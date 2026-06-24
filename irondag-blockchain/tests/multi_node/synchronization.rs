@@ -18,7 +18,7 @@ async fn test_chain_synchronization() {
         let block = Block::new(block_header, vec![]);
         prev_hash = block.hash;
         
-        blockchain.add_block(block.clone()).unwrap();
+        blockchain.add_block(block.clone()).await.unwrap();
         consensus.add_block(block);
     }
     
@@ -47,5 +47,6 @@ async fn test_state_consistency() {
     assert_eq!(blockchain1.get_blocks().len(), blockchain2.get_blocks().len());
     assert_eq!(blockchain1.get_blocks().len(), 1);
 }
+
 
 

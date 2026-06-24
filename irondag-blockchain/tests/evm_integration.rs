@@ -18,8 +18,8 @@ use tokio::sync::RwLock;
 /// Bytecode: PUSH0 PUSH1 0x01 ADD PUSH1 0x00 MSTORE PUSH1 0x20 PUSH1 0x00 RETURN
 /// 0x5f 60 01 01 60 00 52 60 20 60 00 f3
 /// Expected: returns 32 bytes where last byte is 0x01 (0 + 1 = 1)
-#[test]
-fn test_push0_opcode_shanghai() {
+#[tokio::test]
+async fn test_push0_opcode_shanghai() {
     // Bytecode that uses PUSH0 to push 0, then adds 1, stores and returns the result
     // If PUSH0 works: returns 0x01 (proving PUSH0 pushed 0)
     // If PUSH0 is unknown opcode: execution fails with error

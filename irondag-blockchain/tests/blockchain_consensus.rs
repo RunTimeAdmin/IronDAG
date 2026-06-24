@@ -5,8 +5,8 @@ use irondag::consensus::GhostDAG;
 use irondag::types::StreamType;
 
 /// Test block addition with GhostDAG consensus
-#[test]
-fn test_blockchain_consensus_integration() {
+#[tokio::test]
+async fn test_blockchain_consensus_integration() {
     let mut blockchain = Blockchain::new();
     let mut consensus = GhostDAG::new();
 
@@ -16,7 +16,7 @@ fn test_blockchain_consensus_integration() {
     let genesis_hash = genesis.hash;
 
     // Add to blockchain
-    blockchain.add_block(genesis.clone()).unwrap();
+    blockchain.add_block(genesis.clone()).await.unwrap();
 
     // Add to consensus
     consensus.add_block(&genesis).unwrap();
@@ -44,8 +44,8 @@ fn test_blockchain_consensus_integration() {
 }
 
 /// Test parallel blocks with GhostDAG
-#[test]
-fn test_parallel_blocks_consensus() {
+#[tokio::test]
+async fn test_parallel_blocks_consensus() {
     let mut blockchain = Blockchain::new();
     let mut consensus = GhostDAG::new();
 
@@ -53,7 +53,7 @@ fn test_parallel_blocks_consensus() {
     let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4, 1_000_000_000);
     let genesis = Block::new(genesis_header, vec![]);
     let genesis_hash = genesis.hash;
-    blockchain.add_block(genesis.clone()).unwrap();
+    blockchain.add_block(genesis.clone()).await.unwrap();
     consensus.add_block(&genesis).unwrap();
 
     // Create two parallel blocks (both reference genesis)
@@ -83,8 +83,8 @@ fn test_parallel_blocks_consensus() {
 }
 
 /// Test blue score calculation
-#[test]
-fn test_blue_score_calculation() {
+#[tokio::test]
+async fn test_blue_score_calculation() {
     let mut blockchain = Blockchain::new();
     let mut consensus = GhostDAG::new();
 
@@ -92,7 +92,7 @@ fn test_blue_score_calculation() {
     let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4, 1_000_000_000);
     let genesis = Block::new(genesis_header, vec![]);
     let genesis_hash = genesis.hash;
-    blockchain.add_block(genesis.clone()).unwrap();
+    blockchain.add_block(genesis.clone()).await.unwrap();
     consensus.add_block(&genesis).unwrap();
 
     let block1_header =

@@ -5,8 +5,8 @@ use irondag::blockchain::{Block, BlockHeader, Transaction};
 use irondag::pow;
 use irondag::types::{Address, Hash, StreamType};
 
-#[test]
-fn test_difficulty_damping_prevents_oscillation() {
+#[tokio::test]
+async fn test_difficulty_damping_prevents_oscillation() {
     println!("\n🧪 Testing difficulty adjustment damping...");
     // NOTE: MAX_DIFFICULTY is capped at 16 for dev/testnet, so use values within that range
 
@@ -44,8 +44,8 @@ fn test_difficulty_damping_prevents_oscillation() {
     println!("✅ All damping tests passed! Difficulty adjustment prevents oscillation.\n");
 }
 
-#[test]
-fn test_difficulty_moving_average() {
+#[tokio::test]
+async fn test_difficulty_moving_average() {
     println!("\n🧪 Testing moving average difficulty adjustment...");
     // NOTE: MAX_DIFFICULTY is capped at 16 for dev/testnet
 
@@ -83,8 +83,8 @@ fn test_difficulty_moving_average() {
     println!("✅ All moving average tests passed!\n");
 }
 
-#[test]
-fn test_difficulty_adjustment_stability() {
+#[tokio::test]
+async fn test_difficulty_adjustment_stability() {
     println!("\n🧪 Testing difficulty adjustment stability (no oscillation)...");
 
     // Simulate a sequence of blocks with varying times
@@ -133,8 +133,8 @@ fn test_difficulty_adjustment_stability() {
 /// This test ensures that transactions with garbage/invalid signatures
 /// are properly rejected during validation, preventing unauthorized
 /// transaction execution.
-#[test]
-fn sec_001_invalid_signature_rejected() {
+#[tokio::test]
+async fn sec_001_invalid_signature_rejected() {
     println!("\n🔒 Testing SEC-001: Invalid signature rejection...");
 
     use irondag::blockchain::Blockchain;
@@ -144,7 +144,7 @@ fn sec_001_invalid_signature_rejected() {
     // Create genesis block first
     let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamC, 4, 1_000_000_000);
     let genesis = Block::new(genesis_header, vec![]);
-    blockchain.add_block(genesis).unwrap();
+    blockchain.add_block(genesis).await.unwrap();
 
     // Create a transaction with a garbage/invalid signature
     let from = [0x01u8; 20];
@@ -160,7 +160,7 @@ fn sec_001_invalid_signature_rejected() {
     let block = Block::new(header, vec![tx]);
 
     // Attempt to add the block - should fail due to invalid signature
-    let result = blockchain.add_block(block);
+    let result = blockchain.add_block(block).await;
 
     // Assert that validation returns an error (not Ok)
     assert!(
@@ -188,8 +188,8 @@ fn sec_001_invalid_signature_rejected() {
 /// This test ensures that transactions with empty signatures are
 /// properly rejected, preventing unsigned transactions from being
 /// processed (except for genesis/system transactions).
-#[test]
-fn sec_003_empty_signature_returns_error() {
+#[tokio::test]
+async fn sec_003_empty_signature_returns_error() {
     println!("\n🔒 Testing SEC-003: Empty signature rejection...");
 
     use irondag::blockchain::Blockchain;
@@ -199,7 +199,7 @@ fn sec_003_empty_signature_returns_error() {
     // Create genesis block first
     let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamC, 4, 1_000_000_000);
     let genesis = Block::new(genesis_header, vec![]);
-    blockchain.add_block(genesis).unwrap();
+    blockchain.add_block(genesis).await.unwrap();
 
     // Create a transaction with an empty signature
     let from = Address([0x01u8; 20]);
@@ -215,7 +215,7 @@ fn sec_003_empty_signature_returns_error() {
     let block = Block::new(header, vec![tx]);
 
     // Attempt to add the block - should fail due to empty signature
-    let result = blockchain.add_block(block);
+    let result = blockchain.add_block(block).await;
 
     // Assert that validation returns an error
     assert!(
@@ -256,8 +256,8 @@ fn sec_003_empty_signature_returns_error() {
 ///
 /// The test creates a block, computes its hash, then verifies that
 /// changing the stored hash field doesn't affect the computed hash.
-#[test]
-fn sec_007_block_hash_not_circular() {
+#[tokio::test]
+async fn sec_007_block_hash_not_circular() {
     println!("\n🔒 Testing SEC-007: Block hash is not circular...");
 
     // Create a block with some transactions
@@ -313,8 +313,8 @@ fn sec_007_block_hash_not_circular() {
 ///
 /// This test ensures that transactions with invalid post-quantum
 /// signature material return an error rather than causing a panic.
-#[test]
-fn sec_004_invalid_pq_key_returns_error() {
+#[tokio::test]
+async fn sec_004_invalid_pq_key_returns_error() {
     println!("\n🔒 Testing SEC-004: Invalid PQ key material handling...");
 
     use irondag::pqc::{PqAccountType, PqSignature};

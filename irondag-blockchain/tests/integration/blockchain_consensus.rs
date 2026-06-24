@@ -16,7 +16,7 @@ async fn test_blockchain_consensus_integration() {
     let genesis_hash = genesis.hash;
     
     // Add to blockchain
-    blockchain.add_block(genesis.clone()).unwrap();
+    blockchain.add_block(genesis.clone()).await.unwrap();
     
     // Add to consensus
     consensus.add_block(genesis);
@@ -52,7 +52,7 @@ async fn test_parallel_blocks_consensus() {
     let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4);
     let genesis = Block::new(genesis_header, vec![]);
     let genesis_hash = genesis.hash;
-    blockchain.add_block(genesis.clone()).unwrap();
+    blockchain.add_block(genesis.clone()).await.unwrap();
     consensus.add_block(genesis);
     
     // Create two parallel blocks (both reference genesis)
@@ -89,7 +89,7 @@ async fn test_blue_score_calculation() {
     let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4);
     let genesis = Block::new(genesis_header, vec![]);
     let genesis_hash = genesis.hash;
-    blockchain.add_block(genesis.clone()).unwrap();
+    blockchain.add_block(genesis.clone()).await.unwrap();
     consensus.add_block(genesis);
     
     let block1_header = BlockHeader::new(vec![genesis_hash], 1, StreamType::StreamA, 4);
@@ -111,5 +111,6 @@ async fn test_blue_score_calculation() {
     assert_eq!(ordered[1].hash, block1_hash);
     assert_eq!(ordered[2].hash, block2_hash);
 }
+
 
 

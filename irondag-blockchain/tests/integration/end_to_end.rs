@@ -39,7 +39,7 @@ async fn test_complete_transaction_flow() {
     let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4);
     let genesis = Block::new(genesis_header, vec![]);
     let genesis_hash = genesis.hash;
-    blockchain.add_block(genesis.clone()).unwrap();
+    blockchain.add_block(genesis.clone()).await.unwrap();
     consensus.add_block(genesis);
     
     let block_header = BlockHeader::new(vec![genesis_hash], 1, StreamType::StreamA, 4);
@@ -47,7 +47,7 @@ async fn test_complete_transaction_flow() {
     let block_hash = block.hash;
     
     // 4. Add block to blockchain
-    blockchain.add_block(block.clone()).unwrap();
+    blockchain.add_block(block.clone()).await.unwrap();
     
     // 5. Add to consensus
     consensus.add_block(block.clone());
@@ -81,14 +81,14 @@ async fn test_blockchain_state_consistency() {
     let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4);
     let genesis = Block::new(genesis_header, vec![]);
     let mut prev_hash = genesis.hash;
-    blockchain.add_block(genesis.clone()).unwrap();
+    blockchain.add_block(genesis.clone()).await.unwrap();
     consensus.add_block(genesis);
     
     for i in 1..=5 {
         let block_header = BlockHeader::new(vec![prev_hash], i, StreamType::StreamA, 4);
         let block = Block::new(block_header, vec![]);
         prev_hash = block.hash;
-        blockchain.add_block(block.clone()).unwrap();
+        blockchain.add_block(block.clone()).await.unwrap();
         consensus.add_block(block);
     }
     
@@ -99,5 +99,6 @@ async fn test_blockchain_state_consistency() {
     let ordered = consensus.get_ordered_blocks().unwrap();
     assert_eq!(ordered.len(), 6);
 }
+
 
 

@@ -24,7 +24,7 @@ async fn test_block_persistence() {
     let genesis = Block::new(genesis_header, vec![]);
     let genesis_hash = genesis.hash;
     
-    blockchain.add_block(genesis.clone()).unwrap();
+    blockchain.add_block(genesis.clone()).await.unwrap();
     
     // Store block in database
     block_store.put(&genesis).unwrap();
@@ -101,5 +101,6 @@ async fn test_database_recovery() {
     let retrieved = block_store.get(&genesis_hash).unwrap();
     assert!(retrieved.is_some());
 }
+
 
 
