@@ -71,11 +71,8 @@ impl Metrics {
 
         // Block metrics
         let blocks_mined = Counter::with_opts(
-            Opts::new(
-                "irondag_blocks_mined_total",
-                "Total number of blocks mined",
-            )
-            .namespace("irondag"),
+            Opts::new("irondag_blocks_mined_total", "Total number of blocks mined")
+                .namespace("irondag"),
         )?;
 
         let blocks_received = Counter::with_opts(
@@ -119,24 +116,17 @@ impl Metrics {
 
         // Network metrics
         let peers_connected = Gauge::with_opts(
-            Opts::new("irondag_peers_connected", "Number of connected peers")
-                .namespace("irondag"),
+            Opts::new("irondag_peers_connected", "Number of connected peers").namespace("irondag"),
         )?;
 
         let peers_banned = Gauge::with_opts(
-            Opts::new(
-                "irondag_peers_banned",
-                "Number of currently banned peers",
-            )
-            .namespace("irondag"),
+            Opts::new("irondag_peers_banned", "Number of currently banned peers")
+                .namespace("irondag"),
         )?;
 
         let peer_latency_ms = GaugeVec::new(
-            Opts::new(
-                "irondag_peer_latency_ms",
-                "Latency to peer in milliseconds",
-            )
-            .namespace("irondag"),
+            Opts::new("irondag_peer_latency_ms", "Latency to peer in milliseconds")
+                .namespace("irondag"),
             &["peer"],
         )?;
 
@@ -291,11 +281,8 @@ impl Metrics {
 
         // RPC metrics
         let rpc_requests_total = CounterVec::new(
-            Opts::new(
-                "irondag_rpc_requests_total",
-                "Total RPC requests by method",
-            )
-            .namespace("irondag"),
+            Opts::new("irondag_rpc_requests_total", "Total RPC requests by method")
+                .namespace("irondag"),
             &["method"],
         )?;
 

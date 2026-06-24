@@ -114,10 +114,9 @@ impl SponsorRegistry {
         fee: u128,
         current_block: u64,
     ) -> Result<(), String> {
-        let policy = self
-            .policies
-            .get(sponsor)
-            .ok_or_else(|| "Sponsor has no registered policy — use irondag_registerSponsorPolicy first".to_string())?;
+        let policy = self.policies.get(sponsor).ok_or_else(|| {
+            "Sponsor has no registered policy — use irondag_registerSponsorPolicy first".to_string()
+        })?;
 
         if !policy.active {
             return Err("Sponsor policy is paused".to_string());

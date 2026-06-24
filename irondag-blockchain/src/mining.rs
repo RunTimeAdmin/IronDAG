@@ -2269,7 +2269,8 @@ impl MiningManager {
                         b_pool.retain(|p| !cleanup_set.contains(&p.tx.hash));
                         let removed = before - b_pool.len();
                         if removed > 0 {
-                            self.stream_b_pool_size.fetch_sub(removed, Ordering::Release);
+                            self.stream_b_pool_size
+                                .fetch_sub(removed, Ordering::Release);
                         }
                     }
                     {
@@ -2278,7 +2279,8 @@ impl MiningManager {
                         c_pool.retain(|p| !cleanup_set.contains(&p.tx.hash));
                         let removed = before - c_pool.len();
                         if removed > 0 {
-                            self.stream_c_pool_size.fetch_sub(removed, Ordering::Release);
+                            self.stream_c_pool_size
+                                .fetch_sub(removed, Ordering::Release);
                         }
                     }
                 }
@@ -2700,7 +2702,8 @@ impl MiningManager {
                         a_pool.retain(|p| !cleanup_set.contains(&p.tx.hash));
                         let removed = before - a_pool.len();
                         if removed > 0 {
-                            self.stream_a_pool_size.fetch_sub(removed, Ordering::Release);
+                            self.stream_a_pool_size
+                                .fetch_sub(removed, Ordering::Release);
                         }
                     }
                     {
@@ -2709,7 +2712,8 @@ impl MiningManager {
                         c_pool.retain(|p| !cleanup_set.contains(&p.tx.hash));
                         let removed = before - c_pool.len();
                         if removed > 0 {
-                            self.stream_c_pool_size.fetch_sub(removed, Ordering::Release);
+                            self.stream_c_pool_size
+                                .fetch_sub(removed, Ordering::Release);
                         }
                     }
                 }
@@ -3102,7 +3106,8 @@ impl MiningManager {
                         a_pool.retain(|p| !cleanup_set.contains(&p.tx.hash));
                         let removed = before - a_pool.len();
                         if removed > 0 {
-                            self.stream_a_pool_size.fetch_sub(removed, Ordering::Release);
+                            self.stream_a_pool_size
+                                .fetch_sub(removed, Ordering::Release);
                         }
                     }
                     {
@@ -3111,7 +3116,8 @@ impl MiningManager {
                         b_pool.retain(|p| !cleanup_set.contains(&p.tx.hash));
                         let removed = before - b_pool.len();
                         if removed > 0 {
-                            self.stream_b_pool_size.fetch_sub(removed, Ordering::Release);
+                            self.stream_b_pool_size
+                                .fetch_sub(removed, Ordering::Release);
                         }
                     }
                 }
@@ -3592,8 +3598,12 @@ async fn process_blocks(
                     verify_block.transactions.iter().map(|tx| tx.hash).collect();
                 let transactions_root = pow::calculate_transactions_root(&tx_hashes);
                 let calculated_hash = match verify_block.header.stream_type {
-                    StreamType::StreamA => pow::hash_blake3(&verify_block.header, &transactions_root),
-                    StreamType::StreamB => pow::hash_b3memhash(&verify_block.header, &transactions_root),
+                    StreamType::StreamA => {
+                        pow::hash_blake3(&verify_block.header, &transactions_root)
+                    }
+                    StreamType::StreamB => {
+                        pow::hash_b3memhash(&verify_block.header, &transactions_root)
+                    }
                     _ => verify_block.calculate_hash(),
                 };
                 verify_block.hash == calculated_hash

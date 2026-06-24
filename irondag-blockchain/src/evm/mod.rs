@@ -166,7 +166,10 @@ impl<'a> SputnikBackend<'a> {
 
     /// Take the captured EVM logs out of the backend, leaving it empty.
     pub fn take_logs(&self) -> Vec<EvmLog> {
-        let mut logs = self.captured_logs.write().unwrap_or_else(|e| e.into_inner());
+        let mut logs = self
+            .captured_logs
+            .write()
+            .unwrap_or_else(|e| e.into_inner());
         std::mem::take(&mut *logs)
     }
 }
@@ -318,16 +321,23 @@ impl<'a> ApplyBackend for SputnikBackend<'a> {
         L: IntoIterator<Item = Log>,
     {
         tracing::info!(target: "evm::sputnik", "ApplyBackend::apply() called - persisting state changes");
-    
+
         // Capture EVM logs instead of discarding them
         {
-            let mut captured = self.captured_logs.write().unwrap_or_else(|e| e.into_inner());
+            let mut captured = self
+                .captured_logs
+                .write()
+                .unwrap_or_else(|e| e.into_inner());
             for log in logs {
-                let topics: Vec<[u8; 32]> = log.topics.into_iter().map(|t| {
-                    let mut arr = [0u8; 32];
-                    arr.copy_from_slice(t.as_bytes());
-                    arr
-                }).collect();
+                let topics: Vec<[u8; 32]> = log
+                    .topics
+                    .into_iter()
+                    .map(|t| {
+                        let mut arr = [0u8; 32];
+                        arr.copy_from_slice(t.as_bytes());
+                        arr
+                    })
+                    .collect();
                 captured.push(EvmLog {
                     address: sputnik_to_native_address(log.address),
                     topics,

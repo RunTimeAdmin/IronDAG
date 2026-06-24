@@ -158,8 +158,7 @@ pub struct Blockchain {
         Option<Arc<tokio::sync::RwLock<crate::recurring::RecurringTransactionManager>>>,
 
     // Built-in Privacy Pool
-    pub(crate) privacy_pool:
-        Arc<tokio::sync::RwLock<crate::privacy_pool::PrivacyPool>>,
+    pub(crate) privacy_pool: Arc<tokio::sync::RwLock<crate::privacy_pool::PrivacyPool>>,
 
     // Stop-Loss
     #[allow(dead_code)]
@@ -805,7 +804,10 @@ impl Blockchain {
     /// Add a locally-mined block whose PoW hash was already verified outside the write lock.
     /// Call this from process_blocks after pre-verifying the hash via spawn_blocking to avoid
     /// holding the blockchain write lock during the ~8.8ms B3MemHash computation.
-    pub async fn add_block_pre_verified(&mut self, block: Block) -> crate::error::BlockchainResult<()> {
+    pub async fn add_block_pre_verified(
+        &mut self,
+        block: Block,
+    ) -> crate::error::BlockchainResult<()> {
         self.add_block_impl(block, true).await
     }
 
@@ -814,7 +816,11 @@ impl Blockchain {
         self.add_block_impl(block, false).await
     }
 
-    async fn add_block_impl(&mut self, block: Block, skip_pow_verify: bool) -> crate::error::BlockchainResult<()> {
+    async fn add_block_impl(
+        &mut self,
+        block: Block,
+        skip_pow_verify: bool,
+    ) -> crate::error::BlockchainResult<()> {
         // ARC-003/ARC-004: Acquire block processing lock to prevent TOCTOU race condition.
         // This serializes the entire block processing pipeline (validate → process → persist → commit)
         // to ensure that concurrent readers cannot see partially committed state.
@@ -1033,7 +1039,8 @@ impl Blockchain {
         }
 
         // 12. Execute any recurring transactions that are due at this block's timestamp.
-        self.process_recurring_transactions(block_number, block_timestamp).await;
+        self.process_recurring_transactions(block_number, block_timestamp)
+            .await;
 
         Ok(())
     }
@@ -1108,11 +1115,7 @@ impl Blockchain {
 
             {
                 let mut mgr = manager_arc.write().await;
-                let _ = mgr.mark_executed(
-                    &recurring.recurring_tx_id,
-                    exec_hash,
-                    current_timestamp,
-                );
+                let _ = mgr.mark_executed(&recurring.recurring_tx_id, exec_hash, current_timestamp);
             }
 
             info!(
@@ -1135,7 +1138,10 @@ impl Blockchain {
     /// - Parent hash chain validation
     /// - Duplicate transaction detection
     /// - Block timestamp, number, and size validation
-    pub async fn add_block_for_sync(&mut self, block: Block) -> crate::error::BlockchainResult<bool> {
+    pub async fn add_block_for_sync(
+        &mut self,
+        block: Block,
+    ) -> crate::error::BlockchainResult<bool> {
         // ARC-003/ARC-004: Acquire block processing lock to prevent TOCTOU race condition.
         // This serializes the entire block processing pipeline (validate → process → persist → commit)
         // to ensure that concurrent readers cannot see partially committed state.
@@ -1286,7 +1292,8 @@ impl Blockchain {
     ) -> crate::error::BlockchainResult<()> {
         // Check block size without allocating the full buffer (DoS protection)
         let block_size = bincode::serialized_size(block)
-            .map_err(|e| crate::error::BlockchainError::Serialization(e.to_string()))? as usize;
+            .map_err(|e| crate::error::BlockchainError::Serialization(e.to_string()))?
+            as usize;
         if block_size > MAX_BLOCK_SIZE {
             return Err(crate::error::BlockchainError::InvalidBlock(format!(
                 "Block size {} exceeds maximum {}",
@@ -1356,7 +1363,8 @@ impl Blockchain {
     fn validate_block_structure(&self, block: &Block) -> crate::error::BlockchainResult<()> {
         // Check block size without allocating the full buffer (DoS protection)
         let block_size = bincode::serialized_size(block)
-            .map_err(|e| crate::error::BlockchainError::Serialization(e.to_string()))? as usize;
+            .map_err(|e| crate::error::BlockchainError::Serialization(e.to_string()))?
+            as usize;
         if block_size > MAX_BLOCK_SIZE {
             return Err(crate::error::BlockchainError::InvalidBlock(format!(
                 "Block size {} exceeds maximum {}",
@@ -1839,16 +1847,20 @@ impl Blockchain {
 
             // Privacy/multisig txs: full validation (stateless + stateful).
             // Regular txs: stateful-only — stateless was done in parallel above.
-            let is_special = tx.multisig_signatures.is_some()
-                || {
-                    #[cfg(feature = "privacy")]
-                    { tx.privacy_data.is_some() }
-                    #[cfg(not(feature = "privacy"))]
-                    { false }
-                };
+            let is_special = tx.multisig_signatures.is_some() || {
+                #[cfg(feature = "privacy")]
+                {
+                    tx.privacy_data.is_some()
+                }
+                #[cfg(not(feature = "privacy"))]
+                {
+                    false
+                }
+            };
 
             if is_special {
-                self.validate_transaction(tx, current_block, current_timestamp).await?;
+                self.validate_transaction(tx, current_block, current_timestamp)
+                    .await?;
             } else {
                 self.validate_tx_stateful_only(tx, current_block).await?;
             }
@@ -1858,7 +1870,8 @@ impl Blockchain {
 
             // Update the sponsor's rolling spend window after the tx is committed.
             if let Some(ref sponsor) = tx.sponsor {
-                self.sponsor_registry.record_spend(sponsor, tx.fee, current_block);
+                self.sponsor_registry
+                    .record_spend(sponsor, tx.fee, current_block);
             }
         }
 
@@ -2510,7 +2523,10 @@ impl Blockchain {
     }
 
     /// Process a transaction and update state
-    async fn process_transaction(&mut self, tx: &Transaction) -> crate::error::BlockchainResult<()> {
+    async fn process_transaction(
+        &mut self,
+        tx: &Transaction,
+    ) -> crate::error::BlockchainResult<()> {
         // === REPLAY PROTECTION: Check for duplicate transaction hash ===
         {
             let recent_hashes = self.recent_tx_hashes_read();
@@ -2621,7 +2637,10 @@ impl Blockchain {
                         }
                         // Capture receipt before result is consumed.
                         // For contract deployments (tx.to is zero), output is the deployed address.
-                        let contract_addr = if tx.to.is_zero() && !tx.data.is_empty() && result.output.len() >= 20 {
+                        let contract_addr = if tx.to.is_zero()
+                            && !tx.data.is_empty()
+                            && result.output.len() >= 20
+                        {
                             let mut addr = [0u8; 20];
                             addr.copy_from_slice(&result.output[result.output.len() - 20..]);
                             Some(addr)
@@ -3008,12 +3027,15 @@ impl Blockchain {
         self.verify_post_transaction_consistency(tx)?;
 
         // Persist receipt for native transfer (21,000 gas, no logs)
-        self.store_receipt(&tx.hash, &TxReceipt {
-            success: true,
-            gas_used: 21_000,
-            logs: vec![],
-            contract_address: None,
-        });
+        self.store_receipt(
+            &tx.hash,
+            &TxReceipt {
+                success: true,
+                gas_used: 21_000,
+                logs: vec![],
+                contract_address: None,
+            },
+        );
 
         Ok(())
     }
@@ -3075,9 +3097,7 @@ impl Blockchain {
     }
 
     /// Shared handle to the privacy pool.
-    pub fn privacy_pool(
-        &self,
-    ) -> Arc<tokio::sync::RwLock<crate::privacy_pool::PrivacyPool>> {
+    pub fn privacy_pool(&self) -> Arc<tokio::sync::RwLock<crate::privacy_pool::PrivacyPool>> {
         Arc::clone(&self.privacy_pool)
     }
 
@@ -3092,10 +3112,12 @@ impl Blockchain {
     ) -> crate::error::BlockchainResult<u128> {
         let amount = {
             let mut pool = self.privacy_pool.write().await;
-            pool.withdraw(nullifier, proof.as_deref())
-                .map_err(|e| crate::error::BlockchainError::InvalidTransaction(
-                    format!("Privacy pool withdrawal failed: {}", e),
-                ))?
+            pool.withdraw(nullifier, proof.as_deref()).map_err(|e| {
+                crate::error::BlockchainError::InvalidTransaction(format!(
+                    "Privacy pool withdrawal failed: {}",
+                    e
+                ))
+            })?
         };
 
         // Transfer denomination from pool address to recipient
@@ -3267,7 +3289,10 @@ impl Blockchain {
     }
 
     /// Get the latest block for a specific stream type — O(N) but only called on fee changes.
-    pub fn get_latest_block_for_stream(&self, stream_type: crate::types::StreamType) -> Option<Block> {
+    pub fn get_latest_block_for_stream(
+        &self,
+        stream_type: crate::types::StreamType,
+    ) -> Option<Block> {
         let blocks_data = self.blocks_read();
         blocks_data
             .blocks
@@ -4037,10 +4062,18 @@ impl Blockchain {
                 Ok(encoded) => {
                     let key = make_key(crate::storage::key_prefix::RECEIPT, &tx_hash.0);
                     if let Err(e) = db.insert_raw(key, encoded) {
-                        warn!("Failed to persist receipt for tx 0x{}: {}", hex::encode(tx_hash), e);
+                        warn!(
+                            "Failed to persist receipt for tx 0x{}: {}",
+                            hex::encode(tx_hash),
+                            e
+                        );
                     }
                 }
-                Err(e) => warn!("Failed to serialize receipt for tx 0x{}: {}", hex::encode(tx_hash), e),
+                Err(e) => warn!(
+                    "Failed to serialize receipt for tx 0x{}: {}",
+                    hex::encode(tx_hash),
+                    e
+                ),
             }
         }
     }

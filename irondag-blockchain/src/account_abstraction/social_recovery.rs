@@ -429,19 +429,25 @@ mod tests {
 
         // Add first approval
         let sig1 = sign_recovery_approval(&sk1, wallet, new_owner, timestamp + 100);
-        assert!(request.add_approval(guardian1, &sig1, timestamp + 100).is_ok());
+        assert!(request
+            .add_approval(guardian1, &sig1, timestamp + 100)
+            .is_ok());
         assert_eq!(request.approval_count(), 1);
         assert_eq!(request.status, RecoveryStatus::Pending);
 
         // Add second approval (threshold met)
         let sig2 = sign_recovery_approval(&sk2, wallet, new_owner, timestamp + 200);
-        assert!(request.add_approval(guardian2, &sig2, timestamp + 200).is_ok());
+        assert!(request
+            .add_approval(guardian2, &sig2, timestamp + 200)
+            .is_ok());
         assert_eq!(request.approval_count(), 2);
         assert_eq!(request.status, RecoveryStatus::Approved);
 
         // Try to add duplicate approval
         let sig3 = sign_recovery_approval(&sk1, wallet, new_owner, timestamp + 300);
-        assert!(request.add_approval(guardian1, &sig3, timestamp + 300).is_err());
+        assert!(request
+            .add_approval(guardian1, &sig3, timestamp + 300)
+            .is_err());
     }
 
     #[test]
@@ -459,9 +465,13 @@ mod tests {
 
         // Add approvals
         let sig1 = sign_recovery_approval(&sk1, wallet, new_owner, timestamp + 100);
-        request.add_approval(guardian1, &sig1, timestamp + 100).unwrap();
+        request
+            .add_approval(guardian1, &sig1, timestamp + 100)
+            .unwrap();
         let sig2 = sign_recovery_approval(&sk2, wallet, new_owner, timestamp + 200);
-        request.add_approval(guardian2, &sig2, timestamp + 200).unwrap();
+        request
+            .add_approval(guardian2, &sig2, timestamp + 200)
+            .unwrap();
 
         // Check immediately (not ready)
         assert!(!request.is_ready(timestamp + 1000));
@@ -490,9 +500,13 @@ mod tests {
 
         // Add approvals
         let sig1 = sign_recovery_approval(&sk1, wallet, new_owner, timestamp + 100);
-        manager.approve_recovery(wallet, guardian1, &sig1, timestamp + 100).unwrap();
+        manager
+            .approve_recovery(wallet, guardian1, &sig1, timestamp + 100)
+            .unwrap();
         let sig2 = sign_recovery_approval(&sk2, wallet, new_owner, timestamp + 200);
-        manager.approve_recovery(wallet, guardian2, &sig2, timestamp + 200).unwrap();
+        manager
+            .approve_recovery(wallet, guardian2, &sig2, timestamp + 200)
+            .unwrap();
 
         // Check status
         let status = manager.get_recovery_status(&wallet).unwrap();

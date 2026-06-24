@@ -4160,7 +4160,7 @@ fn sign_message_with_key(
         .duration_since(std::time::UNIX_EPOCH)
         .map(|d| d.as_secs())
         .unwrap_or(0);
-    
+
     // Sign message bytes + timestamp together to prevent replay with altered timestamps
     let mut signed_payload = message_bytes;
     signed_payload.extend_from_slice(&timestamp.to_le_bytes());
@@ -5472,8 +5472,12 @@ async fn process_message(
             let (blocks, local_height) = {
                 let bc = blockchain.read().await;
                 // CRITICAL: Sort by block_number BEFORE taking to ensure lowest block numbers are returned first
-                let mut candidates: Vec<Block> = bc
-                    .with_blocks(|bs| bs.iter().filter(|b| b.header.block_number >= from_block).cloned().collect());
+                let mut candidates: Vec<Block> = bc.with_blocks(|bs| {
+                    bs.iter()
+                        .filter(|b| b.header.block_number >= from_block)
+                        .cloned()
+                        .collect()
+                });
                 candidates.sort_by_key(|b| b.header.block_number);
                 candidates.truncate(count as usize);
                 let height = bc.get_block_count();
@@ -5517,8 +5521,12 @@ async fn process_message(
                 // Fallback: query main chain (non-sharding mode)
                 // CRITICAL: Sort by block_number BEFORE taking to ensure lowest block numbers are returned first
                 let bc = blockchain.read().await;
-                let mut candidates: Vec<Block> = bc
-                    .with_blocks(|bs| bs.iter().filter(|b| b.header.block_number >= from_block).cloned().collect());
+                let mut candidates: Vec<Block> = bc.with_blocks(|bs| {
+                    bs.iter()
+                        .filter(|b| b.header.block_number >= from_block)
+                        .cloned()
+                        .collect()
+                });
                 candidates.sort_by_key(|b| b.header.block_number);
                 candidates.truncate(count as usize);
                 candidates

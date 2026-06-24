@@ -43,6 +43,7 @@ pub mod config;
 pub mod consensus;
 pub mod error;
 pub mod evm;
+pub mod gas_sponsorship;
 pub mod governance;
 pub mod light_client;
 pub mod metrics;
@@ -55,9 +56,8 @@ pub mod pow;
 pub mod pqc;
 #[cfg(feature = "privacy")]
 pub mod privacy;
-pub mod quic_transport;
-pub mod gas_sponsorship;
 pub mod privacy_pool;
+pub mod quic_transport;
 pub mod recurring;
 pub mod reputation;
 pub mod rpc;

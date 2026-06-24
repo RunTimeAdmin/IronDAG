@@ -36,7 +36,7 @@ fn get_resync_quorum() -> usize {
     std::env::var("RESYNC_QUORUM")
         .ok()
         .and_then(|v| v.parse::<usize>().ok())
-        .map(|v| v.max(2))  // never allow below 2
+        .map(|v| v.max(2)) // never allow below 2
         .unwrap_or(RESYNC_QUORUM)
 }
 
@@ -2128,8 +2128,7 @@ impl SyncClient {
                         checkpoint_installed = true;
                         info!(
                             block_number = checkpoint_num,
-                            local_tip,
-                            "Installed pruned-peer sync checkpoint"
+                            local_tip, "Installed pruned-peer sync checkpoint"
                         );
                     }
                 }

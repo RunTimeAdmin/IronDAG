@@ -36,9 +36,8 @@ use tracing::warn;
 
 /// System address of the privacy pool contract.
 /// Funds sent to this address are held by the pool.
-pub const PRIVACY_POOL_ADDRESS: Address = Address([
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,
-]);
+pub const PRIVACY_POOL_ADDRESS: Address =
+    Address([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]);
 
 /// A single pool deposit record.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -115,11 +114,7 @@ impl PrivacyPool {
 
     /// Register a new commitment (called when a deposit tx is processed).
     /// Returns Err if the exact denomination wasn't sent or the commitment already exists.
-    pub fn deposit(
-        &mut self,
-        commitment: Hash,
-        block_number: u64,
-    ) -> Result<usize, PoolError> {
+    pub fn deposit(&mut self, commitment: Hash, block_number: u64) -> Result<usize, PoolError> {
         if self.commitment_set.contains(&commitment) {
             return Err(PoolError::DuplicateCommitment);
         }
@@ -137,11 +132,7 @@ impl PrivacyPool {
     ///
     /// In stub mode (`require_proof = false`) the proof bytes are ignored.
     /// Returns `Ok(denomination)` on success so the caller can transfer the funds.
-    pub fn withdraw(
-        &mut self,
-        nullifier: Hash,
-        _proof: Option<&[u8]>,
-    ) -> Result<u128, PoolError> {
+    pub fn withdraw(&mut self, nullifier: Hash, _proof: Option<&[u8]>) -> Result<u128, PoolError> {
         if self.spent_nullifiers.contains(&nullifier) {
             return Err(PoolError::NullifierAlreadySpent);
         }

@@ -872,7 +872,8 @@ impl ShardManager {
         }
         let shard = self.shards[shard_id].read().await;
         let mut bc = shard.blockchain.write().await;
-        bc.add_block_for_sync(block).await
+        bc.add_block_for_sync(block)
+            .await
             .map(|_| ())
             .map_err(|e| format!("{}", e))
     }

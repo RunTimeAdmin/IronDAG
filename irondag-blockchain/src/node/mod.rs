@@ -149,20 +149,20 @@ impl Default for NodeConfig {
             rpc_api_key: std::env::var("IRONDAG_API_KEY").ok(),
             disable_tls_warning: false, // TLS warning enabled by default
             mining_backend: "cpu".to_string(), // Default to CPU mining
-            prune_interval_secs: 60, // Default: prune every 60 seconds
-            keep_red_blocks: false, // Default: prune red blocks
-            sled_cache_mb: 256, // Default: 256MB cache
-            sled_flush_ms: 200, // 200ms for faster durability on crash
+            prune_interval_secs: 60,    // Default: prune every 60 seconds
+            keep_red_blocks: false,     // Default: prune red blocks
+            sled_cache_mb: 256,         // Default: 256MB cache
+            sled_flush_ms: 200,         // 200ms for faster durability on crash
             sled_high_throughput: true, // Default: high-throughput mode
             #[cfg(feature = "privacy")]
             zk_keys_dir: None, // Default: ZK proving disabled
-            ghostdag_k: 4,      // Default: K=4 (Kaspa standard)
-            rpc_rate_limit: 1000, // Default: 1000 requests/minute per IP
-            rpc_burst_size: 50, // Default: 50 burst allowance
-            prune_batch_size: 200, // Default: 200 blocks per pruning batch
-            enable_grpc_v2: false, // Default: disabled (experimental)
+            ghostdag_k: 4,              // Default: K=4 (Kaspa standard)
+            rpc_rate_limit: 1000,       // Default: 1000 requests/minute per IP
+            rpc_burst_size: 50,         // Default: 50 burst allowance
+            prune_batch_size: 200,      // Default: 200 blocks per pruning batch
+            enable_grpc_v2: false,      // Default: disabled (experimental)
             quic_idle_timeout_secs: 30, // Default: 30 seconds
-            public_ip: None,    // Default: use UDP discovery
+            public_ip: None,            // Default: use UDP discovery
         }
     }
 }
@@ -334,7 +334,6 @@ impl Node {
 
         // Set chain_id from config
         blockchain.set_chain_id(config.chain_id);
-
 
         // Wire Parallel EVM executor — enables dependency-graph batching and the
         // irondag_setParallelEvm / irondag_getParallelEvmStatus RPC endpoints.
@@ -744,7 +743,9 @@ impl Node {
                 info!("GENESIS HASH: 0x{}", hex::encode(genesis_hash));
 
                 // Add genesis block (async operation)
-                blockchain.add_block(genesis).await
+                blockchain
+                    .add_block(genesis)
+                    .await
                     .map_err(|e| e.to_string())?;
 
                 // Apply genesis allocations from merged config

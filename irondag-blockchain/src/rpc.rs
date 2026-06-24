@@ -1014,8 +1014,7 @@ impl RpcServer {
     async fn acquire_blockchain_read(
         &self,
     ) -> Result<tokio::sync::RwLockReadGuard<'_, Blockchain>, JsonRpcError> {
-        let deadline =
-            tokio::time::Instant::now() + Duration::from_millis(RPC_LOCK_TIMEOUT_MS);
+        let deadline = tokio::time::Instant::now() + Duration::from_millis(RPC_LOCK_TIMEOUT_MS);
         loop {
             if let Ok(guard) = self.blockchain.try_read() {
                 return Ok(guard);
@@ -1245,7 +1244,9 @@ impl RpcServer {
     /// Returns a JSON Value with node status information
     pub async fn get_health_status(&self) -> Value {
         // Get blockchain height (lock-free via cached atomic)
-        let block_height = self.blockchain_cached_block_number.load(std::sync::atomic::Ordering::Relaxed);
+        let block_height = self
+            .blockchain_cached_block_number
+            .load(std::sync::atomic::Ordering::Relaxed);
 
         // Get peer count from network manager if available
         let peer_count = if let Some(ref network_mgr) = self.network_manager {
@@ -1488,7 +1489,9 @@ impl RpcServer {
             "eth_getStorageAt" => self.eth_get_storage_at(request.params).await,
             "eth_getTransactionReceipt" => self.eth_get_transaction_receipt(request.params).await,
             "irondag_getShardStats" => self.irondag_get_shard_stats(request.params).await,
-            "irondag_getShardForAddress" => self.irondag_get_shard_for_address(request.params).await,
+            "irondag_getShardForAddress" => {
+                self.irondag_get_shard_for_address(request.params).await
+            }
             "irondag_getRiskScore" => self.irondag_get_risk_score(request.params).await,
             "irondag_getRiskLabels" => self.irondag_get_risk_labels(request.params).await,
             "irondag_getTransactionRisk" => self.irondag_get_transaction_risk(request.params).await,
@@ -1497,13 +1500,17 @@ impl RpcServer {
             "irondag_getStateProof" => self.irondag_get_state_proof(request.params).await,
             "irondag_verifyStateProof" => self.irondag_verify_state_proof(request.params).await,
             "irondag_getCrossShardTransaction" => {
-                self.irondag_get_cross_shard_transaction(request.params).await
+                self.irondag_get_cross_shard_transaction(request.params)
+                    .await
             }
             "irondag_getCrossShardTransactions" => {
-                self.irondag_get_cross_shard_transactions(request.params).await
+                self.irondag_get_cross_shard_transactions(request.params)
+                    .await
             }
             "irondag_getShardBlock" => self.irondag_get_shard_block(request.params).await,
-            "irondag_getShardTransactions" => self.irondag_get_shard_transactions(request.params).await,
+            "irondag_getShardTransactions" => {
+                self.irondag_get_shard_transactions(request.params).await
+            }
             "irondag_getShardBalance" => self.irondag_get_shard_balance(request.params).await,
             "irondag_getOrderingPolicy" => self.irondag_get_ordering_policy().await,
             "irondag_setOrderingPolicy" => self.irondag_set_ordering_policy(request.params).await,
@@ -1511,23 +1518,38 @@ impl RpcServer {
             "irondag_getBlockFairness" => self.irondag_get_block_fairness(request.params).await,
             "irondag_traceFunds" => self.irondag_trace_funds(request.params).await,
             "irondag_getAddressSummary" => self.irondag_get_address_summary(request.params).await,
-            "irondag_getAddressTransactions" => self.irondag_get_address_transactions(request.params).await,
+            "irondag_getAddressTransactions" => {
+                self.irondag_get_address_transactions(request.params).await
+            }
             "irondag_detectAnomalies" => self.irondag_detect_anomalies(request.params).await,
-            "irondag_findRelatedAddresses" => self.irondag_find_related_addresses(request.params).await,
-            "irondag_getStateRootHistory" => self.irondag_get_state_root_history(request.params).await,
+            "irondag_findRelatedAddresses" => {
+                self.irondag_find_related_addresses(request.params).await
+            }
+            "irondag_getStateRootHistory" => {
+                self.irondag_get_state_root_history(request.params).await
+            }
             "irondag_getLightClientSyncStatus" => self.irondag_get_light_client_sync_status().await,
-            "irondag_enableLightClientMode" => self.irondag_enable_light_client_mode(request.params).await,
+            "irondag_enableLightClientMode" => {
+                self.irondag_enable_light_client_mode(request.params).await
+            }
             "irondag_generatePqAccount" => self.irondag_generate_pq_account(request.params).await,
             "irondag_getPqAccountType" => self.irondag_get_pq_account_type(request.params).await,
             "irondag_exportPqKey" => self.irondag_export_pq_key(request.params).await,
             "irondag_importPqKey" => self.irondag_import_pq_key(request.params).await,
-            "irondag_createPqTransaction" => self.irondag_create_pq_transaction(request.params).await,
+            "irondag_createPqTransaction" => {
+                self.irondag_create_pq_transaction(request.params).await
+            }
             "irondag_addSecurityPolicy" => self.irondag_add_security_policy(request.params).await,
-            "irondag_removeSecurityPolicy" => self.irondag_remove_security_policy(request.params).await,
-            "irondag_getSecurityPolicies" => self.irondag_get_security_policies(request.params).await,
+            "irondag_removeSecurityPolicy" => {
+                self.irondag_remove_security_policy(request.params).await
+            }
+            "irondag_getSecurityPolicies" => {
+                self.irondag_get_security_policies(request.params).await
+            }
             "irondag_setPolicyEnabled" => self.irondag_set_policy_enabled(request.params).await,
             "irondag_evaluateTransactionPolicy" => {
-                self.irondag_evaluate_transaction_policy(request.params).await
+                self.irondag_evaluate_transaction_policy(request.params)
+                    .await
             }
             #[cfg(test)]
             "irondag_addTestBlock" => self.irondag_add_test_block(request.params).await,
@@ -1538,7 +1560,9 @@ impl RpcServer {
                 data: None,
             }),
             #[cfg(test)]
-            "irondag_createTestTransaction" => self.irondag_create_test_transaction(request.params).await,
+            "irondag_createTestTransaction" => {
+                self.irondag_create_test_transaction(request.params).await
+            }
             #[cfg(not(test))]
             "irondag_createTestTransaction" => Err(JsonRpcError {
                 code: -32601,
@@ -1560,37 +1584,47 @@ impl RpcServer {
                     .await
             }
             "irondag_getTimeLockedTransactions" => {
-                self.irondag_get_time_locked_transactions(request.params).await
+                self.irondag_get_time_locked_transactions(request.params)
+                    .await
             }
             // Recurring transactions
             "irondag_createRecurringTransaction" => {
-                self.irondag_create_recurring_transaction(request.params).await
+                self.irondag_create_recurring_transaction(request.params)
+                    .await
             }
             "irondag_cancelRecurringTransaction" => {
-                self.irondag_cancel_recurring_transaction(request.params).await
+                self.irondag_cancel_recurring_transaction(request.params)
+                    .await
             }
             "irondag_getRecurringTransaction" => {
                 self.irondag_get_recurring_transaction(request.params).await
             }
             "irondag_getRecurringTransactions" => {
-                self.irondag_get_recurring_transactions(request.params).await
+                self.irondag_get_recurring_transactions(request.params)
+                    .await
             }
             // Gasless transactions
             "irondag_createGaslessTransaction" => {
-                self.irondag_create_gasless_transaction(request.params).await
+                self.irondag_create_gasless_transaction(request.params)
+                    .await
             }
             "irondag_getSponsoredTransactions" => {
-                self.irondag_get_sponsored_transactions(request.params).await
+                self.irondag_get_sponsored_transactions(request.params)
+                    .await
             }
             // Programmable Gas Sponsorship
-            "irondag_registerSponsorPolicy" => self.irondag_register_sponsor_policy(request.params).await,
+            "irondag_registerSponsorPolicy" => {
+                self.irondag_register_sponsor_policy(request.params).await
+            }
             "irondag_deregisterSponsorPolicy" => {
                 self.irondag_deregister_sponsor_policy(request.params).await
             }
             "irondag_getSponsorPolicy" => self.irondag_get_sponsor_policy(request.params).await,
             // Reputation system
             "irondag_getReputation" => self.irondag_get_reputation(request.params).await,
-            "irondag_getReputationFactors" => self.irondag_get_reputation_factors(request.params).await,
+            "irondag_getReputationFactors" => {
+                self.irondag_get_reputation_factors(request.params).await
+            }
             // Account Abstraction
             "irondag_createWallet" => self.irondag_create_wallet(request.params).await,
             "irondag_getWallet" => self.irondag_get_wallet(request.params).await,
@@ -1598,15 +1632,19 @@ impl RpcServer {
             "irondag_isContractWallet" => self.irondag_is_contract_wallet(request.params).await,
             // Multi-Signature Operations
             "irondag_createMultisigTransaction" => {
-                self.irondag_create_multisig_transaction(request.params).await
+                self.irondag_create_multisig_transaction(request.params)
+                    .await
             }
-            "irondag_addMultisigSignature" => self.irondag_add_multisig_signature(request.params).await,
+            "irondag_addMultisigSignature" => {
+                self.irondag_add_multisig_signature(request.params).await
+            }
             "irondag_getPendingMultisigTransactions" => {
                 self.irondag_get_pending_multisig_transactions(request.params)
                     .await
             }
             "irondag_validateMultisigTransaction" => {
-                self.irondag_validate_multisig_transaction(request.params).await
+                self.irondag_validate_multisig_transaction(request.params)
+                    .await
             }
             // Social Recovery Operations
             "irondag_initiateRecovery" => self.irondag_initiate_recovery(request.params).await,
@@ -1615,7 +1653,9 @@ impl RpcServer {
             "irondag_completeRecovery" => self.irondag_complete_recovery(request.params).await,
             "irondag_cancelRecovery" => self.irondag_cancel_recovery(request.params).await,
             // Batch Transaction Operations
-            "irondag_createBatchTransaction" => self.irondag_create_batch_transaction(request.params).await,
+            "irondag_createBatchTransaction" => {
+                self.irondag_create_batch_transaction(request.params).await
+            }
             "irondag_executeBatchTransaction" => {
                 self.irondag_execute_batch_transaction(request.params).await
             }
@@ -1623,9 +1663,12 @@ impl RpcServer {
             "irondag_estimateBatchGas" => self.irondag_estimate_batch_gas(request.params).await,
             // Parallel EVM Operations
             "irondag_enableParallelEVM" => self.irondag_enable_parallel_evm(request.params).await,
-            "irondag_getParallelEVMStats" => self.irondag_get_parallel_evm_stats(request.params).await,
+            "irondag_getParallelEVMStats" => {
+                self.irondag_get_parallel_evm_stats(request.params).await
+            }
             "irondag_estimateParallelImprovement" => {
-                self.irondag_estimate_parallel_improvement(request.params).await
+                self.irondag_estimate_parallel_improvement(request.params)
+                    .await
             }
             // Oracle Operations
             "irondag_registerOracle" => self.irondag_register_oracle(request.params).await,
@@ -1639,22 +1682,27 @@ impl RpcServer {
             "irondag_getRandomness" => self.irondag_get_randomness(request.params).await,
             // Recurring Transaction Operations
             "irondag_createRecurringTransaction" => {
-                self.irondag_create_recurring_transaction(request.params).await
+                self.irondag_create_recurring_transaction(request.params)
+                    .await
             }
             "irondag_cancelRecurringTransaction" => {
-                self.irondag_cancel_recurring_transaction(request.params).await
+                self.irondag_cancel_recurring_transaction(request.params)
+                    .await
             }
             "irondag_getRecurringTransaction" => {
                 self.irondag_get_recurring_transaction(request.params).await
             }
             "irondag_getRecurringTransactions" => {
-                self.irondag_get_recurring_transactions(request.params).await
+                self.irondag_get_recurring_transactions(request.params)
+                    .await
             }
             "irondag_pauseRecurringTransaction" => {
-                self.irondag_pause_recurring_transaction(request.params).await
+                self.irondag_pause_recurring_transaction(request.params)
+                    .await
             }
             "irondag_resumeRecurringTransaction" => {
-                self.irondag_resume_recurring_transaction(request.params).await
+                self.irondag_resume_recurring_transaction(request.params)
+                    .await
             }
             // Built-in Privacy Pool
             "irondag_getPoolInfo" => self.irondag_get_pool_info().await,
@@ -1668,14 +1716,17 @@ impl RpcServer {
             "irondag_cancelStopLoss" => self.irondag_cancel_stop_loss(request.params).await,
             "irondag_getStopLoss" => self.irondag_get_stop_loss(request.params).await,
             "irondag_getStopLossOrders" => self.irondag_get_stop_loss_orders(request.params).await,
-            "irondag_updateStopLossPrice" => self.irondag_update_stop_loss_price(request.params).await,
+            "irondag_updateStopLossPrice" => {
+                self.irondag_update_stop_loss_price(request.params).await
+            }
             "irondag_pauseStopLoss" => self.irondag_pause_stop_loss(request.params).await,
             "irondag_resumeStopLoss" => self.irondag_resume_stop_loss(request.params).await,
             // Privacy Operations
             "irondag_createPrivateTransaction" => {
                 #[cfg(feature = "privacy")]
                 {
-                    self.irondag_create_private_transaction(request.params).await
+                    self.irondag_create_private_transaction(request.params)
+                        .await
                 }
                 #[cfg(not(feature = "privacy"))]
                 {
@@ -1707,8 +1758,9 @@ impl RpcServer {
                 {
                     Err(JsonRpcError {
                         code: RPC_METHOD_NOT_FOUND,
-                        message: "Method not found: irondag_proveBalance (privacy feature not enabled)"
-                            .to_string(),
+                        message:
+                            "Method not found: irondag_proveBalance (privacy feature not enabled)"
+                                .to_string(),
                         data: None,
                     })
                 }
@@ -1787,7 +1839,8 @@ impl RpcServer {
         let params = params.ok_or_else(missing_params_error)?;
         let params_arr = params.as_array().ok_or_else(missing_params_error)?;
         let address = extract_address_param(params_arr, 0)?;
-        let balance = self.accounts_cache
+        let balance = self
+            .accounts_cache
             .get(&address)
             .map(|s| s.balance)
             .unwrap_or(0);
@@ -1802,7 +1855,8 @@ impl RpcServer {
         let params = params.ok_or_else(missing_params_error)?;
         let params_arr = params.as_array().ok_or_else(missing_params_error)?;
         let address = extract_address_param(params_arr, 0)?;
-        let nonce = self.accounts_cache
+        let nonce = self
+            .accounts_cache
             .get(&address)
             .map(|s| s.nonce)
             .unwrap_or(0);
@@ -1882,7 +1936,11 @@ impl RpcServer {
             } else {
                 None
             };
-            return Ok(tx_to_json_with_shard(&tx, block.header.block_number, shard_info));
+            return Ok(tx_to_json_with_shard(
+                &tx,
+                block.header.block_number,
+                shard_info,
+            ));
         }
 
         Ok(Value::Null)
@@ -1999,7 +2057,11 @@ impl RpcServer {
         // with pre-signed Ed25519 transactions
 
         // Verify balance first
-        let balance = self.accounts_cache.get(&from).map(|s| s.balance).unwrap_or(0);
+        let balance = self
+            .accounts_cache
+            .get(&from)
+            .map(|s| s.balance)
+            .unwrap_or(0);
 
         let total_cost = value.checked_add(fee).ok_or_else(|| JsonRpcError {
             code: -32000,
@@ -2385,8 +2447,16 @@ impl RpcServer {
         }
 
         // Verify balance and nonce
-        let balance = self.accounts_cache.get(&tx.from).map(|s| s.balance).unwrap_or(0);
-        let current_nonce = self.accounts_cache.get(&tx.from).map(|s| s.nonce).unwrap_or(0);
+        let balance = self
+            .accounts_cache
+            .get(&tx.from)
+            .map(|s| s.balance)
+            .unwrap_or(0);
+        let current_nonce = self
+            .accounts_cache
+            .get(&tx.from)
+            .map(|s| s.nonce)
+            .unwrap_or(0);
 
         let total_cost = value.checked_add(fee).ok_or_else(|| JsonRpcError {
             code: -32000,
@@ -2467,7 +2537,11 @@ impl RpcServer {
 
         let block_number = if block_num_str == "latest" || block_num_str == "pending" {
             let count = blockchain.get_block_count();
-            if count == 0 { 0 } else { (count - 1) as u64 }
+            if count == 0 {
+                0
+            } else {
+                (count - 1) as u64
+            }
         } else if block_num_str == "finalized" || block_num_str == "safe" {
             blockchain
                 .get_finalized_block_number()
@@ -2599,7 +2673,10 @@ impl RpcServer {
 
     /// irondag_getBlocksByStream - Get blocks filtered by stream type
     /// Params: [stream_type: "A"|"B"|"C", count: number (max 100)]
-    async fn irondag_get_blocks_by_stream(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_get_blocks_by_stream(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         // Parse params: [stream_type_str, count]
         let (stream_filter, count) = match params.as_ref().and_then(|p| p.as_array()) {
             Some(arr) if arr.len() >= 2 => {
@@ -2757,9 +2834,17 @@ impl RpcServer {
             .iter()
             .rev()
             .map(|b| {
-                let gas_used: u64 = b.transactions.iter().map(|tx| {
-                    if tx.data.is_empty() { 21_000u64 } else { tx.gas_limit }
-                }).sum();
+                let gas_used: u64 = b
+                    .transactions
+                    .iter()
+                    .map(|tx| {
+                        if tx.data.is_empty() {
+                            21_000u64
+                        } else {
+                            tx.gas_limit
+                        }
+                    })
+                    .sum();
                 let gas_limit = match b.header.stream_type {
                     crate::types::StreamType::StreamA => crate::mining::STREAM_A_GAS_LIMIT,
                     crate::types::StreamType::StreamB => crate::mining::STREAM_B_GAS_LIMIT,
@@ -2798,7 +2883,10 @@ impl RpcServer {
     /// Falls back to heuristics for simple transfers (no data).
     async fn eth_estimate_gas(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
         let params = params.unwrap_or(Value::Array(vec![]));
-        let call_obj = params.as_array().and_then(|a| a.get(0)).and_then(|v| v.as_object());
+        let call_obj = params
+            .as_array()
+            .and_then(|a| a.get(0))
+            .and_then(|v| v.as_object());
 
         // Simple ETH transfer: no EVM needed
         let has_data = call_obj
@@ -2817,36 +2905,64 @@ impl RpcServer {
                 message: "Invalid params: expected call object".to_string(),
                 data: None,
             })?;
-            let from = call_obj.get("from").and_then(|v| v.as_str())
-                .map(parse_address).transpose()?.unwrap_or(Address::zero());
-            let to = call_obj.get("to").and_then(|v| v.as_str())
-                .map(parse_address).transpose()?.unwrap_or(Address::zero());
-            let value = call_obj.get("value").and_then(|v| v.as_str())
-                .map(parse_hex_u128).transpose()?.unwrap_or(0);
-            let data_str = call_obj.get("data").and_then(|v| v.as_str()).unwrap_or("0x");
+            let from = call_obj
+                .get("from")
+                .and_then(|v| v.as_str())
+                .map(parse_address)
+                .transpose()?
+                .unwrap_or(Address::zero());
+            let to = call_obj
+                .get("to")
+                .and_then(|v| v.as_str())
+                .map(parse_address)
+                .transpose()?
+                .unwrap_or(Address::zero());
+            let value = call_obj
+                .get("value")
+                .and_then(|v| v.as_str())
+                .map(parse_hex_u128)
+                .transpose()?
+                .unwrap_or(0);
+            let data_str = call_obj
+                .get("data")
+                .and_then(|v| v.as_str())
+                .unwrap_or("0x");
             let data = if data_str.starts_with("0x") {
                 hex::decode(&data_str[2..]).unwrap_or_default()
             } else {
                 hex::decode(data_str).unwrap_or_default()
             };
-            let gas_limit = call_obj.get("gas").or_else(|| call_obj.get("gasLimit"))
-                .and_then(|v| v.as_str()).map(parse_hex_u128).transpose()?
-                .and_then(|v| u64::try_from(v).ok()).unwrap_or(10_000_000);
+            let gas_limit = call_obj
+                .get("gas")
+                .or_else(|| call_obj.get("gasLimit"))
+                .and_then(|v| v.as_str())
+                .map(parse_hex_u128)
+                .transpose()?
+                .and_then(|v| u64::try_from(v).ok())
+                .unwrap_or(10_000_000);
 
             let block_num = blockchain.latest_block_number();
-            let block_timestamp = blockchain.get_latest_block()
+            let block_timestamp = blockchain
+                .get_latest_block()
                 .map(|b| b.header.timestamp)
                 .unwrap_or_else(|| {
                     std::time::SystemTime::now()
-                        .duration_since(std::time::UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0)
+                        .duration_since(std::time::UNIX_EPOCH)
+                        .map(|d| d.as_secs())
+                        .unwrap_or(0)
                 });
             let nonce = executor.get_account_nonce(from);
-            let temp_tx = crate::blockchain::Transaction::with_data(from, to, value, 0, nonce, data, gas_limit);
+            let temp_tx = crate::blockchain::Transaction::with_data(
+                from, to, value, 0, nonce, data, gas_limit,
+            );
 
             match executor.execute_readonly(&temp_tx, block_num, block_timestamp) {
                 Ok(result) => {
                     // Add 10% safety buffer on top of actual gas used
-                    let estimate = result.gas_used.saturating_add(result.gas_used / 10).max(21_000);
+                    let estimate = result
+                        .gas_used
+                        .saturating_add(result.gas_used / 10)
+                        .max(21_000);
                     return Ok(Value::String(format!("0x{:x}", estimate)));
                 }
                 Err(_) => {} // Fall through to heuristic
@@ -2857,9 +2973,17 @@ impl RpcServer {
         // Heuristic fallback (EVM unavailable or simulation failed)
         let data_len = call_obj
             .and_then(|o| o.get("data").and_then(|v| v.as_str()))
-            .map(|s| if s.starts_with("0x") { (s.len() - 2) / 2 } else { s.len() / 2 })
+            .map(|s| {
+                if s.starts_with("0x") {
+                    (s.len() - 2) / 2
+                } else {
+                    s.len() / 2
+                }
+            })
             .unwrap_or(0);
-        let gas_estimate = 50_000u64.saturating_add((data_len as u64).saturating_mul(68)).min(2_000_000);
+        let gas_estimate = 50_000u64
+            .saturating_add((data_len as u64).saturating_mul(68))
+            .min(2_000_000);
 
         Ok(Value::String(format!("0x{:x}", gas_estimate)))
     }
@@ -3134,7 +3258,11 @@ impl RpcServer {
 
             let gas_used = receipt.as_ref().map(|r| r.gas_used).unwrap_or_else(|| {
                 // Fallback for blocks processed before receipt tracking was added
-                if tx.data.is_empty() { 21_000 } else { tx.gas_limit }
+                if tx.data.is_empty() {
+                    21_000
+                } else {
+                    tx.gas_limit
+                }
             });
 
             let status = if receipt.as_ref().map(|r| r.success).unwrap_or(true) {
@@ -3143,7 +3271,9 @@ impl RpcServer {
                 "0x0"
             };
 
-            let contract_address = receipt.as_ref().and_then(|r| r.contract_address)
+            let contract_address = receipt
+                .as_ref()
+                .and_then(|r| r.contract_address)
                 .map(|addr| Value::String(format!("0x{}", hex::encode(addr))))
                 .unwrap_or(Value::Null);
 
@@ -3168,9 +3298,14 @@ impl RpcServer {
             let mut cumulative_gas_used = 0u64;
             if let Some(block) = blockchain_ref.get_block_by_hash(&block_hash) {
                 for (i, btx) in block.transactions.iter().enumerate() {
-                    let tx_gas = blockchain_ref.get_tx_receipt(&btx.hash)
+                    let tx_gas = blockchain_ref
+                        .get_tx_receipt(&btx.hash)
                         .map(|r| r.gas_used)
-                        .unwrap_or(if btx.data.is_empty() { 21_000 } else { btx.gas_limit });
+                        .unwrap_or(if btx.data.is_empty() {
+                            21_000
+                        } else {
+                            btx.gas_limit
+                        });
                     cumulative_gas_used = cumulative_gas_used.saturating_add(tx_gas);
                     if i == index {
                         break;
@@ -3329,7 +3464,10 @@ impl RpcServer {
     }
 
     /// irondag_getTransactionRisk - Get risk score for a transaction
-    async fn irondag_get_transaction_risk(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_get_transaction_risk(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let scorer = self.security_scorer.as_ref().ok_or_else(|| JsonRpcError {
             code: -32603,
             message: "Security scoring not enabled".to_string(),
@@ -3356,7 +3494,9 @@ impl RpcServer {
 
         // Find transaction in blockchain
         let blockchain = self.acquire_blockchain_read().await?;
-        let found_tx = blockchain.get_transaction_by_hash(&tx_hash).map(|(_, tx, _)| tx);
+        let found_tx = blockchain
+            .get_transaction_by_hash(&tx_hash)
+            .map(|(_, tx, _)| tx);
         drop(blockchain);
 
         let tx = found_tx.ok_or_else(|| JsonRpcError {
@@ -3569,7 +3709,10 @@ impl RpcServer {
     }
 
     /// Send a signed transaction to the mining pool
-    async fn irondag_send_raw_transaction(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_send_raw_transaction(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let params = params.ok_or_else(|| JsonRpcError {
             code: -32602,
             message: "Invalid params".to_string(),
@@ -3605,8 +3748,16 @@ impl RpcServer {
 
         // Verify nonce and balance
         let from_addr = tx.from;
-        let current_nonce = self.accounts_cache.get(&from_addr).map(|s| s.nonce).unwrap_or(0);
-        let balance = self.accounts_cache.get(&from_addr).map(|s| s.balance).unwrap_or(0);
+        let current_nonce = self
+            .accounts_cache
+            .get(&from_addr)
+            .map(|s| s.nonce)
+            .unwrap_or(0);
+        let balance = self
+            .accounts_cache
+            .get(&from_addr)
+            .map(|s| s.balance)
+            .unwrap_or(0);
 
         if tx.nonce != current_nonce {
             return Err(JsonRpcError {
@@ -3743,7 +3894,11 @@ impl RpcServer {
 
         // Get nonce and balance
         let nonce = self.accounts_cache.get(&from).map(|s| s.nonce).unwrap_or(0);
-        let balance = self.accounts_cache.get(&from).map(|s| s.balance).unwrap_or(0);
+        let balance = self
+            .accounts_cache
+            .get(&from)
+            .map(|s| s.balance)
+            .unwrap_or(0);
 
         // Check balance
         let total_cost = value.checked_add(fee).ok_or_else(|| JsonRpcError {
@@ -3933,7 +4088,10 @@ impl RpcServer {
     }
 
     /// irondag_getFairnessMetrics - Get fairness metrics for a block
-    async fn irondag_get_fairness_metrics(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_get_fairness_metrics(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let params = params.ok_or_else(|| JsonRpcError {
             code: -32602,
             message: "Invalid params".to_string(),
@@ -4078,7 +4236,10 @@ impl RpcServer {
     }
 
     /// irondag_verifyStateProof - Verify a state proof (for light clients)
-    async fn irondag_verify_state_proof(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_verify_state_proof(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let params = params.ok_or_else(|| JsonRpcError {
             code: -32602,
             message: "Invalid params".to_string(),
@@ -4234,7 +4395,10 @@ impl RpcServer {
     }
 
     /// irondag_generatePqAccount - Generate a new PQ account
-    async fn irondag_generate_pq_account(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_generate_pq_account(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let params = params.ok_or_else(|| JsonRpcError {
             code: -32602,
             message: "Invalid params".to_string(),
@@ -4267,7 +4431,10 @@ impl RpcServer {
     }
 
     /// irondag_getPqAccountType - Get PQ account type from a transaction
-    async fn irondag_get_pq_account_type(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_get_pq_account_type(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let params = params.ok_or_else(|| JsonRpcError {
             code: -32602,
             message: "Invalid params".to_string(),
@@ -4646,7 +4813,10 @@ impl RpcServer {
     }
 
     /// irondag_getShardBalance - Get balance for an address in a specific shard
-    async fn irondag_get_shard_balance(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_get_shard_balance(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let params = params.ok_or_else(|| JsonRpcError {
             code: -32602,
             message: "Invalid params".to_string(),
@@ -4733,7 +4903,10 @@ impl RpcServer {
     }
 
     /// irondag_setOrderingPolicy - Set transaction ordering policy
-    async fn irondag_set_ordering_policy(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_set_ordering_policy(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let params = params.ok_or_else(|| JsonRpcError {
             code: -32602,
             message: "Invalid params".to_string(),
@@ -4844,7 +5017,10 @@ impl RpcServer {
     }
 
     /// irondag_getBlockFairness - Get detailed fairness metrics for a specific block
-    async fn irondag_get_block_fairness(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_get_block_fairness(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let params = params.ok_or_else(|| JsonRpcError {
             code: -32602,
             message: "Invalid params".to_string(),
@@ -4957,7 +5133,10 @@ impl RpcServer {
     }
 
     /// irondag_getAddressSummary - Get comprehensive address summary
-    async fn irondag_get_address_summary(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_get_address_summary(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let params = params.ok_or_else(|| JsonRpcError {
             code: -32602,
             message: "Invalid params".to_string(),
@@ -5179,7 +5358,10 @@ impl RpcServer {
     }
 
     /// irondag_addSecurityPolicy - Add a new security policy
-    async fn irondag_add_security_policy(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_add_security_policy(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let policy_manager = self.policy_manager.as_ref().ok_or_else(|| JsonRpcError {
             code: -32603,
             message: "Policy manager not available".to_string(),
@@ -5319,7 +5501,10 @@ impl RpcServer {
     }
 
     /// irondag_setPolicyEnabled - Enable or disable a policy
-    async fn irondag_set_policy_enabled(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_set_policy_enabled(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let policy_manager = self.policy_manager.as_ref().ok_or_else(|| JsonRpcError {
             code: -32603,
             message: "Policy manager not available".to_string(),
@@ -5427,7 +5612,9 @@ impl RpcServer {
 
         // Find transaction
         let blockchain = self.acquire_blockchain_read().await?;
-        let tx = blockchain.get_transaction_by_hash(&tx_hash).map(|(_, t, _)| t);
+        let tx = blockchain
+            .get_transaction_by_hash(&tx_hash)
+            .map(|(_, t, _)| t);
         drop(blockchain);
 
         let tx = tx.ok_or_else(|| JsonRpcError {
@@ -5680,7 +5867,10 @@ impl RpcServer {
     }
 
     /// irondag_getNodeLongevity - Get longevity stats for a node
-    async fn irondag_get_node_longevity(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_get_node_longevity(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let registry = self.node_registry.as_ref().ok_or_else(|| JsonRpcError {
             code: -32603,
             message: "Node registry not available".to_string(),
@@ -5967,25 +6157,24 @@ impl RpcServer {
             data: None,
         })?;
 
-        let from = parse_address(
-            obj.get("from")
-                .and_then(|v| v.as_str())
-                .ok_or_else(|| JsonRpcError {
-                    code: -32602,
-                    message: "Missing field: from".to_string(),
-                    data: None,
-                })?,
-        )?;
+        let from = parse_address(obj.get("from").and_then(|v| v.as_str()).ok_or_else(|| {
+            JsonRpcError {
+                code: -32602,
+                message: "Missing field: from".to_string(),
+                data: None,
+            }
+        })?)?;
 
-        let to = parse_address(
-            obj.get("to")
-                .and_then(|v| v.as_str())
-                .ok_or_else(|| JsonRpcError {
-                    code: -32602,
-                    message: "Missing field: to".to_string(),
-                    data: None,
-                })?,
-        )?;
+        let to =
+            parse_address(
+                obj.get("to")
+                    .and_then(|v| v.as_str())
+                    .ok_or_else(|| JsonRpcError {
+                        code: -32602,
+                        message: "Missing field: to".to_string(),
+                        data: None,
+                    })?,
+            )?;
 
         let value_str = obj
             .get("value")
@@ -5995,21 +6184,24 @@ impl RpcServer {
                 message: "Missing field: value".to_string(),
                 data: None,
             })?;
-        let value = value_str.parse::<u128>().or_else(|_| {
-            u128::from_str_radix(value_str.strip_prefix("0x").unwrap_or(value_str), 16)
-        }).map_err(|_| JsonRpcError {
-            code: -32602,
-            message: "value must be a decimal or 0x-hex string".to_string(),
-            data: None,
-        })?;
+        let value = value_str
+            .parse::<u128>()
+            .or_else(|_| {
+                u128::from_str_radix(value_str.strip_prefix("0x").unwrap_or(value_str), 16)
+            })
+            .map_err(|_| JsonRpcError {
+                code: -32602,
+                message: "value must be a decimal or 0x-hex string".to_string(),
+                data: None,
+            })?;
 
         let schedule_val = obj.get("schedule").ok_or_else(|| JsonRpcError {
             code: -32602,
             message: "Missing field: schedule".to_string(),
             data: None,
         })?;
-        let schedule: crate::recurring::Schedule =
-            serde_json::from_value(schedule_val.clone()).map_err(|e| JsonRpcError {
+        let schedule: crate::recurring::Schedule = serde_json::from_value(schedule_val.clone())
+            .map_err(|e| JsonRpcError {
                 code: -32602,
                 message: format!("Invalid schedule: {}", e),
                 data: None,
@@ -6139,15 +6331,14 @@ impl RpcServer {
             message: "params must be a JSON object".to_string(),
             data: None,
         })?;
-        let address = parse_address(
-            obj.get("address")
-                .and_then(|v| v.as_str())
-                .ok_or_else(|| JsonRpcError {
+        let address =
+            parse_address(obj.get("address").and_then(|v| v.as_str()).ok_or_else(|| {
+                JsonRpcError {
                     code: -32602,
                     message: "Missing field: address".to_string(),
                     data: None,
-                })?,
-        )?;
+                }
+            })?)?;
 
         let bc = self.acquire_blockchain_read().await?;
         let manager_arc = bc.recurring_manager.as_ref().ok_or_else(|| JsonRpcError {
@@ -6170,7 +6361,10 @@ impl RpcServer {
         }))
     }
 
-    fn parse_recurring_id(&self, params: Option<Value>) -> Result<crate::types::Hash, JsonRpcError> {
+    fn parse_recurring_id(
+        &self,
+        params: Option<Value>,
+    ) -> Result<crate::types::Hash, JsonRpcError> {
         let p = params.ok_or_else(|| JsonRpcError {
             code: -32602,
             message: "params required".to_string(),
@@ -6378,20 +6572,16 @@ impl RpcServer {
             data: None,
         })?;
 
-        let sponsor = parse_address(
-            obj.get("sponsor")
-                .and_then(|v| v.as_str())
-                .ok_or_else(|| JsonRpcError {
+        let sponsor =
+            parse_address(obj.get("sponsor").and_then(|v| v.as_str()).ok_or_else(|| {
+                JsonRpcError {
                     code: -32602,
                     message: "Missing field: sponsor".to_string(),
                     data: None,
-                })?,
-        )?;
+                }
+            })?)?;
 
-        let active = obj
-            .get("active")
-            .and_then(|v| v.as_bool())
-            .unwrap_or(true);
+        let active = obj.get("active").and_then(|v| v.as_bool()).unwrap_or(true);
 
         let allowed_senders = match obj.get("allowedSenders") {
             Some(Value::Null) | None => None,
@@ -6425,9 +6615,7 @@ impl RpcServer {
                 } else {
                     let s = v.as_str().unwrap_or("0");
                     s.parse::<u128>()
-                        .or_else(|_| {
-                            u128::from_str_radix(s.strip_prefix("0x").unwrap_or(s), 16)
-                        })
+                        .or_else(|_| u128::from_str_radix(s.strip_prefix("0x").unwrap_or(s), 16))
                         .map_err(|_| JsonRpcError {
                             code: -32602,
                             message: "maxFeePerTx must be a decimal or 0x-hex string".to_string(),
@@ -6455,9 +6643,7 @@ impl RpcServer {
                 } else {
                     let s = v.as_str().unwrap_or("0");
                     s.parse::<u128>()
-                        .or_else(|_| {
-                            u128::from_str_radix(s.strip_prefix("0x").unwrap_or(s), 16)
-                        })
+                        .or_else(|_| u128::from_str_radix(s.strip_prefix("0x").unwrap_or(s), 16))
                         .map_err(|_| JsonRpcError {
                             code: -32602,
                             message: "dailySpendLimit must be a decimal or 0x-hex string"
@@ -6509,15 +6695,14 @@ impl RpcServer {
             data: None,
         })?;
 
-        let sponsor = parse_address(
-            obj.get("sponsor")
-                .and_then(|v| v.as_str())
-                .ok_or_else(|| JsonRpcError {
+        let sponsor =
+            parse_address(obj.get("sponsor").and_then(|v| v.as_str()).ok_or_else(|| {
+                JsonRpcError {
                     code: -32602,
                     message: "Missing field: sponsor".to_string(),
                     data: None,
-                })?,
-        )?;
+                }
+            })?)?;
 
         let bc = self.acquire_blockchain_read().await?;
         let existed = bc.sponsor_registry().deregister(&sponsor);
@@ -6548,15 +6733,14 @@ impl RpcServer {
             data: None,
         })?;
 
-        let sponsor = parse_address(
-            obj.get("sponsor")
-                .and_then(|v| v.as_str())
-                .ok_or_else(|| JsonRpcError {
+        let sponsor =
+            parse_address(obj.get("sponsor").and_then(|v| v.as_str()).ok_or_else(|| {
+                JsonRpcError {
                     code: -32602,
                     message: "Missing field: sponsor".to_string(),
                     data: None,
-                })?,
-        )?;
+                }
+            })?)?;
 
         let bc = self.acquire_blockchain_read().await?;
         match bc.sponsor_registry().get(&sponsor) {
@@ -6664,10 +6848,7 @@ impl RpcServer {
     ///   - proof: "0x..."                  — (optional) zk-SNARK proof bytes; ignored in stub mode
     ///
     /// In stub mode the nullifier is accepted without proof.
-    async fn irondag_pool_withdraw(
-        &self,
-        params: Option<Value>,
-    ) -> Result<Value, JsonRpcError> {
+    async fn irondag_pool_withdraw(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
         let p = params.ok_or_else(|| JsonRpcError {
             code: -32602,
             message: "params required".to_string(),
@@ -6680,33 +6861,26 @@ impl RpcServer {
             data: None,
         })?;
 
-        let nullifier = parse_hash(
-            obj.get("nullifier")
-                .and_then(|v| v.as_str())
-                .ok_or_else(|| JsonRpcError {
-                    code: -32602,
-                    message: "Missing field: nullifier".to_string(),
-                    data: None,
-                })?,
-        )?;
+        let nullifier = parse_hash(obj.get("nullifier").and_then(|v| v.as_str()).ok_or_else(
+            || JsonRpcError {
+                code: -32602,
+                message: "Missing field: nullifier".to_string(),
+                data: None,
+            },
+        )?)?;
 
-        let recipient = parse_address(
-            obj.get("recipient")
-                .and_then(|v| v.as_str())
-                .ok_or_else(|| JsonRpcError {
-                    code: -32602,
-                    message: "Missing field: recipient".to_string(),
-                    data: None,
-                })?,
-        )?;
+        let recipient = parse_address(obj.get("recipient").and_then(|v| v.as_str()).ok_or_else(
+            || JsonRpcError {
+                code: -32602,
+                message: "Missing field: recipient".to_string(),
+                data: None,
+            },
+        )?)?;
 
-        let proof: Option<Vec<u8>> = obj
-            .get("proof")
-            .and_then(|v| v.as_str())
-            .map(|s| {
-                let stripped = s.strip_prefix("0x").unwrap_or(s);
-                hex::decode(stripped).unwrap_or_default()
-            });
+        let proof: Option<Vec<u8>> = obj.get("proof").and_then(|v| v.as_str()).map(|s| {
+            let stripped = s.strip_prefix("0x").unwrap_or(s);
+            hex::decode(stripped).unwrap_or_default()
+        });
 
         let bc = self.acquire_blockchain_read().await?;
         let amount = bc
@@ -7169,7 +7343,10 @@ impl RpcServer {
     }
 
     /// irondag_getOwnerWallets - Get all wallets for an owner
-    async fn irondag_get_owner_wallets(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_get_owner_wallets(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let wallet_registry = self.wallet_registry.as_ref().ok_or_else(|| JsonRpcError {
             code: -32603,
             message: "Wallet registry not available".to_string(),
@@ -7227,7 +7404,10 @@ impl RpcServer {
     }
 
     /// irondag_isContractWallet - Check if an address is a contract wallet
-    async fn irondag_is_contract_wallet(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_is_contract_wallet(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let wallet_registry = self.wallet_registry.as_ref().ok_or_else(|| JsonRpcError {
             code: -32603,
             message: "Wallet registry not available".to_string(),
@@ -7577,7 +7757,10 @@ impl RpcServer {
     }
 
     /// irondag_initiateRecovery - Initiate wallet recovery process
-    async fn irondag_initiate_recovery(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_initiate_recovery(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let social_recovery_manager =
             self.social_recovery_manager
                 .as_ref()
@@ -7721,13 +7904,14 @@ impl RpcServer {
             },
         )?)?;
 
-        let signature_hex = params.get("signature").and_then(|v| v.as_str()).ok_or_else(
-            || JsonRpcError {
+        let signature_hex = params
+            .get("signature")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| JsonRpcError {
                 code: -32602,
                 message: "Missing 'signature'".to_string(),
                 data: None,
-            },
-        )?;
+            })?;
 
         let signature = hex::decode(signature_hex.strip_prefix("0x").unwrap_or(signature_hex))
             .map_err(|_| JsonRpcError {
@@ -7778,7 +7962,10 @@ impl RpcServer {
     }
 
     /// irondag_getRecoveryStatus - Get recovery request status
-    async fn irondag_get_recovery_status(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_get_recovery_status(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let social_recovery_manager =
             self.social_recovery_manager
                 .as_ref()
@@ -7857,7 +8044,10 @@ impl RpcServer {
     }
 
     /// irondag_completeRecovery - Complete recovery and transfer wallet ownership
-    async fn irondag_complete_recovery(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_complete_recovery(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let social_recovery_manager =
             self.social_recovery_manager
                 .as_ref()
@@ -8152,7 +8342,9 @@ impl RpcServer {
     ) -> Result<Value, JsonRpcError> {
         Err(JsonRpcError {
             code: -32601,
-            message: "irondag_executeBatchTransaction is not available in this version (planned for V2)".to_string(),
+            message:
+                "irondag_executeBatchTransaction is not available in this version (planned for V2)"
+                    .to_string(),
             data: None,
         })
     }
@@ -8219,7 +8411,10 @@ impl RpcServer {
     }
 
     /// irondag_estimateBatchGas - Estimate gas cost for a batch
-    async fn irondag_estimate_batch_gas(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_estimate_batch_gas(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let batch_manager = self.batch_manager.as_ref().ok_or_else(|| JsonRpcError {
             code: -32603,
             message: "Batch manager not available".to_string(),
@@ -8352,7 +8547,10 @@ impl RpcServer {
     }
 
     /// irondag_enableParallelEVM - Enable or disable parallel EVM execution
-    async fn irondag_enable_parallel_evm(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_enable_parallel_evm(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let params = params.ok_or_else(|| JsonRpcError {
             code: -32602,
             message: "Missing parameters".to_string(),
@@ -8610,7 +8808,10 @@ impl RpcServer {
     }
 
     /// irondag_requestRandomness - Request verifiable randomness
-    async fn irondag_request_randomness(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_request_randomness(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let vrf = self.vrf_manager.as_ref().ok_or_else(|| JsonRpcError {
             code: -32603,
             message: "VRF manager not available".to_string(),
@@ -8801,7 +9002,10 @@ impl RpcServer {
     }
 
     /// irondag_getStopLossOrders - Get all stop-loss orders for an address
-    async fn irondag_get_stop_loss_orders(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_get_stop_loss_orders(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let manager = self
             .stop_loss_manager
             .as_ref()
@@ -8850,7 +9054,10 @@ impl RpcServer {
     // ========== Complete Oracle RPC Methods ==========
 
     /// irondag_unregisterOracle - Unregister an oracle node
-    async fn irondag_unregister_oracle(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_unregister_oracle(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let registry = self.oracle_registry.as_ref().ok_or_else(|| JsonRpcError {
             code: -32603,
             message: "Oracle registry not available".to_string(),
@@ -8987,7 +9194,10 @@ impl RpcServer {
     }
 
     /// irondag_getPriceHistory - Get price history for a feed
-    async fn irondag_get_price_history(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_get_price_history(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let price_feeds = self
             .price_feed_manager
             .as_ref()
@@ -9491,7 +9701,10 @@ impl RpcServer {
 
     /// irondag_verifyPrivacyProof - Verify a privacy proof
     #[cfg(feature = "privacy")]
-    async fn irondag_verify_privacy_proof(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_verify_privacy_proof(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let privacy_manager =
             self.privacy_manager
                 .read()
@@ -9930,7 +10143,10 @@ impl RpcServer {
     }
 
     /// irondag_getSnapshotInfo - Get detailed info about a specific snapshot
-    async fn irondag_get_snapshot_info(&self, params: Option<Value>) -> Result<Value, JsonRpcError> {
+    async fn irondag_get_snapshot_info(
+        &self,
+        params: Option<Value>,
+    ) -> Result<Value, JsonRpcError> {
         let params = params.ok_or_else(|| JsonRpcError {
             code: -32602,
             message: "Missing params".to_string(),
@@ -10228,7 +10444,11 @@ fn block_to_json(block: Option<Block>, miner_address: Address) -> Value {
 }
 
 /// Convert block to JSON with shard information
-fn block_to_json_with_shard(block: Option<Block>, shard_id: Option<usize>, miner_address: Address) -> Value {
+fn block_to_json_with_shard(
+    block: Option<Block>,
+    shard_id: Option<usize>,
+    miner_address: Address,
+) -> Value {
     match block {
         Some(b) => {
             // Map stream type to string
@@ -10247,9 +10467,17 @@ fn block_to_json_with_shard(block: Option<Block>, shard_id: Option<usize>, miner
             //       report true gas consumption. Until then, use a better heuristic:
             //       simple transfers (no data) = 21,000 gas (Ethereum standard);
             //       contract calls/deployments = gas_limit as upper-bound approximation.
-            let gas_used: u64 = b.transactions.iter().map(|tx| {
-                if tx.data.is_empty() { 21_000u64 } else { tx.gas_limit }
-            }).sum();
+            let gas_used: u64 = b
+                .transactions
+                .iter()
+                .map(|tx| {
+                    if tx.data.is_empty() {
+                        21_000u64
+                    } else {
+                        tx.gas_limit
+                    }
+                })
+                .sum();
 
             // Compute block size (header + transactions estimate)
             let block_size = 512
