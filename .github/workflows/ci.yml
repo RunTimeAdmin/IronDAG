@@ -65,7 +65,7 @@ jobs:
 
       - name: Cargo build
         working-directory: irondag-blockchain
-        run: cargo build --release --bin node --features kyber
+        run: cargo build --release --bin irondagd --features kyber
 
       - name: Install cargo-audit
         run: cargo install cargo-audit --locked

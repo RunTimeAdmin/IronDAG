@@ -18,7 +18,7 @@ COPY irondag-blockchain/build.rs irondag-blockchain/build.rs
 COPY irondag-blockchain/proto irondag-blockchain/proto
 
 WORKDIR /app/irondag-blockchain
-RUN cargo build --release
+RUN cargo build --release --bin irondagd
 
 FROM debian:bookworm-slim
 

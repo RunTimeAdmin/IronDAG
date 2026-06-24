@@ -24,16 +24,16 @@ jobs:
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-            artifact: node
+            artifact: irondagd
           - target: x86_64-pc-windows-msvc
             os: windows-latest
-            artifact: node.exe
+            artifact: irondagd.exe
           - target: x86_64-apple-darwin
             os: macos-latest
-            artifact: node
+            artifact: irondagd
           - target: aarch64-apple-darwin
             os: macos-latest
-            artifact: node
+            artifact: irondagd
 
     steps:
       - uses: actions/checkout@v4
@@ -63,7 +63,7 @@ jobs:
 
       - name: Build release
         working-directory: irondag-blockchain
-        run: cargo build --release --bin node --features kyber --target ${{ matrix.target }}
+        run: cargo build --release --bin irondagd --features kyber --target ${{ matrix.target }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
