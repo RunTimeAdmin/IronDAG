@@ -42,7 +42,7 @@ use std::io::Cursor;
 ///
 /// # Example
 /// ```ignore
-/// use irondag_blockchain::zk::{StateTransitionCircuit, prove_state_transition};
+/// use irondag::zk::{StateTransitionCircuit, prove_state_transition};
 /// use ark_bn254::Fr;
 /// use ark_groth16::ProvingKey;
 ///
@@ -103,7 +103,7 @@ pub fn prove_state_transition(
 ///
 /// # Example
 /// ```ignore
-/// use irondag_blockchain::zk::verify_state_transition;
+/// use irondag::zk::verify_state_transition;
 /// use ark_bn254::Fr;
 /// use ark_groth16::VerifyingKey;
 ///
@@ -223,7 +223,7 @@ pub fn setup_state_transition_circuit(
 ///
 /// # Example
 /// ```ignore
-/// use irondag_blockchain::zk::load_proving_key;
+/// use irondag::zk::load_proving_key;
 ///
 /// let pk = load_proving_key("data/zk/proving_key.bin").unwrap();
 /// ```
@@ -251,7 +251,7 @@ pub fn load_proving_key(path: &str) -> Result<ProvingKey<Bn254>, String> {
 ///
 /// # Example
 /// ```ignore
-/// use irondag_blockchain::zk::load_verifying_key;
+/// use irondag::zk::load_verifying_key;
 ///
 /// let vk = load_verifying_key("data/zk/verifying_key.bin").unwrap();
 /// ```

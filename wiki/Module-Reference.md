@@ -163,11 +163,11 @@ Horizontal sharding for blockchain scalability with cross-shard transaction supp
 
 ---
 
-### `mining` - TriStream Mining
+### `mining` - BraidCore Mining
 
 **Location**: `src/mining.rs`, `src/mining/`
 
-TriStream mining with three parallel hash streams.
+BraidCore Mining with three parallel hash streams.
 
 #### Mining Streams
 
@@ -467,3 +467,4 @@ Peer-to-peer networking layer.
 - [Dependencies](Dependencies) - External libraries
 - [API Reference](API-Reference) - JSON-RPC documentation
 - [Getting Started](Getting-Started) - Setup guide
+

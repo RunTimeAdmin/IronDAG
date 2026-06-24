@@ -1,7 +1,7 @@
 # IronDAG Security Audit Scope
 
 ## Project Overview
-- **Brief**: Layer 1 blockchain in Rust with GhostDAG consensus and TriStream mining
+- **Brief**: Layer 1 blockchain in Rust with GhostDAG consensus and BraidCore Mining
 - **Repository**: github.com/dev-irondag/irondag
 - **Branch**: feature/alpha-hardening
 - **Language**: Rust 1.75+
@@ -23,7 +23,7 @@
   - `update_blue_set_incremental()` - Optimized incremental update
   - `get_finalized_block_hash()` - Finality determination
 
-### 2. Mining: TriStream (HIGH)
+### 2. Mining: BraidCore (HIGH)
 - **File**: `src/mining.rs`
 - **Lines of code**: 2,901
 - **What to audit**: 
@@ -33,7 +33,7 @@
   - Block number allocation across streams
   - Cross-stream fairness mechanisms
 - **Known risks**: 
-  - Stream C flooding potential (documented in `docs/TRISTREAM_GAME_THEORY.md`)
+  - Stream C flooding potential (documented in `docs/BraidCore_GAME_THEORY.md`)
   - `BLOCK_PROCESSING_LOCK` serializes all block commits
   - `BlockNumberAllocator` free-list recycling starvation vector
 - **Constants**:
@@ -125,7 +125,7 @@
 - Privacy/ZK features (feature-gated, experimental)
 
 ## Known Issues (Already Documented)
-- See `docs/TRISTREAM_GAME_THEORY.md` for cross-stream attack vectors
+- See `docs/BraidCore_GAME_THEORY.md` for cross-stream attack vectors
 - See `docs/FEE_MARKET_ANALYSIS.md` for economic risks
 - See `docs/PHASED_LAUNCH_PLAN.md` for launch risk assessment
 
@@ -142,7 +142,7 @@
 
 #### Selfish Mining
 - **Description**: Miner withholds blocks to gain unfair advantage
-- **Current mitigation**: TriStream multi-stream design reduces single-point advantage
+- **Current mitigation**: BraidCore multi-stream design reduces single-point advantage
 - **Residual risk**: MEDIUM - Block reward calculation may incentivize withholding
 
 #### Block Withholding
@@ -369,3 +369,4 @@ cargo run --release --bin node -- --data-dir /path/to/data
 ---
 
 *This document was generated for the external security audit of the IronDAG blockchain. For questions, contact the development team.*
+

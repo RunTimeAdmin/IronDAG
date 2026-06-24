@@ -6,7 +6,7 @@ This document verifies which items from the "IronDAG Blockchain - Project Status
 
 ## ✅ VERIFIED COMPLETE
 
-### 1. TriStream Mining — **100% Complete** (not 70%)
+### 1. BraidCore Mining — **100% Complete** (not 70%)
 
 | Item | Status | Location |
 |------|--------|----------|
@@ -17,7 +17,7 @@ This document verifies which items from the "IronDAG Blockchain - Project Status
 | Stream A/B/C ParentHashCoordinator | ✅ | select_parents(), are_parents_valid() in mine_stream_a, _b, _c |
 | All constructors updated | ✅ | new(), with_node_registry(), with_sharding() all use block_allocator + parent_coordinator |
 
-**Conclusion:** TriStream fixes are **fully implemented**. No remaining work for BlockNumberAllocator, ParentHashCoordinator, or process_blocks.
+**Conclusion:** BraidCore fixes are **fully implemented**. No remaining work for BlockNumberAllocator, ParentHashCoordinator, or process_blocks.
 
 ---
 
@@ -116,7 +116,7 @@ From `docs/OPEN_ISSUES_PLAN.md` (all phases 1–4 complete, 5.1–5.2 done):
 **Previously estimated:** 300–445 hours, 55 issues, "NOT PRODUCTION READY"
 
 **After verification:**
-- **~35+ issues are DONE** (TriStream, BlockDAG incremental, cache, finality, sharding retry/WAL/refund/timeout/sync, RPC auth/hashing/constant-time/unsigned rejection, per-IP rate limit, batch rollback, storage lock, peering advertise/STUN/peer exchange/quality)
+- **~35+ issues are DONE** (BraidCore, BlockDAG incremental, cache, finality, sharding retry/WAL/refund/timeout/sync, RPC auth/hashing/constant-time/unsigned rejection, per-IP rate limit, batch rollback, storage lock, peering advertise/STUN/peer exchange/quality)
 - **~20 issues remain** (privacy, EVM gas, CLI security, config, GhostDAG integration, sharding rebalancing)
 
 **Revised effort:** Many critical items are complete. Remaining work is closer to **100–150 hours** for the highest-priority items (privacy trusted setup, CLI security, GhostDAG integration or removal).
@@ -124,3 +124,4 @@ From `docs/OPEN_ISSUES_PLAN.md` (all phases 1–4 complete, 5.1–5.2 done):
 ---
 
 *Verification source: codebase grep + docs/OPEN_ISSUES_PLAN.md. Date: 2026-02-16.*
+

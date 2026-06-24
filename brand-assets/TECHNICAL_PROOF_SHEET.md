@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-IronDAG Protocol is a Layer 1 blockchain with post-quantum cryptography and TriStream mining that has been fully implemented, tested, and verified. All code compiles with zero errors, core functionality passes 100% of tests, and the network is operational in Testnet Phase 3.
+IronDAG Protocol is a Layer 1 blockchain with post-quantum cryptography and BraidCore Mining that has been fully implemented, tested, and verified. All code compiles with zero errors, core functionality passes 100% of tests, and the network is operational in Testnet Phase 3.
 
 * * *
 
@@ -58,7 +58,7 @@ Core Mining Tests: 17/17 passing (100%)
 
 ## Performance Specifications
 
-### TriStream Mining Architecture
+### BraidCore Mining Architecture
 
 | Stream | Block Time | Txs/Block | Reward | Target Hardware |
 | --- | --- | --- | --- | --- |
@@ -171,7 +171,7 @@ Core Mining Tests: 17/17 passing (100%)
 -   Standards-based approach (Kyber, Dilithium)
 -   Algorithm rotation capability for upgrades
 
-### 2\. TriStream Mining
+### 2\. BraidCore Mining
 
 **Multi-stream architecture preventing centralization**
 

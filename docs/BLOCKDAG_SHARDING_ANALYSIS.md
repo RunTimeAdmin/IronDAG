@@ -9,7 +9,7 @@
 ### 1.1 Blue Score Calculated But Never Used
 
 - **Location:** `irondag-blockchain/src/consensus/mod.rs`
-- **Problem:** GhostDAG calculates blue scores and maintains a blue set, but **mining never uses them**. No reference to `blue_score` or `blue_set` in `mining.rs`. Block selection is TriStream timing-based, not DAG-based. GhostDAG is effectively dead code for consensus.
+- **Problem:** GhostDAG calculates blue scores and maintains a blue set, but **mining never uses them**. No reference to `blue_score` or `blue_set` in `mining.rs`. Block selection is BraidCore timing-based, not DAG-based. GhostDAG is effectively dead code for consensus.
 
 ### 1.2 O(n²) DAG Recalculation on Every Block
 
@@ -73,7 +73,7 @@
 
 ### 3.1 GhostDAG Not Integrated with Mining
 
-- Mining uses TriStream timing only; no use of GhostDAG or blue scores in mining. Two separate “consensus” mechanisms; GhostDAG computation is unused.
+- Mining uses BraidCore timing only; no use of GhostDAG or blue scores in mining. Two separate “consensus” mechanisms; GhostDAG computation is unused.
 
 ### 3.2 Sharding Not Integrated with BlockDAG
 
@@ -137,3 +137,4 @@ Without these fixes, risks include: lost funds (cross-shard failures), poor scal
 *This file summarizes the BlockDAG and Sharding analysis. The codebase should be consulted for current locations and any subsequent changes.*
 
 **Last updated:** 2026-02-16 – Sharding: retry logic, timeout, WAL, StateSync (Phase 6) added.
+

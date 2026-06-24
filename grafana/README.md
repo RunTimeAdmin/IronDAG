@@ -76,7 +76,7 @@ Comprehensive overview dashboard showing:
 ### 2. IronDAG Mining Metrics
 **File:** `dashboards/IronDAG-mining.json`
 
-TriStream mining specific metrics:
+BraidCore Mining specific metrics:
 - Blocks mined per stream (A, B, C)
 - Total mining rewards
 - Mining rate by stream
@@ -259,3 +259,4 @@ For issues or questions:
 1. Check the IronDAG documentation
 2. Review Prometheus logs: `docker-compose logs prometheus`
 3. Review Grafana logs: `docker-compose logs grafana`
+

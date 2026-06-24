@@ -23,7 +23,7 @@
 │  └───────────────────────┬───────────────────────────────────────────┘  │
 │                          │                                               │
 │  ┌───────────────────────▼───────────────────────────────────────────┐  │
-│  │                    TriStream Mining                                │  │
+│  │                    BraidCore Mining                                │  │
 │  │  ┌──────────┐  ┌──────────┐  ┌──────────┐                         │  │
 │  │  │ Stream A │  │ Stream B │  │ Stream C │                         │  │
 │  │  │ (Blake3) │  │(KHeavyHash)│ │(Keccak256)│                        │  │
@@ -231,3 +231,4 @@ pub fn get_latest_block_number(&self) -> u64 {
 - [Module Reference](Module-Reference) - Detailed module documentation
 - [Dependencies](Dependencies) - External libraries used
 - [API Reference](API-Reference) - JSON-RPC API guide
+

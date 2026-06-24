@@ -1,6 +1,6 @@
 # Local 3-Node Testnet
 
-Stable local environment: **2 TriStream mining nodes** + **1 RPC-only node**, all peered.
+Stable local environment: **2 BraidCore Mining nodes** + **1 RPC-only node**, all peered.
 
 ## Layout
 
@@ -83,3 +83,4 @@ $r = Invoke-RestMethod -Uri "http://127.0.0.1:8545" -Method Post -Body '{"jsonrp
 ```
 
 MetaMask: RPC URL `http://127.0.0.1:8545`, Chain ID `1338`, symbol IDAG.
+

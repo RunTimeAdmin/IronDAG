@@ -24,7 +24,7 @@ Summary of changes applied from the CPU Usage and Optimization Analysis to reduc
 
 ## Usage
 
-- **Default (TriStream, Stream C off):** `./node` — Stream A + B only; Stream C disabled.
+- **Default (BraidCore, Stream C off):** `./node` — Stream A + B only; Stream C disabled.
 - **Enable Stream C:** `./node --enable-stream-c`
 - **Single-stream (Stream A only):** `./node --single-stream`
 
@@ -34,3 +34,4 @@ Summary of changes applied from the CPU Usage and Optimization Analysis to reduc
 - **After (default):** Lower CPU (Stream C off, Stream B 5s, KHeavy 256KB/2 passes, parallel Stream B, network backoff). Target range ~100–200% on 4-core for typical loads.
 
 *See the original CPU Usage and Optimization Analysis and Implementation Guide for full rationale and optional phases.*
+

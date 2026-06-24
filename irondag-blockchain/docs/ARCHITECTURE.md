@@ -499,7 +499,7 @@ flowchart TD
 
 When a node detects that a peer has significantly more blocks, it enters IBD:
 
-1. **All 3 TriStream mining streams pause** via a shared `AtomicBool` flag
+1. **All 3 BraidCore Mining streams pause** via a shared `AtomicBool` flag
 2. Each stream checks `syncing.load(Ordering::Acquire)` before each round
 3. Blocks are downloaded and processed without interference from local mining
 4. Mining **resumes automatically** after sync completes — guaranteed by `scopeguard`
@@ -535,3 +535,4 @@ When an entire batch contains only orphaned blocks:
 2. Sync advances `current` to `highest_in_batch + 1`
 3. Next batch is requested from peer
 4. Prevents indefinite stall on all-orphaned responses
+

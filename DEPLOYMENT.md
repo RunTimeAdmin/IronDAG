@@ -1,4 +1,4 @@
-# Deployment Guide - MondoShawan Blockchain
+# Deployment Guide - IronDAG
 
 **Version:** v0.2.0
 **Status:** ✅ Production-Ready for Testnet/Private Networks
@@ -12,14 +12,14 @@ The IronDAG testnet is live and accessible 24/7. Connect your node to the networ
 
 ## Overview
 
-MondoShawan blockchain is now production-ready with all critical P2P and consensus features verified:
+IronDAG is now production-ready with all critical P2P and consensus features verified:
 - ✅ Multi-node synchronization (tested with 3+ nodes)
 - ✅ P2P block propagation (375+ blocks verified)
 - ✅ P2P transaction propagation (bidirectional, tested)
 - ✅ Orphan block resolution (perfect sync, zero divergence)
 - ✅ EVM storage persistence (HOTWIRE bypass functional)
 - ✅ Lock-free RPC (<1 second response during mining)
-- ✅ TriStream mining (all 3 streams active)
+- ✅ BraidCore Mining (all 3 streams active)
 - ✅ Post-quantum cryptography (Dilithium3)
 
 **Ready For:**
@@ -268,7 +268,7 @@ tail -f node.log | grep "Broadcasting block\|Received block"
    - Chain divergence: 0% divergence (down from 87%)
    - Block validation: All validation checks passing
 
-3. **Mining (TriStream)**
+3. **Mining (BraidCore)**
    - Stream A: 10s blocks, 10,000 txs, 50 IDAG reward
    - Stream B: 5s blocks, 5,000 txs, 25 IDAG reward
    - Stream C: 1s blocks, 1,000 txs, fee-based only
@@ -303,7 +303,7 @@ tail -f node.log | grep "Broadcasting block\|Received block"
 - ~~Multi-node sync~~ → **FIXED** (orphan resolution)
 - ~~Transaction propagation~~ → **FIXED** (handshake + stream locks)
 - ~~RPC lock contention~~ → **FIXED** (atomic cache)
-- ~~TriStream mining~~ → **FIXED** (duplicate start eliminated)
+- ~~BraidCore Mining~~ → **FIXED** (duplicate start eliminated)
 
 ### Current Limitations
 1. **HOTWIRE Coverage**: Only handles `setValue(uint256)` selector
@@ -385,3 +385,4 @@ tail -f node.log | grep "Stream A\|Stream B\|Stream C"
 **Release:** v0.2.0 - Complete P2P Network Implementation
 **Status:** ✅ Production-Ready for Testnet
 **Next Steps:** External security audit for public mainnet deployment
+

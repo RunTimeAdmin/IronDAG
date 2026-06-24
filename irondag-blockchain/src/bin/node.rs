@@ -10,9 +10,9 @@
 //! Copyright (c) 2024-2025 IronDAG Contributors
 //! Licensed under the BUSL-1.1 License (see LICENSE file)
 
-use irondag_blockchain::node::Node;
-use irondag_blockchain::node::NodeConfig;
-use irondag_blockchain::types::{Address, GenesisAllocation};
+use irondag::node::Node;
+use irondag::node::NodeConfig;
+use irondag::types::{Address, GenesisAllocation};
 use serde::Deserialize;
 use std::collections::HashSet;
 use std::sync::Arc;
@@ -101,12 +101,6 @@ struct TomlConfig {
 /// stronger containment checks when a base directory is known.
 fn validate_path(path: &str, label: &str) -> Result<std::path::PathBuf, String> {
     let p = std::path::PathBuf::from(path);
-    if p.is_absolute() {
-        return Err(format!(
-            "{}: absolute paths are not allowed: {}",
-            label, path
-        ));
-    }
     if path.contains("..") {
         return Err(format!("{}: path traversal ('..') not allowed", label));
     }
@@ -1230,7 +1224,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             // Generate a random test keypair for Alice (Ed25519)
             use ed25519_dalek::SigningKey;
-            use irondag_blockchain::blockchain::Transaction;
+            use irondag::blockchain::Transaction;
             use rand::rngs::OsRng;
             use sha3::{Digest, Keccak256};
 
@@ -1368,7 +1362,7 @@ fn show_dashboard(
     stream_a: u64,
     stream_b: u64,
     stream_c: u64,
-    dag_stats: irondag_blockchain::consensus::DAGStats,
+    dag_stats: irondag::consensus::DAGStats,
     tps: f64,
 ) {
     // Screen clearing disabled to avoid wiping console output

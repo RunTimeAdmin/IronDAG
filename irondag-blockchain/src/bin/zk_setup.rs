@@ -30,7 +30,7 @@ use std::io::BufWriter;
 use std::path::Path;
 
 #[cfg(feature = "privacy")]
-use irondag_blockchain::zk::StateTransitionCircuit;
+use irondag::zk::StateTransitionCircuit;
 
 #[cfg(feature = "privacy")]
 fn main() -> Result<(), Box<dyn std::error::Error>> {

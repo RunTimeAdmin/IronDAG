@@ -107,7 +107,7 @@ Tokenomics were informed by PoW L1s with similar architecture or philosophy:
 | Aspect | Testnet (current) | Mainnet (post-IKO) |
 |--------|-------------------|--------------------|
 | **Supply** | 10B hard cap enforced in code (same as mainnet); rewards for testing | 10B cap; 30% genesis + 70% emission |
-| **Block rewards** | 50 IDAG (single-stream, CPU-only implementation) | TriStream split (45% GPU, 35% ASIC, 20% ZK) — target for mainnet |
+| **Block rewards** | 50 IDAG (single-stream, CPU-only implementation) | BraidCore split (45% GPU, 35% ASIC, 20% ZK) — target for mainnet |
 | **Fee burn** | Not implemented | 50% burned, 50% to miners |
 | **Emission curve** | Fixed reward | Chromatic monthly decay |
 
@@ -127,3 +127,4 @@ See **IDAG_Technical_Overview.docx** and **IDAG_One_Pager.docx** for technical d
 ---
 
 **Tokenomics are operational on testnet; mainnet/IKO parameters follow the above and the canonical Word documents.**
+

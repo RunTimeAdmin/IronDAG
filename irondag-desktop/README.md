@@ -23,7 +23,7 @@
 
 ✅ **Integrated Wallet** — Create wallets, check balances, and send transactions with Ed25519 signing
 
-✅ **One-Click Mining** — Start/stop TriStream mining (ASIC, CPU, ZK proofs) with a single button (GPU planned)
+✅ **One-Click Mining** — Start/stop BraidCore Mining (ASIC, CPU, ZK proofs) with a single button (GPU planned)
 
 ✅ **Live Explorer** — Browse recent blocks, view DAG statistics (blue/red blocks), and monitor network performance
 
@@ -88,7 +88,7 @@ The desktop window will open automatically.
 ### Dashboard Tab
 - View node status: height, transaction count, peer count, mining state
 - **Start/Stop Mining** with one click
-- View TriStream details: block times, max txs, and rewards for all three streams
+- View BraidCore details: block times, max txs, and rewards for all three streams
 
 ### Wallet Tab
 - Enter any address (0x...) to view balance and nonce
@@ -299,3 +299,4 @@ MIT License — See LICENSE file for details
 ---
 
 **Built and operational today — not "coming soon".**
+

@@ -6,9 +6,9 @@
 //! - Stats dashboard (optional via --enable-stats)
 //! - Minimal lock contention with fine-grained locking
 
-use irondag_blockchain::node::Node;
-use irondag_blockchain::node::NodeConfig;
-use irondag_blockchain::types::Address;
+use irondag::node::Node;
+use irondag::node::NodeConfig;
+use irondag::types::Address;
 use tokio::signal;
 use tracing::info;
 

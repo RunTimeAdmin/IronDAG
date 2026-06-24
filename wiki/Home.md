@@ -2,7 +2,7 @@
 
 **IronDAG Protocol** | Ticker: **IDAG**
 
-High-performance sharded blockchain with TriStream mining architecture and GhostDAG consensus.
+High-performance sharded blockchain with BraidCore Mining Architecture and GhostDAG consensus.
 
 ---
 
@@ -27,7 +27,7 @@ irondag-blockchain/
 │   ├── consensus/           # GhostDAG consensus engine
 │   ├── evm/                 # Ethereum Virtual Machine integration
 │   ├── sharding/            # Horizontal sharding
-│   ├── mining/              # TriStream mining
+│   ├── mining/              # BraidCore Mining
 │   ├── network/             # P2P networking
 │   ├── rpc/                 # JSON-RPC server
 │   ├── security/            # AI-driven security & fraud detection
@@ -52,7 +52,7 @@ irondag-blockchain/
 
 ### Core Blockchain
 - **GhostDAG Consensus**: DAG-based consensus for parallel block production
-- **TriStream Mining**: Three parallel mining streams (Blake3, KHeavyHash, Keccak256)
+- **BraidCore Mining**: Three parallel mining streams (Blake3, KHeavyHash, Keccak256)
 - **Horizontal Sharding**: Scale with multiple shards and cross-shard transactions
 
 ### Smart Contracts
@@ -79,3 +79,4 @@ See [Technical Status](Technical-Status) for detailed implementation status.
 ## License
 
 MIT License - Copyright (c) 2026 IronDAG Protocol
+

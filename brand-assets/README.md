@@ -1,6 +1,6 @@
-# IronDAG (IDAG) Brand Assets
+# IronDAG Brand Assets
 
-Official brand assets for IronDAG Protocol.
+Official brand assets for IronDAG — Post-Quantum AI-Native Layer 1 with BraidCore Mining.
 
 ---
 
@@ -9,11 +9,10 @@ Official brand assets for IronDAG Protocol.
 | Field | Value |
 |-------|-------|
 | **Name** | IronDAG |
-| **Ticker** | IDAG |
+| **Ticker** | $IDAG |
 | **Chain** | IronDAG Mainnet |
-| **Chain ID** | 1338 |
-
-**Ticker Meaning**: Q = Quantum (Post-Quantum Cryptography), MON = IronDAG
+| **Chain ID** | 11567 |
+| **Positioning** | Industrial-strength, quantum-resistant DAG infrastructure |
 
 ---
 
@@ -21,39 +20,34 @@ Official brand assets for IronDAG Protocol.
 
 | Color | Hex | Usage |
 |-------|-----|-------|
-| **Primary Blue** | `#0066FF` | Token logo, primary accents |
-| **Cyan** | `#00D4FF` | Highlights, gradients |
-| **Purple** | `#8B5CF6` | Secondary accents |
-| **Gold** | `#FFD700` | Mascot, premium elements |
-| **Dark Navy** | `#0A1929` | Backgrounds |
+| **Graphite Black** | `#0B0F14` | Primary background |
+| **Gunmetal** | `#1F2933` | Secondary surfaces and panels |
+| **Brushed Steel** | `#8A96A3` | Metallic highlights and typography accents |
+| **Iron Silver** | `#C7CED6` | Primary light text / highlights |
+| **Molten Amber** | `#F59E0B` | Energy accents, rim lights, emphasis |
+| **Forge Orange** | `#EA580C` | Secondary warm accent |
+| **Electric Cyan** | `#06B6D4` | DAG network lines and technology glow |
+| **Deep Blue Steel** | `#1E3A8A` | Cool tech contrast |
 
 ---
 
 ## Primary Assets (Use These)
 
-### Token Logo
-**File**: `logos/idag_token_logo.png`
-- Professional "Q" design with network nodes
-- Use for: CoinGecko, CoinMarketCap, exchanges, wallets
-- White background, versatile
-
-### Project Logo
+### Square Logo / Icon
 **File**: `logos/irondag_project_logo.png`
-- Hexagonal "M" wave design with circuit aesthetic
-- Use for: GitHub, website, documentation, press kit
-- Includes "IRONDAG BLOCKCHAIN" text
+- Forged hexagonal shield with DAG network nodes in Electric Cyan
+- Molten Amber outer ring
+- Use for: GitHub, exchanges, wallets, CoinGecko, CoinMarketCap
 
 ### Horizontal Banner
 **File**: `banners/irondag_banner_horizontal.png`
-- Features gold IronDAG mascot + IDAG badge
-- Headline: "Post-Quantum AI-Native Layer 1"
-- Use for: Twitter header, exchange listings, social media
+- Full IronDAG logotype with `$IDAG | Post-Quantum AI-Native Layer 1 | BraidCore Mining`
+- Use for: Twitter/X header, website hero, exchange listings
 
 ### Square Banner
-**File**: `banners/idag_banner_square.png`
-- Bold IDAG branding with futuristic Q coin
-- Tagline: "The Quantum-Resistant Native Token"
-- Use for: Instagram, Telegram, Discord profiles
+**File**: `banners/irondag_banner_square.png`
+- Square promotional graphic for launch announcements and community posts
+- Use for: Instagram, Telegram, Discord, promotional campaigns
 
 ---
 
@@ -63,81 +57,53 @@ Official brand assets for IronDAG Protocol.
 
 | File | Description | Primary Use |
 |------|-------------|-------------|
-| `idag_token_logo.png` | ⭐ **PRIMARY** Token logo | Exchanges, CoinGecko, CMC |
-| `irondag_project_logo.png` | ⭐ **PRIMARY** Project logo | GitHub, website, docs |
-| `irondag-logo-512.png` | Original infinity logo (512px) | Legacy/alternative |
-| `irondag-logo-310.png` | Original logo (310px) | Legacy/alternative |
-| `irondag-logo-256.png` | Original logo (256px) | Legacy/alternative |
-| `irondag-logo-128.png` | Original logo (128px) | Legacy/alternative |
+| `irondag_project_logo.png` | ⭐ **PRIMARY** Square logo icon | All platforms |
+| `irondag-logo-512.png` | 512px variant | Large displays |
+| `irondag-logo-310.png` | 310px variant | Tiles / store |
+| `irondag-logo-256.png` | 256px variant | Website / docs |
+| `irondag-logo-128.png` | 128px variant | Favicon / small icons |
+| `idag_token_logo.png` | Token logo variant | Exchange listings |
 
 ### Banners (`/banners/`)
 
 | File | Description | Dimensions |
 |------|-------------|------------|
 | `irondag_banner_horizontal.png` | ⭐ **PRIMARY** Main banner | Wide/horizontal |
-| `idag_banner_square.png` | ⭐ **PRIMARY** Square banner | Square format |
+| `irondag_banner_square.png` | ⭐ **PRIMARY** Square banner | Square format |
+| `irondag_social_header.png` | Social media header | Twitter/X, GitHub |
 
 ### Icons (`/icons/`)
 
 | File | Description |
 |------|-------------|
+| `irondag.png` | Main icon (PNG) |
 | `irondag.ico` | Windows icon |
 | `irondag.icns` | macOS icon |
-| `security-badge.png` | Security feature badge |
 
 ### Archive (`/archive/`)
-
-| File | Description |
-|------|-------------|
-| `idag-token-logo.png` | AI-generated token logo (superseded) |
-| `idag-token-logo-light.png` | AI-generated light variant (superseded) |
-| `idag-symbol-clean.png` | AI-generated symbol (superseded) |
-| `irondag-banner.png` | AI-generated banner (superseded) |
+Previous generation assets — superseded by the above. Do not use for new materials.
 
 ---
 
-## Usage Guidelines
+## Messaging
 
-### Do's
-- ✅ Use primary assets for all new materials
-- ✅ Maintain aspect ratios when resizing
-- ✅ Use on appropriate backgrounds (check contrast)
-- ✅ Include proper spacing around logos
+Primary brand phrases:
+- **IronDAG — Quantum-Resistant DAG Infrastructure**
+- **$IDAG | Post-Quantum AI-Native Layer 1 | BraidCore Mining**
+- **Industrial-strength blockchain infrastructure for the post-quantum era**
 
-### Don'ts
-- ❌ Don't stretch or distort logos
-- ❌ Don't change the colors
-- ❌ Don't add effects (shadows, glows) unless matching brand
-- ❌ Don't use archived assets for new materials
+Mining architecture: always use **BraidCore Mining** (two streams: Blake3 + B3MemHash).
 
----
-
-## Quick Copy for Submissions
-
-**Token Logo URL** (after uploading to Google Drive):
-```
-logos/idag_token_logo.png
-```
-
-**Project Logo URL**:
-```
-logos/irondag_project_logo.png
-```
-
-**Banner URL**:
-```
-banners/irondag_banner_horizontal.png
-```
+Do not reference `Mondoshawan`, `QMON`, or `TriStream Mining` anywhere.
 
 ---
 
 ## Links
 
 - **Website**: https://irondag.io
-- **GitHub**: https://github.com/dev-irondag/irondag
-- **Explorer**: https://irondag.io/explorer/
-- **Twitter/X**: https://x.com/DevIronDAG
+- **Explorer**: https://explorer.irondag.io
+- **GitHub**: https://github.com/RunTimeAdmin/IronDAG
 
 ---
 
-**Copyright © 2026 IronDAG Protocol** | MIT License
+**Copyright © 2026 IronDAG** | MIT License

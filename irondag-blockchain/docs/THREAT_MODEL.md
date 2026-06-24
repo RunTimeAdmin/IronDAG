@@ -116,7 +116,7 @@ This threat model is based on **self-assessed code review**. No external securit
 | StateSnapshot merge bug — phantom values on parallel batch merge | Critical | EVM | Known, unmitigated | Before parallel execution enable |
 | Database encryption at rest | Medium | Storage | Not implemented | Post-mainnet hardening |
 | GhostDAG formal verification (K=4 for 3-stream topology) | High | Consensus | Not started | Research phase |
-| TriStream game theory analysis | Medium | Mining | Not started | Post-launch research |
+| BraidCore game theory analysis | Medium | Mining | Not started | Post-launch research |
 | MEV protection / transaction ordering fairness | High | Tx Pool | Not implemented | Future hard fork |
 | Long-lived Ed25519 key zeroization | Medium | Cryptography | Not implemented | Requires architectural change |
 | RPC request size limits | Medium | RPC | Not implemented | Near-term fix |
@@ -195,7 +195,7 @@ We believe honest disclosure builds trust. If you find something, tell us.
 | Database encryption absent | Medium | Storage | Not implemented |
 | Long-lived key zeroization | Medium | Cryptography | Not implemented |
 | RPC request size limits absent | Medium | RPC | Not implemented |
-| TriStream game theory | Medium | Mining | Not analyzed |
+| BraidCore game theory | Medium | Mining | Not analyzed |
 | TOFU first-connection risk | Medium | P2P | Accepted risk |
 | Plaintext fallback window | Low | P2P | Accepted risk |
 | Clock drift exploitation | Low | P2P | Mitigated |
@@ -228,3 +228,4 @@ We believe honest disclosure builds trust. If you find something, tell us.
 ---
 
 *This document is a living analysis. As the codebase evolves and issues are resolved, this threat model will be updated to reflect the current security posture.*
+

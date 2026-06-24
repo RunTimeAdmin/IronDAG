@@ -6,7 +6,7 @@
 
 ---
 
-## 1. TriStream — reserve/confirm/release in process_blocks
+## 1. BraidCore — reserve/confirm/release in process_blocks
 
 | Item | Location | Evidence |
 |------|----------|----------|
@@ -116,7 +116,7 @@
 
 | Category | Claimed | Found | Status |
 |----------|---------|-------|--------|
-| TriStream reserve/confirm/release | ❌ | ✅ | **EXISTS** |
+| BraidCore reserve/confirm/release | ❌ | ✅ | **EXISTS** |
 | Stream C 1s | ❌ | ✅ | **EXISTS** |
 | hash_api_key, constant_time_eq | ❌ | ✅ | **EXISTS** |
 | allow_unsigned_eth_send | ❌ | ✅ | **EXISTS** |
@@ -131,3 +131,4 @@
 | Batch revert_fn | ❌ | ✅ | **EXISTS** |
 
 **Conclusion:** All 21+ claimed implementations exist on **master**. The "NONE were found" analysis likely searched the wrong branches, used incorrect paths, or had tooling/visibility issues.
+

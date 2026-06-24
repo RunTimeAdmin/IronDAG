@@ -1,0 +1,81 @@
+name: irondag
+
+services:
+  miner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: irondag-miner
+    ports:
+      - "8080:8080"   # P2P
+      - "8546:8546"   # RPC  →  curl http://localhost:8546
+    volumes:
+      - miner-data:/data
+    command:
+      - "--port"
+      - "8080"
+      - "--rpc-port"
+      - "8546"
+      - "--data-dir"
+      - "/data"
+      - "--mine"
+      - "--chain-id"
+      - "11567"
+      - "--miner-address"
+      - "6fbEAdBE02D54fC1e61f15A193b7D23cDF6e56a7"
+      - "--rpc-no-auth"
+    networks:
+      - irondag
+    restart: unless-stopped
+
+  explorer:
+    build:
+      context: ./irondag-explorer
+      dockerfile: Dockerfile
+    container_name: irondag-explorer
+    ports:
+      - "3000:80"
+    depends_on:
+      - miner
+    networks:
+      - irondag
+    restart: unless-stopped
+
+  sync:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: irondag-sync
+    ports:
+      - "8081:8080"   # P2P
+      - "8547:8546"   # RPC  →  curl http://localhost:8547
+    volumes:
+      - sync-data:/data
+    command:
+      - "--port"
+      - "8080"
+      - "--rpc-port"
+      - "8546"
+      - "--data-dir"
+      - "/data"
+      - "--no-mining"
+      - "--chain-id"
+      - "11567"
+      - "--miner-address"
+      - "6fbEAdBE02D54fC1e61f15A193b7D23cDF6e56a7"
+      - "--peer"
+      - "miner:8080"
+      - "--rpc-no-auth"
+    depends_on:
+      - miner
+    networks:
+      - irondag
+    restart: unless-stopped
+
+volumes:
+  miner-data:
+  sync-data:
+
+networks:
+  irondag:
+    driver: bridge

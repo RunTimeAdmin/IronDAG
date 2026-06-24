@@ -536,7 +536,7 @@ With native sharding enabled (default: 10 shards), throughput scales linearly:
 ### Threat Resistance
 
 **Quantum Attacks:** ✅ Resistant (PQ crypto)
-**51% Attacks:** ✅ Mitigated (TriStream)
+**51% Attacks:** ✅ Mitigated (BraidCore)
 **MEV Exploitation:** ✅ Detected & mitigated
 **Front-Running:** ✅ Preventable (ordering policies)
 **Sybil Attacks:** ✅ PoW protection
@@ -1379,3 +1379,4 @@ IronDAG/
 ---
 
 *IronDAG: Building the Future of Decentralized Finance*
+
