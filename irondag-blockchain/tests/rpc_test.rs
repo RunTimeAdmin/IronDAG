@@ -1,7 +1,7 @@
 //! RPC endpoint tests
 
-use irondag_blockchain::blockchain::Blockchain;
-use irondag_blockchain::rpc::{JsonRpcRequest, RpcServer};
+use irondag::blockchain::Blockchain;
+use irondag::rpc::{JsonRpcRequest, RpcServer};
 use serde_json::json;
 use std::sync::Arc;
 use tokio::sync::RwLock;

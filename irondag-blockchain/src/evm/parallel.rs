@@ -749,6 +749,7 @@ mod tests {
                 success: true,
                 gas_used: 21_000,
                 output: Vec::new(),
+                logs: vec![],
             })
         });
 
@@ -777,6 +778,7 @@ mod tests {
                 success: true,
                 gas_used: 21_000,
                 output: Vec::new(),
+                logs: vec![],
             })
         });
 
@@ -824,6 +826,7 @@ mod tests {
                 success: true,
                 gas_used: 21_000,
                 output: Vec::new(),
+                logs: vec![],
             })
         });
 
@@ -1020,6 +1023,7 @@ mod tests {
                     success: true,
                     gas_used: 21_000,
                     output: tx.data.clone(), // Echo back the data for verification
+                    logs: vec![],
                 })
             },
         );
@@ -1121,6 +1125,7 @@ mod integration_tests {
                 success: true,
                 gas_used: 21_000,
                 output: Vec::new(),
+                logs: vec![],
             })
         });
 

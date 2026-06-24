@@ -1,8 +1,8 @@
 //! Integration tests for Blockchain + Consensus (GhostDAG)
 
-use irondag_blockchain::blockchain::{Block, BlockHeader, Blockchain};
-use irondag_blockchain::consensus::GhostDAG;
-use irondag_blockchain::types::StreamType;
+use irondag::blockchain::{Block, BlockHeader, Blockchain};
+use irondag::consensus::GhostDAG;
+use irondag::types::StreamType;
 
 /// Test block addition with GhostDAG consensus
 #[test]

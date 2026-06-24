@@ -1,9 +1,9 @@
 //! Standalone tests to validate PoW and database improvements
 //! Run with: cargo test --test validate_improvements
 
-use irondag_blockchain::blockchain::{Block, BlockHeader, Transaction};
-use irondag_blockchain::pow;
-use irondag_blockchain::types::{Address, Hash, StreamType};
+use irondag::blockchain::{Block, BlockHeader, Transaction};
+use irondag::pow;
+use irondag::types::{Address, Hash, StreamType};
 
 #[test]
 fn test_difficulty_damping_prevents_oscillation() {
@@ -137,7 +137,7 @@ fn test_difficulty_adjustment_stability() {
 fn sec_001_invalid_signature_rejected() {
     println!("\n🔒 Testing SEC-001: Invalid signature rejection...");
 
-    use irondag_blockchain::blockchain::Blockchain;
+    use irondag::blockchain::Blockchain;
 
     let mut blockchain = Blockchain::new();
 
@@ -192,7 +192,7 @@ fn sec_001_invalid_signature_rejected() {
 fn sec_003_empty_signature_returns_error() {
     println!("\n🔒 Testing SEC-003: Empty signature rejection...");
 
-    use irondag_blockchain::blockchain::Blockchain;
+    use irondag::blockchain::Blockchain;
 
     let mut blockchain = Blockchain::new();
 
@@ -317,7 +317,7 @@ fn sec_007_block_hash_not_circular() {
 fn sec_004_invalid_pq_key_returns_error() {
     println!("\n🔒 Testing SEC-004: Invalid PQ key material handling...");
 
-    use irondag_blockchain::pqc::{PqAccountType, PqSignature};
+    use irondag::pqc::{PqAccountType, PqSignature};
 
     let _blockchain = ();
 

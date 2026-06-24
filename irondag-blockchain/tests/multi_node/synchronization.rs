@@ -1,8 +1,8 @@
 //! Network synchronization tests
 
-use irondag_blockchain::blockchain::{Blockchain, Block, BlockHeader};
-use irondag_blockchain::consensus::GhostDAG;
-use irondag_blockchain::types::StreamType;
+use irondag::blockchain::{Blockchain, Block, BlockHeader};
+use irondag::consensus::GhostDAG;
+use irondag::types::StreamType;
 
 /// Test chain synchronization structure
 #[tokio::test]
@@ -47,4 +47,5 @@ async fn test_state_consistency() {
     assert_eq!(blockchain1.get_blocks().len(), blockchain2.get_blocks().len());
     assert_eq!(blockchain1.get_blocks().len(), 1);
 }
+
 

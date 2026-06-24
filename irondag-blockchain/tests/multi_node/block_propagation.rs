@@ -1,7 +1,7 @@
 //! Block propagation tests
 
-use irondag_blockchain::blockchain::{Blockchain, Block, BlockHeader};
-use irondag_blockchain::types::StreamType;
+use irondag::blockchain::{Blockchain, Block, BlockHeader};
+use irondag::types::StreamType;
 
 /// Test block structure for propagation
 #[tokio::test]
@@ -35,4 +35,5 @@ async fn test_block_validation() {
     // Block hash should be non-zero
     assert_ne!(block.hash, [0u8; 32]);
 }
+
 

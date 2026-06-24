@@ -1,8 +1,8 @@
 //! Integration tests for Mining + Blockchain
 
-use irondag_blockchain::blockchain::{Blockchain, Block, Transaction};
-use irondag_blockchain::mining::MiningManager;
-use irondag_blockchain::types::{Address, Difficulty};
+use irondag::blockchain::{Blockchain, Block, Transaction};
+use irondag::mining::MiningManager;
+use irondag::types::{Address, Difficulty};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
@@ -89,4 +89,5 @@ async fn test_mining_rewards() {
         .unwrap_or([0u8; 32]);
     assert_eq!(latest_hash, [0u8; 32]);
 }
+
 

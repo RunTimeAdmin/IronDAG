@@ -3,12 +3,12 @@
 //! Tests complete sharding workflows including multi-shard transaction processing,
 //! cross-shard communication, state merging, and failure recovery.
 
-use irondag_blockchain::blockchain::block::BlockHeader;
-use irondag_blockchain::blockchain::{Block, Transaction};
-use irondag_blockchain::sharding::{
+use irondag::blockchain::block::BlockHeader;
+use irondag::blockchain::{Block, Transaction};
+use irondag::sharding::{
     AssignmentStrategy, CrossShardStatus, ShardConfig, ShardManager,
 };
-use irondag_blockchain::types::{Address, Hash, StreamType};
+use irondag::types::{Address, Hash, StreamType};
 
 /// Test complete multi-shard transaction workflow
 #[tokio::test]

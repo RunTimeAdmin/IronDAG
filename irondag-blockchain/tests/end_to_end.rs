@@ -1,11 +1,11 @@
 //! End-to-end integration tests
 
 use ed25519_dalek::SigningKey;
-use irondag_blockchain::blockchain::{Block, Blockchain, Transaction};
-use irondag_blockchain::consensus::GhostDAG;
-use irondag_blockchain::node::pool::TransactionPool;
-use irondag_blockchain::storage::{BlockStore, Database, StateStore};
-use irondag_blockchain::types::Address;
+use irondag::blockchain::{Block, Blockchain, Transaction};
+use irondag::consensus::GhostDAG;
+use irondag::node::pool::TransactionPool;
+use irondag::storage::{BlockStore, Database, StateStore};
+use irondag::types::Address;
 use tempfile::TempDir;
 
 /// Test complete transaction flow
@@ -38,8 +38,8 @@ fn test_complete_transaction_flow() {
     tx_pool.add(tx.clone()).unwrap();
 
     // 4. Create block with transaction
-    use irondag_blockchain::blockchain::BlockHeader;
-    use irondag_blockchain::types::StreamType;
+    use irondag::blockchain::BlockHeader;
+    use irondag::types::StreamType;
 
     let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4, 1_000_000_000);
     let genesis = Block::new(genesis_header, vec![]);
@@ -79,8 +79,8 @@ fn test_complete_transaction_flow() {
 /// Test blockchain state consistency
 #[test]
 fn test_blockchain_state_consistency() {
-    use irondag_blockchain::blockchain::BlockHeader;
-    use irondag_blockchain::types::StreamType;
+    use irondag::blockchain::BlockHeader;
+    use irondag::types::StreamType;
 
     let mut blockchain = Blockchain::new();
     let mut consensus = GhostDAG::new();

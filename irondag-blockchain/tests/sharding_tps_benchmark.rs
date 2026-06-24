@@ -3,9 +3,9 @@
 //! Tests throughput scaling with sharding enabled.
 //! Target: 160,000+ TPS with 10 shards (16,000 TPS per shard)
 
-use irondag_blockchain::blockchain::Transaction;
-use irondag_blockchain::sharding::{AssignmentStrategy, ShardConfig, ShardManager};
-use irondag_blockchain::types::Address;
+use irondag::blockchain::Transaction;
+use irondag::sharding::{AssignmentStrategy, ShardConfig, ShardManager};
+use irondag::types::Address;
 use std::time::Instant;
 
 /// Benchmark transaction routing across shards

@@ -1,8 +1,8 @@
 //! Integration tests for Transaction Pool
 
-use irondag_blockchain::node::pool::TransactionPool;
-use irondag_blockchain::blockchain::Transaction;
-use irondag_blockchain::types::Hash;
+use irondag::node::pool::TransactionPool;
+use irondag::blockchain::Transaction;
+use irondag::types::Hash;
 
 /// Test transaction pool basic operations
 #[tokio::test]
@@ -92,4 +92,5 @@ async fn test_transaction_pool_deduplication() {
     
     assert_eq!(pool.len(), 1);
 }
+
 

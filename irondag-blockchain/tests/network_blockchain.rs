@@ -1,8 +1,8 @@
 //! Integration tests for Network + Blockchain
 
-use irondag_blockchain::blockchain::{Block, BlockHeader, Blockchain, Transaction};
-use irondag_blockchain::network::NetworkManager;
-use irondag_blockchain::types::{Address, StreamType};
+use irondag::blockchain::{Block, BlockHeader, Blockchain, Transaction};
+use irondag::network::NetworkManager;
+use irondag::types::{Address, StreamType};
 use std::net::SocketAddr;
 use std::sync::Arc;
 use tokio::sync::RwLock;

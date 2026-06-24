@@ -8,8 +8,8 @@
 // for extracting common patterns as the test suite grows.
 
 /// Re-export commonly used types for convenience
-pub use irondag_blockchain::blockchain::{Block, BlockHeader, Blockchain, Transaction};
-pub use irondag_blockchain::types::{Address, StreamType};
+pub use irondag::blockchain::{Block, BlockHeader, Blockchain, Transaction};
+pub use irondag::types::{Address, StreamType};
 
 /// Helper function to create a test address with a given byte value
 pub fn test_address(byte: u8) -> Address {
@@ -32,3 +32,4 @@ pub fn create_test_transaction(
 ) -> Transaction {
     Transaction::new(sender, recipient, value, fee, nonce)
 }
+

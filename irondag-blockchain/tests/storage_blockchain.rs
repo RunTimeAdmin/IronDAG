@@ -1,8 +1,8 @@
 //! Integration tests for Storage + Blockchain
 
-use irondag_blockchain::blockchain::{Block, Blockchain};
-use irondag_blockchain::storage::{BlockStore, Database, StateStore};
-use irondag_blockchain::types::Address;
+use irondag::blockchain::{Block, Blockchain};
+use irondag::storage::{BlockStore, Database, StateStore};
+use irondag::types::Address;
 use tempfile::TempDir;
 
 /// Test block persistence
@@ -16,8 +16,8 @@ async fn test_block_persistence() {
     let block_store = BlockStore::new(&database);
 
     // Create blockchain and add block
-    use irondag_blockchain::blockchain::BlockHeader;
-    use irondag_blockchain::types::StreamType;
+    use irondag::blockchain::BlockHeader;
+    use irondag::types::StreamType;
 
     let mut blockchain = Blockchain::new();
     let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4, 1_000_000_000);
@@ -81,8 +81,8 @@ async fn test_database_recovery() {
     let db_path = temp_dir.path().join("test.db");
 
     // Create database and add block
-    use irondag_blockchain::blockchain::BlockHeader;
-    use irondag_blockchain::types::StreamType;
+    use irondag::blockchain::BlockHeader;
+    use irondag::types::StreamType;
 
     let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4, 1_000_000_000);
     let genesis = Block::new(genesis_header, vec![]);

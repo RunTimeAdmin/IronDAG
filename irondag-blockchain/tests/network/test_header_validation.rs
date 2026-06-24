@@ -2,9 +2,9 @@
 
 #[cfg(test)]
 mod tests {
-    use irondag_blockchain::blockchain::{Block, BlockHeader};
-    use irondag_blockchain::network::sync::{BlockHeaderSync, HeadersFirstSync};
-    use irondag_blockchain::types::{Hash, StreamType};
+    use irondag::blockchain::{Block, BlockHeader};
+    use irondag::network::sync::{BlockHeaderSync, HeadersFirstSync};
+    use irondag::types::{Hash, StreamType};
 
     #[tokio::test]
     async fn test_validate_valid_headers() {
@@ -101,3 +101,4 @@ mod tests {
         assert_eq!(validated, 0, "Should reject header with future timestamp");
     }
 }
+

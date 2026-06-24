@@ -1,8 +1,8 @@
 //! Integration tests for Transaction Pool
 
-use irondag_blockchain::blockchain::Transaction;
-use irondag_blockchain::node::pool::TransactionPool;
-use irondag_blockchain::types::Address;
+use irondag::blockchain::Transaction;
+use irondag::node::pool::TransactionPool;
+use irondag::types::Address;
 
 /// Test transaction pool basic operations
 #[tokio::test]

@@ -1,9 +1,9 @@
 //! End-to-end integration tests
 
-use irondag_blockchain::blockchain::{Blockchain, Block, Transaction};
-use irondag_blockchain::consensus::GhostDAG;
-use irondag_blockchain::storage::{Database, BlockStore, StateStore};
-use irondag_blockchain::node::pool::TransactionPool;
+use irondag::blockchain::{Blockchain, Block, Transaction};
+use irondag::consensus::GhostDAG;
+use irondag::storage::{Database, BlockStore, StateStore};
+use irondag::node::pool::TransactionPool;
 use tempfile::TempDir;
 
 /// Test complete transaction flow
@@ -33,8 +33,8 @@ async fn test_complete_transaction_flow() {
     tx_pool.add(tx.clone());
     
     // 3. Create block with transaction
-    use irondag_blockchain::blockchain::BlockHeader;
-    use irondag_blockchain::types::StreamType;
+    use irondag::blockchain::BlockHeader;
+    use irondag::types::StreamType;
     
     let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4);
     let genesis = Block::new(genesis_header, vec![]);
@@ -71,8 +71,8 @@ async fn test_complete_transaction_flow() {
 /// Test blockchain state consistency
 #[tokio::test]
 async fn test_blockchain_state_consistency() {
-    use irondag_blockchain::blockchain::BlockHeader;
-    use irondag_blockchain::types::StreamType;
+    use irondag::blockchain::BlockHeader;
+    use irondag::types::StreamType;
     
     let mut blockchain = Blockchain::new();
     let mut consensus = GhostDAG::new();
@@ -99,4 +99,5 @@ async fn test_blockchain_state_consistency() {
     let ordered = consensus.get_ordered_blocks().unwrap();
     assert_eq!(ordered.len(), 6);
 }
+
 

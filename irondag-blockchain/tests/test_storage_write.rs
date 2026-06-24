@@ -3,9 +3,9 @@
 //! This test verifies that SSTORE operations persist storage correctly
 //! using SputnikVM's ApplyBackend.
 
-use irondag_blockchain::evm::EvmTransactionExecutor;
-use irondag_blockchain::storage::Database;
-use irondag_blockchain::types::Address;
+use irondag::evm::EvmTransactionExecutor;
+use irondag::storage::Database;
+use irondag::types::Address;
 use std::sync::Arc;
 use tempfile::TempDir;
 

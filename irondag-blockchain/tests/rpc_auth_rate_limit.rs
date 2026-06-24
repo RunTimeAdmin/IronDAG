@@ -1,8 +1,8 @@
 //! RPC authentication and rate limiting tests
 
-use irondag_blockchain::blockchain::Blockchain;
-use irondag_blockchain::rpc::rate_limit::PerIpRateLimiter;
-use irondag_blockchain::rpc::{JsonRpcRequest, RpcServer};
+use irondag::blockchain::Blockchain;
+use irondag::rpc::rate_limit::PerIpRateLimiter;
+use irondag::rpc::{JsonRpcRequest, RpcServer};
 use serde_json::json;
 use std::net::IpAddr;
 use std::sync::Arc;

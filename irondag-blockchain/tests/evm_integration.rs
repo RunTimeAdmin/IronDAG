@@ -2,9 +2,9 @@
 //!
 //! Tests for contract deployment and execution using SputnikVM.
 
-use irondag_blockchain::blockchain::{Blockchain, Transaction};
-use irondag_blockchain::evm::EvmTransactionExecutor;
-use irondag_blockchain::types::Address;
+use irondag::blockchain::{Blockchain, Transaction};
+use irondag::evm::EvmTransactionExecutor;
+use irondag::types::Address;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 

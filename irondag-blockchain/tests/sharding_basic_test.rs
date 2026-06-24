@@ -6,11 +6,11 @@
 //! The test `test_cross_shard_e2e_flow` validates the complete Phase 6 pipeline:
 //! submit -> route -> process -> receipt creation -> balance update
 
-use irondag_blockchain::blockchain::Transaction;
-use irondag_blockchain::sharding::{
+use irondag::blockchain::Transaction;
+use irondag::sharding::{
     AssignmentStrategy, CrossShardStatus, ShardConfig, ShardManager,
 };
-use irondag_blockchain::types::Address;
+use irondag::types::Address;
 
 /// Test shard creation
 #[tokio::test]

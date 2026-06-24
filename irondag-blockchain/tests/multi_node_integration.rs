@@ -12,11 +12,11 @@
 //! All tests use real TCP networking with in-process nodes to ensure
 //! realistic network behavior while maintaining test isolation.
 
-use irondag_blockchain::blockchain::{Blockchain, Transaction};
-use irondag_blockchain::mining::MiningManager;
-use irondag_blockchain::network::NetworkManager;
-use irondag_blockchain::node::{Node, NodeConfig};
-use irondag_blockchain::types::Address;
+use irondag::blockchain::{Blockchain, Transaction};
+use irondag::mining::MiningManager;
+use irondag::network::NetworkManager;
+use irondag::node::{Node, NodeConfig};
+use irondag::types::Address;
 use std::net::SocketAddr;
 use std::path::PathBuf;
 use std::sync::Arc;

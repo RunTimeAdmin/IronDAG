@@ -1,8 +1,8 @@
 //! Integration tests for Mining + Blockchain
 
-use irondag_blockchain::blockchain::{Blockchain, Transaction};
-use irondag_blockchain::mining::MiningManager;
-use irondag_blockchain::types::{Address, Hash};
+use irondag::blockchain::{Blockchain, Transaction};
+use irondag::mining::MiningManager;
+use irondag::types::{Address, Hash};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 

@@ -1,6 +1,6 @@
 //! Multi-node startup tests
 
-use irondag_blockchain::node::{Node, NodeConfig};
+use irondag::node::{Node, NodeConfig};
 use std::path::PathBuf;
 use tempfile::TempDir;
 
@@ -55,4 +55,5 @@ async fn test_node_start_stop() {
     let result = node.stop().await;
     assert!(result.is_ok());
 }
+
 

@@ -1,8 +1,8 @@
 //! Integration tests for Blockchain + Consensus (GhostDAG)
 
-use irondag_blockchain::blockchain::{Blockchain, Block, BlockHeader};
-use irondag_blockchain::consensus::GhostDAG;
-use irondag_blockchain::types::{Hash, StreamType};
+use irondag::blockchain::{Blockchain, Block, BlockHeader};
+use irondag::consensus::GhostDAG;
+use irondag::types::{Hash, StreamType};
 
 /// Test block addition with GhostDAG consensus
 #[tokio::test]
@@ -111,4 +111,5 @@ async fn test_blue_score_calculation() {
     assert_eq!(ordered[1].hash, block1_hash);
     assert_eq!(ordered[2].hash, block2_hash);
 }
+
 

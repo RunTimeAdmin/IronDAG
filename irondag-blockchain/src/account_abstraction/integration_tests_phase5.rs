@@ -111,10 +111,10 @@ mod tests {
         {
             let mut manager = recovery_manager.write().await;
             assert!(manager
-                .approve_recovery(wallet, guardians[0], timestamp + 100)
+                .approve_recovery(wallet, guardians[0], &[], timestamp + 100)
                 .is_ok());
             assert!(manager
-                .approve_recovery(wallet, guardians[1], timestamp + 200)
+                .approve_recovery(wallet, guardians[1], &[], timestamp + 200)
                 .is_ok());
         }
 

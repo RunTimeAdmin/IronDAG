@@ -3,12 +3,12 @@
 //! Tests for shard management, transaction routing, cross-shard communication,
 //! state synchronization, and consensus coordination.
 
-use irondag_blockchain::blockchain::block::BlockHeader;
-use irondag_blockchain::blockchain::{Block, Transaction};
-use irondag_blockchain::sharding::{
+use irondag::blockchain::block::BlockHeader;
+use irondag::blockchain::{Block, Transaction};
+use irondag::sharding::{
     AssignmentStrategy, CrossShardStatus, ShardConfig, ShardManager,
 };
-use irondag_blockchain::types::{Address, StreamType};
+use irondag::types::{Address, StreamType};
 
 /// Test shard creation and initialization
 #[tokio::test]

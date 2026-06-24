@@ -6,11 +6,11 @@
 //! - Receipt ordering guarantees
 //! - Shard height tracking for catch-up protocol
 
-use irondag_blockchain::blockchain::Transaction;
-use irondag_blockchain::sharding::{
+use irondag::blockchain::Transaction;
+use irondag::sharding::{
     AssignmentStrategy, CrossShardStatus, ShardConfig, ShardManager,
 };
-use irondag_blockchain::types::Address;
+use irondag::types::Address;
 
 /// Test the full cross-shard flow:
 /// 1. Create ShardManager with 2+ shards
