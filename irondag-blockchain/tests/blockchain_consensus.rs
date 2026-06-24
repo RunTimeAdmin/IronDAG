@@ -32,7 +32,7 @@ async fn test_blockchain_consensus_integration() {
     let block1_hash = block1.hash;
 
     // Add to blockchain
-    blockchain.add_block(block1.clone()).unwrap();
+    blockchain.add_block(block1.clone()).await.unwrap();
 
     // Add to consensus
     consensus.add_block(&block1).unwrap();
@@ -68,8 +68,8 @@ async fn test_parallel_blocks_consensus() {
     let block2_hash = block2.hash;
 
     // Add both blocks
-    blockchain.add_block(block1.clone()).unwrap();
-    blockchain.add_block(block2.clone()).unwrap();
+    blockchain.add_block(block1.clone()).await.unwrap();
+    blockchain.add_block(block2.clone()).await.unwrap();
 
     consensus.add_block(&block1).unwrap();
     consensus.add_block(&block2).unwrap();
@@ -99,14 +99,14 @@ async fn test_blue_score_calculation() {
         BlockHeader::new(vec![genesis_hash], 1, StreamType::StreamA, 4, 1_000_000_000);
     let block1 = Block::new(block1_header, vec![]);
     let block1_hash = block1.hash;
-    blockchain.add_block(block1.clone()).unwrap();
+    blockchain.add_block(block1.clone()).await.unwrap();
     consensus.add_block(&block1).unwrap();
 
     let block2_header =
         BlockHeader::new(vec![block1_hash], 2, StreamType::StreamA, 4, 1_000_000_000);
     let block2 = Block::new(block2_header, vec![]);
     let block2_hash = block2.hash;
-    blockchain.add_block(block2.clone()).unwrap();
+    blockchain.add_block(block2.clone()).await.unwrap();
     consensus.add_block(&block2).unwrap();
 
     // Verify ordering

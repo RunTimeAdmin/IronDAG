@@ -157,7 +157,12 @@ async fn test_shard_block_processing() {
         let shard_guard = shard.read().await;
         let blockchain = shard_guard.blockchain.clone();
         drop(shard_guard);
-        blockchain.write().await.add_block(block.clone()).unwrap();
+        blockchain
+            .write()
+            .await
+            .add_block(block.clone())
+            .await
+            .unwrap();
     }
 
     // Verify block was added
@@ -185,7 +190,7 @@ async fn test_independent_shard_processing() {
         let block = Block::new(header, vec![]);
 
         let blockchain = shard.read().await.blockchain.clone();
-        blockchain.write().await.add_block(block).unwrap();
+        blockchain.write().await.add_block(block).await.unwrap();
     }
 
     // Verify each shard has its own block

@@ -59,7 +59,7 @@ async fn test_multi_shard_workflow() {
         if chain_len == 0 {
             let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4, 1_000_000_000);
             let genesis = Block::new(genesis_header, vec![]);
-            blockchain.write().await.add_block(genesis).unwrap();
+            blockchain.write().await.add_block(genesis).await.unwrap();
         }
     }
 
@@ -164,7 +164,7 @@ async fn test_shard_consensus_coordination() {
         let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4, 1_000_000_000);
         let genesis = Block::new(genesis_header, vec![]);
         let genesis_hash = genesis.hash;
-        blockchain.write().await.add_block(genesis).unwrap();
+        blockchain.write().await.add_block(genesis).await.unwrap();
 
         // Then create and process additional blocks with proper parent hash
         for block_num in 1..4 {
@@ -176,7 +176,7 @@ async fn test_shard_consensus_coordination() {
                 1_000_000_000,
             );
             let block = Block::new(header, vec![]);
-            blockchain.write().await.add_block(block).unwrap();
+            blockchain.write().await.add_block(block).await.unwrap();
         }
     }
 
@@ -223,7 +223,7 @@ async fn test_shard_recovery() {
         let blockchain = shard.read().await.blockchain.clone();
         let header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4, 1_000_000_000);
         let block = Block::new(header, vec![]);
-        blockchain.write().await.add_block(block).unwrap();
+        blockchain.write().await.add_block(block).await.unwrap();
     }
 
     // Verify state after adding blocks

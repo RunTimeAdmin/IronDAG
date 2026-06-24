@@ -229,7 +229,7 @@ async fn sec_003_empty_signature_returns_error() {
     let mut blockchain2 = Blockchain::new();
     let genesis_header2 = BlockHeader::new(vec![], 0, StreamType::StreamC, 4, 1_000_000_000);
     let genesis2 = Block::new(genesis_header2, vec![]);
-    blockchain2.add_block(genesis2).unwrap();
+    blockchain2.add_block(genesis2).await.unwrap();
 
     let mut tx2 = Transaction::new(from, to, 1000, 100, 1);
     tx2.signature = vec![0u8; 64]; // 64 zeros

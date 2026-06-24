@@ -40,13 +40,14 @@ async fn test_state_consistency() {
     let block_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4);
     let block = Block::new(block_header, vec![]);
     
-    blockchain1.add_block(block.clone()).unwrap();
-    blockchain2.add_block(block.clone()).unwrap();
+    blockchain1.add_block(block.clone()).await.unwrap();
+    blockchain2.add_block(block.clone()).await.unwrap();
     
     // Both should have same chain length
     assert_eq!(blockchain1.get_blocks().len(), blockchain2.get_blocks().len());
     assert_eq!(blockchain1.get_blocks().len(), 1);
 }
+
 
 
 
