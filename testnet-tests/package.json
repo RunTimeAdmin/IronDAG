@@ -1,0 +1,18 @@
+{
+  "name": "irondag-testnet-tests",
+  "version": "1.0.0",
+  "description": "Test scripts for IronDAG testnet using ethers.js",
+  "main": "test_transactions.js",
+  "scripts": {
+    "test": "node test_transactions.js"
+  },
+  "dependencies": {
+    "ethers": "^6.13.0"
+  },
+  "keywords": [
+    "blockchain",
+    "testnet",
+    "ethers"
+  ],
+  "license": "MIT"
+}

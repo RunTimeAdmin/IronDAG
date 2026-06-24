@@ -1,0 +1,67 @@
+# Exclude everything not needed for Docker build
+# Keep build context minimal and avoid conflicts with other Cargo.toml files
+
+# Other projects/directories not needed for blockchain node
+PYRAX-OFFICIAL/
+mondoshawan-core-concepts/
+mondoshawan-explorer-frontend/
+mondoshawan-desktop/
+mondoshawan-website/
+mondoshawan-website-FINAL-v2/
+mondoshawan-website-legendary/
+mondoshawan_poc/
+mondoshawan_real/
+
+# Build artifacts
+dockerbuild-extract/
+dockerbuild.bin
+*.dockerbuild.zip
+
+# Version control
+.git/
+.githooks/
+.gitattributes
+.gitmodules
+
+# Build outputs
+**/target/
+**/data/
+**/data*/
+**/node_modules/
+
+# Documentation and notes
+**/*.md
+!mondoshawan-blockchain/README.md
+
+# IDE and editor configs
+.vs/
+.vscode/
+.claude/
+.qoder/
+.idea/
+
+# Test and temporary files
+*.txt
+*.log
+*.zip
+*.exe
+*.ps1
+*.bat
+*.sh
+*.py
+*.js
+*.json
+!mondoshawan-blockchain/**/*.json
+
+# Cache and temp directories
+cache/
+out/
+temp_fixes/
+temp_fixes_final/
+test/
+test_node*/
+node-t*/
+node1-data/
+node2-data/
+release/
+local_env/

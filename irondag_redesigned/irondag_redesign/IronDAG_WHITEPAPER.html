@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IronDAG Protocol — Technical Whitepaper v2.0</title>
+    <meta name="description" content="Technical whitepaper for the IronDAG Protocol — a post-quantum Layer 1 blockchain combining GhostDAG consensus, ML-KEM-768 cryptography, and EVM compatibility.">
+    <link rel="icon" type="image/png" href="images/coin.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #6366f1;
+            --accent: #ec4899;
+            --cyan: #06b6d4;
+            --darkest: #020617;
+            --darker: #0f172a;
+            --dark: #1e293b;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--darkest);
+            color: #e2e8f0;
+            line-height: 1.8;
+        }
+        /* Animated background */
+        .animated-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(45deg, #020617, #0f172a, #1e293b, #0f172a);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+        .particle-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-image: linear-gradient(rgba(99,102,241,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }
+        }
+        /* Header */
+        header {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 1.2rem 0;
+            position: sticky; top: 0; z-index: 100;
+        }
+        nav { max-width: 1100px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo-link {
+            font-size: 1.2rem; font-weight: bold; text-decoration: none;
+            background: linear-gradient(135deg, #6366f1, #ec4899, #06b6d4);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--cyan); }
+        /* Layout */
+        .wp-layout { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; display: grid; grid-template-columns: 260px 1fr; gap: 4rem; align-items: start; }
+        /* TOC Sidebar */
+        .toc {
+            position: sticky; top: 80px;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(99,102,241,0.2);
+            border-radius: 16px; padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+        .toc h4 { color: var(--cyan); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 1rem; }
+        .toc ol { list-style: none; counter-reset: toc-counter; }
+        .toc ol li { counter-increment: toc-counter; margin-bottom: 0.5rem; }
+        .toc ol li::before { content: counter(toc-counter) ". "; color: var(--primary); font-size: 0.8rem; font-weight: bold; }
+        .toc a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+        .toc a:hover { color: white; }
+        /* Main content */
+        .wp-content {}
+        /* Cover */
+        .wp-cover {
+            text-align: center; padding: 3rem 0 4rem;
+            border-bottom: 1px solid rgba(99,102,241,0.2); margin-bottom: 3rem;
+        }
+        .wp-cover img { height: 70px; margin-bottom: 1.5rem; }
+        .wp-cover h1 {
+            font-size: 2.8rem; font-weight: 900; letter-spacing: -1px;
+            background: linear-gradient(135deg, #fff 0%, #6366f1 50%, #ec4899 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        .wp-cover .subtitle { font-size: 1.2rem; color: rgba(255,255,255,0.5); margin-bottom: 1.5rem; }
+        .wp-cover .meta { font-size: 0.85rem; color: rgba(255,255,255,0.4); }
+        .wp-cover .meta span { margin: 0 1rem; }
+        .badge {
+            display: inline-block; padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; margin: 0.25rem;
+        }
+        .badge-green { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+        .badge-blue { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
+        .badge-cyan { background: rgba(6,182,212,0.15); color: var(--cyan); border: 1px solid rgba(6,182,212,0.3); }
+        /* Sections */
+        .wp-section { margin-bottom: 4rem; scroll-margin-top: 90px; }
+        .wp-section h2 {
+            font-size: 1.8rem; font-weight: 800; color: white; margin-bottom: 1rem;
+            padding-bottom: 0.75rem; border-bottom: 1px solid rgba(99,102,241,0.2);
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+        .wp-section h2 .section-num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 36px; height: 36px; border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            font-size: 0.9rem; font-weight: 900; color: white; flex-shrink: 0;
+        }
+        .wp-section h3 { font-size: 1.2rem; color: var(--cyan); margin: 2rem 0 0.75rem; font-weight: 700; }
+        .wp-section p { color: rgba(255,255,255,0.75); margin-bottom: 1rem; }
+        /* Tables */
+        .wp-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
+        .wp-table th { background: rgba(99,102,241,0.15); color: var(--cyan); padding: 0.75rem 1rem; text-align: left; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 1px solid rgba(99,102,241,0.3); }
+        .wp-table td { padding: 0.75rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); color: rgba(255,255,255,0.75); vertical-align: top; }
+        .wp-table tr:hover td { background: rgba(99,102,241,0.05); }
+        .wp-table .highlight td { color: white; font-weight: 600; }
+        .wp-table .highlight td:first-child { color: var(--cyan); }
+        .check { color: #10b981; font-weight: bold; }
+        .cross { color: #ef4444; }
+        /* Code blocks */
+        .code-block {
+            background: #0d1117; border: 1px solid rgba(99,102,241,0.3); border-radius: 12px;
+            padding: 1.5rem; font-family: 'Courier New', monospace; font-size: 0.82rem;
+            color: #e6edf3; overflow-x: auto; margin: 1.5rem 0; line-height: 1.6;
+        }
+        .code-block .comment { color: #8b949e; }
+        .code-block .keyword { color: #ff7b72; }
+        .code-block .type { color: #ffa657; }
+        .code-block .string { color: #a5d6ff; }
+        .code-block .number { color: #79c0ff; }
+        .code-block .fn-name { color: #d2a8ff; }
+        /* Info boxes */
+        .info-box {
+            background: rgba(6,182,212,0.08); border: 1px solid rgba(6,182,212,0.25);
+            border-left: 4px solid var(--cyan); border-radius: 8px; padding: 1.25rem 1.5rem; margin: 1.5rem 0;
+        }
+        .info-box.warning { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.25); border-left-color: #f59e0b; }
+        .info-box.success { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.25); border-left-color: #10b981; }
+        .info-box p { margin: 0; color: rgba(255,255,255,0.8); font-size: 0.95rem; }
+        /* Architecture diagram */
+        .arch-diagram {
+            background: #0d1117; border: 1px solid rgba(99,102,241,0.3); border-radius: 12px;
+            padding: 2rem; font-family: 'Courier New', monospace; font-size: 0.8rem;
+            color: #8b949e; margin: 1.5rem 0; line-height: 1.5;
+        }
+        .arch-diagram .layer-title { color: var(--cyan); font-weight: bold; }
+        .arch-diagram .component { color: #e6edf3; }
+        .arch-diagram .arrow { color: var(--primary); }
+        /* Footer */
+        footer { background: var(--darkest); border-top: 1px solid rgba(255,255,255,0.05); padding: 3rem 0; text-align: center; color: rgba(255,255,255,0.4); font-size: 0.85rem; }
+        footer a { color: var(--primary); text-decoration: none; }
+        @media (max-width: 900px) {
+            .wp-layout { grid-template-columns: 1fr; }
+            .toc { display: none; }
+            .wp-cover h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="particle-grid"></div>
+
+    <header>
+        <nav>
+            <a href="index.html" class="logo-link">← IronDAG Protocol</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="http://explorer.irondag.io" target="_blank">Testnet Explorer</a></li>
+                <li><a href="https://github.com/RunTimeAdmin/irondag-core-concepts" target="_blank">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="wp-layout">
+        <!-- Sidebar TOC -->
+        <aside class="toc">
+            <h4>Table of Contents</h4>
+            <ol>
+                <li><a href="#abstract">Abstract</a></li>
+                <li><a href="#motivation">Motivation &amp; Problem Statement</a></li>
+                <li><a href="#architecture">System Architecture</a></li>
+                <li><a href="#ghostdag">GhostDAG Consensus</a></li>
+                <li><a href="#braidcore">BraidCore Mining</a></li>
+                <li><a href="#pow">Proof of Work &amp; DAA</a></li>
+                <li><a href="#pqc">Post-Quantum Cryptography</a></li>
+                <li><a href="#network">P2P Network Layer</a></li>
+                <li><a href="#evm">EVM Integration</a></li>
+                <li><a href="#sharding">Sharding</a></li>
+                <li><a href="#tokenomics">Tokenomics</a></li>
+                <li><a href="#competitive">Competitive Analysis</a></li>
+                <li><a href="#roadmap">Roadmap</a></li>
+                <li><a href="#conclusion">Conclusion</a></li>
+            </ol>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="wp-content">
+            <!-- Cover -->
+            <div class="wp-cover">
+                <img src="images/LOGO.png" alt="IronDAG Logo" onerror="this.style.display='none'">
+                <h1>IronDAG Protocol</h1>
+                <div class="subtitle">Technical Whitepaper v2.0</div>
+                <div style="margin: 1rem 0;">
+                    <span class="badge badge-green">✅ Live Testnet</span>
+                    <span class="badge badge-cyan">ML-KEM-768 (NIST FIPS 203)</span>
+                    <span class="badge badge-blue">GhostDAG + EVM</span>
+                </div>
+                <div class="meta">
+                    <span>Ticker: <strong>IDAG</strong></span>
+                    <span>Chain ID: <strong>11567</strong></span>
+                    <span>April 2026</span>
+                </div>
+            </div>
+
+            <!-- Abstract -->
+            <section class="wp-section" id="abstract">
+                <h2><span class="section-num">0</span> Abstract</h2>
+                <p>IronDAG is a Layer 1 blockchain protocol built in Rust that combines three capabilities no existing production chain currently offers simultaneously: <strong>GhostDAG BlockDAG consensus</strong> for parallel block production, <strong>ML-KEM-768 post-quantum cryptography</strong> (NIST FIPS 203) on all peer-to-peer transport, and <strong>full EVM compatibility</strong> via SputnikVM. The protocol is currently operational on a multi-datacenter public testnet, producing blocks at a stable ~10-second median interval using real cryptographic Proof of Work.</p>
+                <p>This document describes the technical architecture of the IronDAG protocol as it exists in the current codebase, distinguishing implemented features from planned work. Claims are grounded in the live implementation.</p>
+            </section>
+
+            <!-- Motivation -->
+            <section class="wp-section" id="motivation">
+                <h2><span class="section-num">1</span> Motivation &amp; Problem Statement</h2>
+                <h3>The Quantum Threat is Not Hypothetical</h3>
+                <p>In August 2024, NIST finalized three post-quantum cryptographic standards: FIPS 203 (ML-KEM, key encapsulation), FIPS 204 (ML-DSA, digital signatures), and FIPS 205 (SLH-DSA, hash-based signatures). The US National Security Agency has mandated migration to these standards for all classified systems by 2030. The Federal Reserve has published guidance on the "Harvest Now, Decrypt Later" (HNDL) threat — the practice of recording encrypted network traffic today for decryption once a sufficiently powerful quantum computer exists.</p>
+                <div class="info-box warning">
+                    <p><strong>The HNDL threat applies directly to blockchain P2P networks.</strong> Any node-to-node communication using classical ECDH key exchange today can be archived and decrypted retroactively. No major production blockchain has addressed this at the transport layer.</p>
+                </div>
+                <h3>The Gap in the Market</h3>
+                <p>Examining the current landscape reveals a clear gap. Kaspa implements GhostDAG with high throughput but has no post-quantum security and no EVM. Ethereum has EVM and a large developer ecosystem but uses a single-chain architecture and has no post-quantum roadmap at the protocol layer. QRL implements post-quantum signatures but has no EVM and uses a traditional single chain. No production Layer 1 combines all three.</p>
+                <p>IronDAG is built to occupy this intersection.</p>
+            </section>
+
+            <!-- Architecture -->
+            <section class="wp-section" id="architecture">
+                <h2><span class="section-num">2</span> System Architecture</h2>
+                <p>The IronDAG node is structured as four distinct layers, each with clear responsibilities and interfaces:</p>
+                <div class="arch-diagram">
+<span class="layer-title">┌─────────────────────────────────────────────────────────┐</span>
+<span class="layer-title">│  LAYER 4 — EXECUTION LAYER                              │</span>
+<span class="component">│  SputnikVM EVM (Shanghai) · JSON-RPC (129+ methods)     │</span>
+<span class="component">│  Account Abstraction · Gas Estimation · eth_call        │</span>
+<span class="layer-title">├─────────────────────────────────────────────────────────┤</span>
+<span class="layer-title">│  LAYER 3 — CONSENSUS LAYER                              │</span>
+<span class="component">│  GhostDAG (K=4) · Blue/Red Classification               │</span>
+<span class="component">│  Sled DB + RAM Hot-Cache · Quorum Fork Recovery         │</span>
+<span class="layer-title">├─────────────────────────────────────────────────────────┤</span>
+<span class="layer-title">│  LAYER 2 — MINING LAYER                                 │</span>
+<span class="component">│  Stream A: Blake3 (ASIC) · Stream B: B3MemHash (GPU)   │</span>
+<span class="component">│  DAA (Fixed-point, 0.667x–1.5x clamp) · ~10s target    │</span>
+<span class="layer-title">├─────────────────────────────────────────────────────────┤</span>
+<span class="layer-title">│  LAYER 1 — NETWORK LAYER                                │</span>
+<span class="component">│  QUIC Transport · ML-KEM-768 Kyber Handshake            │</span>
+<span class="component">│  Noise Protocol · TOFU Identity · Sybil Resistance      │</span>
+<span class="layer-title">└─────────────────────────────────────────────────────────┘</span>
+                </div>
+                <table class="wp-table">
+                    <thead><tr><th>Layer</th><th>Implementation</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td>Network</td><td>QUIC + ML-KEM-768 + Noise Protocol</td><td><span class="badge badge-green">Live</span></td></tr>
+                        <tr><td>Mining</td><td>Blake3 (Stream A) + B3MemHash SIMD (Stream B)</td><td><span class="badge badge-green">Live</span></td></tr>
+                        <tr><td>Consensus</td><td>GhostDAG K=4, sled + RAM hybrid storage</td><td><span class="badge badge-green">Live</span></td></tr>
+                        <tr><td>Execution</td><td>SputnikVM EVM, 129+ JSON-RPC methods</td><td><span class="badge badge-green">Live</span></td></tr>
+                        <tr><td>Sharding</td><td>Consistent-hash sharding, two-phase cross-shard commit</td><td><span class="badge badge-cyan">Testnet</span></td></tr>
+                        <tr><td>Stream C (ZK)</td><td>ZK Proof validation stream</td><td><span class="badge badge-blue">Planned</span></td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- GhostDAG -->
+            <section class="wp-section" id="ghostdag">
+                <h2><span class="section-num">3</span> GhostDAG Consensus</h2>
+                <h3>BlockDAG vs. Single Chain</h3>
+                <p>Traditional blockchains discard blocks produced simultaneously (orphans), wasting the honest work of miners and limiting throughput to a single block per interval. GhostDAG (Greedy Heaviest-Observed Sub-DAG) resolves this by organizing all produced blocks into a Directed Acyclic Graph and then computing a linear ordering over them.</p>
+                <p>The protocol uses a parameter <strong>K</strong> (set to 4 in IronDAG's testnet configuration) representing the maximum number of blocks produced in a single network propagation delay window. Blocks are classified as <strong>blue</strong> (honest, well-connected) or <strong>red</strong> (potentially dishonest or poorly connected) based on their position in the DAG relative to the blue set. Only blue blocks earn mining rewards.</p>
+                <h3>Storage Architecture</h3>
+                <p>The DAG is stored using a hybrid strategy: a <strong>sled</strong> embedded key-value store provides durable persistence, while a bounded in-memory LRU cache holds the "hot" tip region of the DAG for low-latency blue score computation. This avoids the recursive traversal penalty that would otherwise make GhostDAG impractical on a key-value store.</p>
+                <h3>Sync Resilience</h3>
+                <p>The sync layer implements compact block IBD (analogous to BIP152), stall detection with automatic re-sync triggers, and quorum-based fork recovery. These mechanisms were hardened through extensive multi-datacenter testing and are running in production on the current testnet.</p>
+            </section>
+
+            <!-- BraidCore -->
+            <section class="wp-section" id="braidcore">
+                <h2><span class="section-num">4</span> BraidCore Mining Architecture</h2>
+                <p>IronDAG introduces a multi-stream parallel mining architecture where each stream uses a different algorithm targeting different hardware profiles. All active streams feed blocks into the same GhostDAG consensus engine. Stream A (Blake3) and Stream B (B3MemHash) are live on testnet; a third ZK-proof validation stream is planned for mainnet.</p>
+                <table class="wp-table">
+                    <thead><tr><th>Stream</th><th>Algorithm</th><th>Target Hardware</th><th>Block Reward</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Stream A</strong></td><td>Blake3</td><td>ASIC / High-end GPU</td><td>50 IDAG</td><td><span class="badge badge-green">Live</span></td></tr>
+                        <tr><td><strong>Stream B</strong></td><td>B3MemHash (memory-hard)</td><td>CPU / GPU</td><td>25 IDAG</td><td><span class="badge badge-green">Live</span></td></tr>
+                        <tr><td><strong>Stream C</strong></td><td>ZK Proof Validation</td><td>ZK Provers</td><td>Fee-based</td><td><span class="badge badge-blue">Planned</span></td></tr>
+                    </tbody>
+                </table>
+                <h3>Economic Rationale</h3>
+                <p>The BraidCore model addresses a fundamental tension in PoW design. Pure ASIC mining (Bitcoin) concentrates hash power in large industrial operations. Pure memory-hard mining (Monero) resists ASICs but limits throughput. By running both in parallel, IronDAG creates two distinct economic constituencies — ASIC operators and GPU miners — each with different cost structures and incentives, making coordinated attacks significantly more expensive. A third ZK prover constituency is planned for mainnet.</p>
+            </section>
+
+            <!-- PoW & DAA -->
+            <section class="wp-section" id="pow">
+                <h2><span class="section-num">5</span> Proof of Work &amp; Difficulty Adjustment</h2>
+                <h3>B3MemHash Algorithm</h3>
+                <p>Stream B uses a custom memory-hard hash function called <strong>B3MemHash</strong>. The algorithm initializes a 256 KB scratchpad from the block header using Blake3, then performs 2 passes of XOR mixing across the buffer using SIMD intrinsics (AVX2 on x86-64, SSE2 fallback, scalar on other architectures). The final hash is produced by running Blake3 over the mixed buffer. Measured performance on the production VPS is ~8.8 ms/hash, with a batch size of 400 nonces per mining cycle (≈3.5 s) to stay within the timestamp freshness window.</p>
+                <div class="code-block">
+<span class="comment">// B3MemHash — SIMD-accelerated memory-hard hash (from pow.rs)</span>
+<span class="keyword">fn</span> <span class="fn-name">b3memhash</span>(header: &amp;<span class="type">BlockHeader</span>, nonce: <span class="type">u64</span>) -&gt; [<span class="type">u8</span>; <span class="number">32</span>] {
+    <span class="comment">// 1. Initialize 256 KB scratchpad from header + nonce</span>
+    <span class="keyword">let mut</span> buf = [<span class="number">0u8</span>; <span class="number">262144</span>]; <span class="comment">// 256 KB</span>
+    blake3_init_buffer(header, nonce, &amp;<span class="keyword">mut</span> buf);
+
+    <span class="comment">// 2. 2 passes of SIMD XOR mixing (AVX2 / SSE2 / scalar)</span>
+    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="number">0</span>..<span class="number">2</span> {
+        simd_xor_mix(&amp;<span class="keyword">mut</span> buf); <span class="comment">// dispatches to best available SIMD</span>
+    }
+
+    <span class="comment">// 3. Final Blake3 over mixed buffer</span>
+    blake3::hash(&amp;buf).into()
+}
+
+<span class="comment">// Mining loop — zero allocation, parallel threads with atomics</span>
+<span class="keyword">fn</span> <span class="fn-name">mine_block</span>(header: &amp;<span class="type">BlockHeader</span>, difficulty: <span class="type">u8</span>) -&gt; <span class="type">u64</span> {
+    <span class="keyword">let mut</span> nonce = <span class="number">0u64</span>;
+    <span class="keyword">loop</span> {
+        <span class="keyword">let</span> hash = b3memhash(header, nonce);
+        <span class="keyword">if</span> meets_difficulty(&amp;hash, difficulty) { <span class="keyword">return</span> nonce; }
+        nonce += <span class="number">1</span>;
+    }
+}
+                </div>
+                <h3>Difficulty Adjustment Algorithm (DAA)</h3>
+                <p>The DAA uses <strong>fixed-point arithmetic</strong> (no floating-point in consensus code) to compute the ratio of target block time to actual block time, then clamps the adjustment to a range of <strong>0.667× to 1.5×</strong> per adjustment window. This prevents the oscillation behavior common in naive DAA implementations.</p>
+                <p>Two variants are implemented: a single-block adjustment for rapid response and a moving-average variant for stability over longer windows. The testnet currently runs with the following parameters:</p>
+                <table class="wp-table">
+                    <thead><tr><th>Parameter</th><th>Value</th><th>Purpose</th></tr></thead>
+                    <tbody>
+                        <tr><td>INITIAL_DIFFICULTY_A</td><td>9 leading zero bits</td><td>Stream A starting difficulty</td></tr>
+                        <tr><td>INITIAL_DIFFICULTY_B</td><td>5 leading zero bits</td><td>Stream B starting difficulty</td></tr>
+                        <tr><td>MAX_DIFFICULTY</td><td>21 leading zero bits</td><td>Upper bound on difficulty (both streams)</td></tr>
+                        <tr><td>Adjustment clamp (up)</td><td>1.5×</td><td>Prevents runaway difficulty increase</td></tr>
+                        <tr><td>Adjustment clamp (down)</td><td>0.667×</td><td>Prevents runaway difficulty collapse</td></tr>
+                        <tr><td>Target block time (A)</td><td>10 seconds</td><td>Stream A (Blake3) interval target</td></tr>
+                        <tr><td>Target block time (B)</td><td>5 seconds</td><td>Stream B (B3MemHash) interval target</td></tr>
+                        <tr><td>Observed block time</td><td>~10–11s (A) · ~5s (B)</td><td>Live testnet measurement</td></tr>
+                    </tbody>
+                </table>
+                <div class="info-box success">
+                    <p><strong>Testnet Status:</strong> Both streams are live and producing blocks continuously. Stream A runs at a stable 10–11 second median interval; Stream B at ~5 seconds. The Stream B DAA uses inter-block wall time (not per-batch time) to avoid the oscillation-to-MAX_DIFFICULTY failure mode. BRAIDCORE distribution is ~82% A / 18% B by block count.</p>
+                </div>
+            </section>
+
+            <!-- PQC -->
+            <section class="wp-section" id="pqc">
+                <h2><span class="section-num">6</span> Post-Quantum Cryptography</h2>
+                <h3>NIST Standards Implemented</h3>
+                <p>IronDAG implements post-quantum cryptography at the network transport layer using <strong>ML-KEM-768</strong> (Module Lattice Key Encapsulation Mechanism, NIST FIPS 203), the standardized version of CRYSTALS-Kyber. This provides 192-bit classical security and is resistant to Grover's algorithm and Shor's algorithm attacks.</p>
+                <table class="wp-table">
+                    <thead><tr><th>Algorithm</th><th>Standard</th><th>Use Case</th><th>Security Level</th></tr></thead>
+                    <tbody>
+                        <tr><td>ML-KEM-768</td><td>NIST FIPS 203</td><td>P2P key encapsulation</td><td>NIST Level 3 (192-bit)</td></tr>
+                        <tr><td>Ed25519</td><td>RFC 8032</td><td>TOFU peer identity</td><td>Classical 128-bit</td></tr>
+                        <tr><td>ML-DSA (planned)</td><td>NIST FIPS 204</td><td>Transaction signatures</td><td>NIST Level 3</td></tr>
+                    </tbody>
+                </table>
+                <h3>The Kyber Handshake Protocol</h3>
+                <p>Every peer connection performs a full ML-KEM-768 key exchange before any block data is transmitted. The handshake proceeds as follows:</p>
+                <div class="code-block">
+<span class="comment">// 5-step Kyber handshake (from kyber_transport.rs)</span>
+
+<span class="comment">// Step 1: Initiator generates ML-KEM-768 keypair</span>
+<span class="keyword">let</span> (ek, dk) = ml_kem_768::generate_keypair();
+
+<span class="comment">// Step 2: Initiator sends encapsulation key (ek) to responder</span>
+send(peer, &amp;ek).await?;
+
+<span class="comment">// Step 3: Responder encapsulates — produces ciphertext + shared secret</span>
+<span class="keyword">let</span> (ciphertext, shared_secret) = ml_kem_768::encapsulate(&amp;ek);
+send(initiator, &amp;ciphertext).await?;
+
+<span class="comment">// Step 4: Initiator decapsulates — derives same shared secret</span>
+<span class="keyword">let</span> shared_secret = ml_kem_768::decapsulate(&amp;dk, &amp;ciphertext);
+
+<span class="comment">// Step 5: Both parties derive session key via HKDF-SHA256</span>
+<span class="keyword">let</span> session_key = hkdf_sha256(&amp;shared_secret, b<span class="string">"irondag-session-v1"</span>);
+<span class="comment">// All subsequent traffic encrypted with session_key</span>
+                </div>
+                <h3>Why This Matters: HNDL Protection</h3>
+                <p>The Harvest Now, Decrypt Later attack allows a quantum-capable adversary to record classical ECDH-encrypted P2P traffic today and decrypt it once a sufficiently powerful quantum computer exists. By using ML-KEM-768 for key exchange, IronDAG ensures that even if all historical P2P traffic is archived, it cannot be decrypted retroactively — the shared secret is computationally infeasible to derive from the public encapsulation key alone, even with a quantum computer.</p>
+            </section>
+
+            <!-- Network -->
+            <section class="wp-section" id="network">
+                <h2><span class="section-num">7</span> P2P Network Layer</h2>
+                <p>The IronDAG P2P layer uses <strong>QUIC</strong> as the transport protocol, providing multiplexed streams, built-in TLS 1.3, and connection migration. Peer identity is established via <strong>TOFU (Trust On First Use)</strong> — each node presents a self-signed Ed25519 certificate, and the fingerprint is stored on first connection.</p>
+                <h3>Sybil &amp; Eclipse Attack Resistance</h3>
+                <p>The network layer implements several mitigations against Sybil and eclipse attacks:</p>
+                <table class="wp-table">
+                    <thead><tr><th>Attack Vector</th><th>Mitigation</th></tr></thead>
+                    <tbody>
+                        <tr><td>Sybil via many identities</td><td>Jaccard similarity detection — peers with highly overlapping peer lists are flagged</td></tr>
+                        <tr><td>Eclipse via subnet concentration</td><td>/16 subnet diversity limit — maximum 2 peers per /16 IPv4 subnet</td></tr>
+                        <tr><td>MITM on key exchange</td><td>ML-KEM-768 encapsulation — no shared secret derivable from public key alone</td></tr>
+                        <tr><td>Traffic analysis</td><td>QUIC multiplexing obscures message boundaries</td></tr>
+                        <tr><td>Peer identity spoofing</td><td>Ed25519 TOFU certificate pinning</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- EVM -->
+            <section class="wp-section" id="evm">
+                <h2><span class="section-num">8</span> EVM Integration</h2>
+                <p>IronDAG integrates <strong>SputnikVM</strong> at the Shanghai hard fork level, providing full EVM opcode compatibility. The JSON-RPC surface has been validated with 129+ methods covering the full <code>eth_*</code>, <code>net_*</code>, <code>web3_*</code>, and <code>irondag_*</code> (IronDAG-specific) namespaces.</p>
+                <h3>Validated Capabilities</h3>
+                <table class="wp-table">
+                    <thead><tr><th>Capability</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td>MetaMask connection (Chain ID 11567)</td><td><span class="badge badge-green">Live</span></td></tr>
+                        <tr><td>eth_call / eth_estimateGas</td><td><span class="badge badge-green">Live</span></td></tr>
+                        <tr><td>Transaction receipts &amp; logs</td><td><span class="badge badge-green">Live</span></td></tr>
+                        <tr><td>Solidity contract deployment</td><td><span class="badge badge-green">Live</span></td></tr>
+                        <tr><td>WebSocket subscriptions (eth_subscribe)</td><td><span class="badge badge-green">Live</span></td></tr>
+                        <tr><td>ERC-20 / ERC-721 compatibility</td><td><span class="badge badge-green">Live</span></td></tr>
+                        <tr><td>Parallel EVM execution</td><td><span class="badge badge-cyan">Testnet</span></td></tr>
+                    </tbody>
+                </table>
+                <h3>Account Abstraction</h3>
+                <p>The protocol implements native account abstraction with smart contract wallets supporting multi-signature authorization, social recovery mechanisms, per-transaction spending limits, and atomic batch transactions. This is implemented at the protocol level rather than as an L2 overlay, providing lower gas costs and tighter security guarantees than ERC-4337 on Ethereum.</p>
+            </section>
+
+            <!-- Sharding -->
+            <section class="wp-section" id="sharding">
+                <h2><span class="section-num">9</span> Sharding</h2>
+                <p>IronDAG's sharding architecture uses consistent hashing for deterministic shard assignment. Each shard maintains its own state tree and transaction pool. Cross-shard transactions use a two-phase commit protocol with async receipt-based finality.</p>
+                <div class="info-box warning">
+                    <p><strong>Current Status:</strong> The sharding module is implemented in the codebase but is currently disabled on the live testnet. It is planned for activation and optimization as part of the mainnet milestone.</p>
+                </div>
+            </section>
+
+            <!-- Tokenomics -->
+            <section class="wp-section" id="tokenomics">
+                <h2><span class="section-num">10</span> Tokenomics</h2>
+                <table class="wp-table">
+                    <thead><tr><th>Allocation</th><th>Percentage</th><th>Vesting</th></tr></thead>
+                    <tbody>
+                        <tr><td>Mining Rewards (Stream A + B)</td><td>90%</td><td>Earned per block</td></tr>
+                        <tr><td>Team &amp; Development</td><td>5%</td><td>4-year linear vesting</td></tr>
+                        <tr><td>Ecosystem Fund</td><td>5%</td><td>Community governance</td></tr>
+                    </tbody>
+                </table>
+                <p>Stream A (Blake3) rewards 50 IDAG per block. Stream B (B3MemHash) rewards 25 IDAG per block. Stream C (ZK Proofs, planned) will be fee-based only. There is no pre-mine, no presale, and no VC allocation. The supply is entirely emission-based.</p>
+                <p>A portion of transaction fees are burned on each block, creating deflationary pressure as network usage grows. The burn rate and emission schedule are subject to governance adjustment post-mainnet.</p>
+            </section>
+
+            <!-- Competitive Analysis -->
+            <section class="wp-section" id="competitive">
+                <h2><span class="section-num">11</span> Competitive Analysis</h2>
+                <table class="wp-table">
+                    <thead>
+                        <tr>
+                            <th>Protocol</th>
+                            <th>BlockDAG</th>
+                            <th>Post-Quantum P2P</th>
+                            <th>EVM</th>
+                            <th>Real PoW</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="highlight"><td>IronDAG (IDAG)</td><td><span class="check">✓ GhostDAG</span></td><td><span class="check">✓ ML-KEM-768</span></td><td><span class="check">✓ SputnikVM</span></td><td><span class="check">✓ B3MemHash</span></td></tr>
+                        <tr><td>Kaspa (KAS)</td><td><span class="check">✓ GhostDAG</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="check">✓ KHeavyHash</span></td></tr>
+                        <tr><td>Ethereum (ETH)</td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="check">✓ Native</span></td><td><span class="cross">✗ PoS</span></td></tr>
+                        <tr><td>QRL</td><td><span class="cross">✗</span></td><td><span class="check">✓ XMSS</span></td><td><span class="cross">✗</span></td><td><span class="check">✓ RandomX</span></td></tr>
+                        <tr><td>Bitcoin (BTC)</td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="check">✓ SHA-256</span></td></tr>
+                        <tr><td>Solana (SOL)</td><td><span class="cross">✗</span></td><td><span class="cross">✗</span></td><td><span class="check">✓ Partial</span></td><td><span class="cross">✗ PoH/PoS</span></td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Roadmap -->
+            <section class="wp-section" id="roadmap">
+                <h2><span class="section-num">12</span> Roadmap</h2>
+                <table class="wp-table">
+                    <thead><tr><th>Phase</th><th>Milestone</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <tr><td>Phase 1</td><td>Core protocol: GhostDAG, BraidCore PoW, ML-KEM-768 P2P, SputnikVM EVM, Account Abstraction</td><td><span class="badge badge-green">Complete</span></td></tr>
+                        <tr><td>Phase 2</td><td>Testnet hardening: sync resilience, DAA tuning, RPC validation, multi-datacenter deployment</td><td><span class="badge badge-green">Complete</span></td></tr>
+                        <tr><td>Phase 3</td><td>Public testnet: community nodes, bug bounty, seed funding, Alliance DAO application</td><td><span class="badge badge-cyan">In Progress</span></td></tr>
+                        <tr><td>Phase 4</td><td>Mainnet: genesis config, ML-DSA signature migration (FIPS 204), sharding optimization, ecosystem tooling</td><td><span class="badge badge-blue">Planned</span></td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Conclusion -->
+            <section class="wp-section" id="conclusion">
+                <h2><span class="section-num">13</span> Conclusion</h2>
+                <p>IronDAG is a production-grade Layer 1 blockchain protocol that addresses a clear gap in the current landscape. The combination of GhostDAG consensus, ML-KEM-768 post-quantum transport, and full EVM compatibility is unique among live or testnet-stage protocols as of April 2026.</p>
+                <p>The protocol is not a whitepaper or a proof of concept. It is a running system producing blocks at stable intervals between geographically distributed nodes using real cryptographic Proof of Work and real post-quantum key exchange. The core implementation is available for technical review at the GitHub repository below.</p>
+                <div class="info-box">
+                    <p><strong>Core Concepts Repository:</strong> <a href="https://github.com/RunTimeAdmin/irondag-core-concepts" target="_blank" style="color: var(--cyan);">github.com/RunTimeAdmin/irondag-core-concepts</a></p>
+                </div>
+                <div class="info-box">
+                    <p><strong>Public Testnet RPC:</strong> <code>http://76.13.101.31:8546</code> — Chain ID: 11567 — Currency: IDAG</p>
+                </div>
+                <div class="info-box">
+                    <p><strong>Block Explorer:</strong> <a href="http://explorer.irondag.io" target="_blank" style="color: var(--cyan);">explorer.irondag.io</a></p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <p>© 2026 IronDAG Protocol · Ticker: IDAG · Built in Rust · Secured by NIST FIPS 203</p>
+        <p style="margin-top: 0.5rem;"><a href="index.html">Home</a> · <a href="https://github.com/RunTimeAdmin/irondag-core-concepts" target="_blank">GitHub</a> · <a href="http://explorer.irondag.io" target="_blank">Testnet Explorer</a></p>
+    </footer>
+</body>
+</html>

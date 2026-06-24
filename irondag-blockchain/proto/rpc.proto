@@ -1,0 +1,227 @@
+syntax = "proto3";
+
+package irondag.rpc;
+
+// RPC Service for IronDAG Blockchain
+service BlockchainService {
+  // Get latest block number
+  rpc GetBlockNumber(GetBlockNumberRequest) returns (GetBlockNumberResponse);
+  
+  // Get block by number
+  rpc GetBlockByNumber(GetBlockByNumberRequest) returns (GetBlockByNumberResponse);
+  
+  // Get block by hash
+  rpc GetBlockByHash(GetBlockByHashRequest) returns (GetBlockByHashResponse);
+  
+  // Get balance for an address
+  rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse);
+  
+  // Get transaction count (nonce) for an address
+  rpc GetTransactionCount(GetTransactionCountRequest) returns (GetTransactionCountResponse);
+  
+  // Send raw transaction
+  rpc SendRawTransaction(SendRawTransactionRequest) returns (SendRawTransactionResponse);
+  
+  // Get transaction by hash
+  rpc GetTransactionByHash(GetTransactionByHashRequest) returns (GetTransactionByHashResponse);
+  
+  // Get transaction receipt
+  rpc GetTransactionReceipt(GetTransactionReceiptRequest) returns (GetTransactionReceiptResponse);
+  
+  // Get DAG statistics
+  rpc GetDagStats(GetDagStatsRequest) returns (GetDagStatsResponse);
+  
+  // Get peer count
+  rpc GetPeerCount(GetPeerCountRequest) returns (GetPeerCountResponse);
+  
+  // Get gas price
+  rpc GetGasPrice(GetGasPriceRequest) returns (GetGasPriceResponse);
+  
+  // Call contract (read-only)
+  rpc Call(CallRequest) returns (CallResponse);
+  
+  // Estimate gas
+  rpc EstimateGas(EstimateGasRequest) returns (EstimateGasResponse);
+  
+  // Get code at address
+  rpc GetCode(GetCodeRequest) returns (GetCodeResponse);
+}
+
+// Request/Response messages
+message GetBlockNumberRequest {}
+
+message GetBlockNumberResponse {
+  string block_number = 1; // Hex string
+}
+
+message GetBlockByNumberRequest {
+  string block_number = 1; // Hex string or "latest"
+  bool include_transactions = 2;
+}
+
+message GetBlockByNumberResponse {
+  Block block = 1;
+}
+
+message GetBlockByHashRequest {
+  string hash = 1; // Hex string
+  bool include_transactions = 2;
+}
+
+message GetBlockByHashResponse {
+  Block block = 1;
+}
+
+message GetBalanceRequest {
+  string address = 1; // Hex string
+  string block_number = 2; // Hex string or "latest"
+}
+
+message GetBalanceResponse {
+  string balance = 1; // Hex string
+}
+
+message GetTransactionCountRequest {
+  string address = 1; // Hex string
+  string block_number = 2; // Hex string or "latest"
+}
+
+message GetTransactionCountResponse {
+  string count = 1; // Hex string (nonce)
+}
+
+message SendRawTransactionRequest {
+  string raw_transaction = 1; // Hex string
+}
+
+message SendRawTransactionResponse {
+  string transaction_hash = 1; // Hex string
+}
+
+message GetTransactionByHashRequest {
+  string hash = 1; // Hex string
+}
+
+message GetTransactionByHashResponse {
+  Transaction transaction = 1;
+}
+
+message GetTransactionReceiptRequest {
+  string hash = 1; // Hex string
+}
+
+message GetTransactionReceiptResponse {
+  TransactionReceipt receipt = 1;
+}
+
+message GetDagStatsRequest {}
+
+message GetDagStatsResponse {
+  uint64 total_blocks = 1;
+  uint64 blue_blocks = 2;
+  uint64 red_blocks = 3;
+  uint64 total_transactions = 4;
+  uint64 total_size_bytes = 5;
+  uint64 avg_block_size = 6;
+  uint64 avg_txs_per_block = 7;
+}
+
+message GetPeerCountRequest {}
+
+message GetPeerCountResponse {
+  uint32 peer_count = 1;
+}
+
+message GetGasPriceRequest {}
+
+message GetGasPriceResponse {
+  string gas_price = 1; // Hex string
+}
+
+message CallRequest {
+  TransactionCall call = 1;
+  string block_number = 2; // Hex string or "latest"
+}
+
+message CallResponse {
+  string result = 1; // Hex string (return data)
+}
+
+message EstimateGasRequest {
+  TransactionCall call = 1;
+}
+
+message EstimateGasResponse {
+  string gas_estimate = 1; // Hex string
+}
+
+message GetCodeRequest {
+  string address = 1; // Hex string
+  string block_number = 2; // Hex string or "latest"
+}
+
+message GetCodeResponse {
+  string code = 1; // Hex string
+}
+
+// Data structures
+message Block {
+  string hash = 1;
+  string parent_hash = 2;
+  repeated string parent_hashes = 3; // For DAG
+  uint64 block_number = 4;
+  uint64 timestamp = 5;
+  uint64 difficulty = 6;
+  string nonce = 7; // Hex string
+  string transactions_root = 8;
+  repeated Transaction transactions = 9;
+  uint32 stream_type = 10; // 0=A, 1=B, 2=C
+}
+
+message Transaction {
+  string hash = 1;
+  string from = 2;
+  string to = 3;
+  string value = 4; // Hex string
+  string data = 5; // Hex string
+  uint64 nonce = 6;
+  string gas_price = 7; // Hex string
+  uint64 gas_limit = 8;
+  uint32 v = 9;
+  string r = 10; // Hex string
+  string s = 11; // Hex string
+}
+
+message TransactionReceipt {
+  string transaction_hash = 1;
+  uint64 block_number = 2;
+  string block_hash = 3;
+  uint64 transaction_index = 4;
+  string from = 5;
+  string to = 6;
+  uint64 gas_used = 7;
+  uint64 cumulative_gas_used = 8;
+  string contract_address = 9; // Empty if not a contract creation
+  repeated Log logs = 10;
+  string status = 11; // "0x1" for success, "0x0" for failure
+}
+
+message Log {
+  string address = 1;
+  repeated string topics = 2; // Hex strings
+  string data = 3; // Hex string
+  uint64 block_number = 4;
+  string block_hash = 5;
+  string transaction_hash = 6;
+  uint64 transaction_index = 7;
+  uint64 log_index = 8;
+}
+
+message TransactionCall {
+  string from = 1; // Hex string (optional)
+  string to = 2; // Hex string
+  string value = 3; // Hex string (optional)
+  string data = 4; // Hex string (optional)
+  string gas_price = 5; // Hex string (optional)
+  uint64 gas_limit = 6; // Optional
+}

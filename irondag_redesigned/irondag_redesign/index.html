@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IronDAG Protocol - Post-Quantum Layer 1 Blockchain</title>
+    <meta name="description" content="IronDAG Protocol (IDAG) — The first Layer 1 combining GhostDAG consensus, ML-KEM-768 post-quantum cryptography, and EVM compatibility. Live testnet running now.">
+    <link rel="icon" type="image/png" href="images/coin.png">
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://irondag.io/">
+    <meta property="og:site_name" content="IronDAG Protocol">
+    <meta property="og:title" content="IronDAG Protocol — Post-Quantum Layer 1 Blockchain">
+    <meta property="og:description" content="The first L1 combining GhostDAG BlockDAG consensus, ML-KEM-768 post-quantum cryptography (NIST FIPS 203), and full EVM compatibility. Live testnet running between datacenters.">
+    <meta property="og:image" content="https://irondag.io/twitter-card.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/jpeg">
+    <!-- Twitter / X Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@DevIronDAG">
+    <meta name="twitter:creator" content="@DevIronDAG">
+    <meta name="twitter:title" content="IronDAG Protocol — Post-Quantum L1">
+    <meta name="twitter:description" content="GhostDAG + ML-KEM-768 + EVM. No other L1 has all three. Live testnet now.">
+    <meta name="twitter:image" content="https://irondag.io/twitter-card.jpg">
+    <meta name="twitter:image:alt" content="IronDAG Protocol — Post-Quantum AI-Native Layer 1 Blockchain">
+    
+    <!-- Google Fonts - Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Enhanced Web3 Color Palette */
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --cyan: #06b6d4;
+            --neon-green: #10b981;
+            --neon-yellow: #fbbf24;
+            
+            /* Dark Mode Foundation */
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --darkest: #020617;
+            --light: #f8fafc;
+            --text: #334155;
+            --text-light: #64748b;
+            
+            /* Glassmorphism */
+            --glass-light: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        
+        html { 
+            scroll-behavior: smooth; 
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--darkest);
+            overflow-x: hidden;
+            letter-spacing: 0.3px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* ===== ANIMATED BACKGROUND SYSTEM ===== */
+        .animated-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #020617 0%, #0f172a 25%, #1a0f3f 50%, #0f172a 75%, #020617 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .particle-grid {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.08) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 30s linear infinite;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        /* Enhanced Orb Effects */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.25;
+            animation: float 25s ease-in-out infinite;
+        }
+        .orb-1 { 
+            width: 500px; height: 500px; 
+            background: radial-gradient(circle, var(--primary), transparent); 
+            top: -250px; left: -250px; 
+            animation-delay: 0s; 
+        }
+        .orb-2 { 
+            width: 600px; height: 600px; 
+            background: radial-gradient(circle, var(--accent), transparent); 
+            top: 40%; right: -300px; 
+            animation-delay: -8s; 
+        }
+        .orb-3 { 
+            width: 450px; height: 450px; 
+            background: radial-gradient(circle, var(--cyan), transparent); 
+            bottom: -225px; left: 50%; 
+            animation-delay: -16s; 
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(120px, -60px) scale(1.15); }
+            66% { transform: translate(-60px, 120px) scale(0.95); }
+        }
+        
+        /* ===== HEADER & NAVIGATION ===== */
+        header {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.15);
+            color: white;
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        nav { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 4s ease-in-out infinite;
+            background-size: 200% 200%;
+            text-decoration: none;
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.5px;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .nav-links { 
+            display: flex; 
+            list-style: none; 
+            gap: 2.5rem; 
+        }
+        
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            padding: 0.5rem 0;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav-links a:hover { 
+            color: white; 
+            text-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
+        }
+        
+        .nav-links a:hover::after { 
+            width: 100%; 
+        }
+        
+        /* ===== HERO SECTION ===== */
+        .hero {
+            position: relative;
+            background: transparent;
+            color: white;
+            padding: 10rem 0 8rem;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 900px; height: 900px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15), transparent 70%);
+            animation: pulse 5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.7; }
+        }
+        
+        .hero-content { 
+            position: relative; 
+            z-index: 1; 
+        }
+        
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #6366f1 40%, #ec4899 70%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGlow 4s ease-in-out infinite;
+            font-weight: 900;
+            letter-spacing: -2px;
+            font-family: 'Space Grotesk', sans-serif;
+            line-height: 1.1;
+        }
+        
+        @keyframes titleGlow {
+            0%, 100% { filter: drop-shadow(0 0 25px rgba(99, 102, 241, 0.4)); }
+            50% { filter: drop-shadow(0 0 50px rgba(236, 72, 153, 0.6)); }
+        }
+        
+        .hero .subtitle { 
+            font-size: 1.6rem; 
+            color: rgba(255, 255, 255, 0.75); 
+            margin-bottom: 2.5rem; 
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+        
+        .hero .status-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.1));
+            color: #10b981;
+            padding: 0.75rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            margin: 1.5rem;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3), inset 0 0 20px rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            animation: statusPulse 2s ease-in-out infinite;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+        
+        @keyframes statusPulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.3), inset 0 0 20px rgba(16, 185, 129, 0.1); }
+            50% { box-shadow: 0 0 50px rgba(16, 185, 129, 0.5), inset 0 0 30px rgba(16, 185, 129, 0.2); }
+        }
+        
+        .hero .ticker {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            margin: 1.5rem;
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            animation: glow 2.5s ease-in-out infinite;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.1); }
+            50% { box-shadow: 0 0 60px rgba(236, 72, 153, 0.6), inset 0 0 30px rgba(255, 255, 255, 0.15); }
+        }
+        
+        .hero p { 
+            max-width: 850px; 
+            margin: 2.5rem auto; 
+            font-size: 1.15rem; 
+            line-height: 1.9; 
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+        }
+        
+        .cta-buttons { 
+            margin-top: 4rem; 
+        }
+        
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            background: rgba(15, 23, 42, 0.6);
+            border-top: 1px solid rgba(99, 102, 241, 0.15);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.15);
+            padding: 3rem 0;
+            backdrop-filter: blur(20px);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2.5rem;
+            text-align: center;
+        }
+        
+        .stat-item { 
+            color: white; 
+        }
+        
+        .stat-value { 
+            font-size: 2.2rem; 
+            font-weight: 900; 
+            background: linear-gradient(135deg, var(--cyan), var(--primary)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            background-clip: text;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .stat-label { 
+            font-size: 0.8rem; 
+            color: rgba(255, 255, 255, 0.5); 
+            margin-top: 0.5rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.15em;
+            font-weight: 600;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            display: inline-block;
+            padding: 1.3rem 2.8rem;
+            margin: 0.6rem;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            font-size: 1.05rem;
+            letter-spacing: 0.3px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+            color: white; 
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-primary:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-outline { 
+            background: rgba(255, 255, 255, 0.06); 
+            color: white; 
+            border: 1.5px solid rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(20px);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-outline:hover { 
+            background: rgba(255, 255, 255, 0.12); 
+            border-color: var(--primary); 
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        
+        /* ===== SECTIONS ===== */
+        section { 
+            padding: 120px 0; 
+            position: relative; 
+        }
+        
+        .section-title { 
+            font-size: 3.5rem; 
+            text-align: center; 
+            margin-bottom: 1.5rem; 
+            color: white; 
+            font-weight: 900;
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -1px;
+        }
+        
+        .section-subtitle { 
+            text-align: center; 
+            color: rgba(255, 255, 255, 0.65); 
+            max-width: 750px; 
+            margin: 0 auto 5rem; 
+            font-size: 1.25rem;
+            font-weight: 300;
+            line-height: 1.8;
+        }
+        
+        /* ===== CARDS WITH GLASSMORPHISM ===== */
+        .why-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 2.5rem; 
+        }
+        
+        .why-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 3.5rem;
+            border-radius: 28px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .why-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        
+        .why-card::after {
+            content: '';
+            position: absolute;
+            top: -50%; right: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        
+        .why-card:hover { 
+            transform: translateY(-12px) scale(1.02); 
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 30px 60px rgba(99, 102, 241, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .why-card:hover::before { 
+            opacity: 1; 
+        }
+        
+        .why-card:hover::after { 
+            opacity: 1; 
+        }
+        
+        .why-card h3 { 
+            font-size: 1.9rem; 
+            margin-bottom: 1.8rem; 
+            color: white; 
+            display: flex; 
+            align-items: center;
+            font-weight: 800;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .why-card p { 
+            color: rgba(255, 255, 255, 0.75); 
+            font-size: 1.1rem; 
+            line-height: 1.8;
+            font-weight: 300;
+        }
+        
+        /* ===== FEATURES GRID ===== */
+        .features-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 2.5rem; 
+        }
+        
+        .feature-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            padding: 2.5rem;
+            border-radius: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .feature-card:hover { 
+            background: rgba(30, 41, 59, 0.7); 
+            border-color: rgba(99, 102, 241, 0.35);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.2);
+        }
+        
+        .feature-card:hover::before { 
+            opacity: 1; 
+        }
+        
+        .feature-icon { 
+            width: 90px; 
+            height: 90px; 
+            margin: 0 auto 1.8rem; 
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1)); 
+            border-radius: 24px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature-card h3 { 
+            color: white; 
+            margin-bottom: 1.2rem; 
+            font-size: 1.5rem;
+            font-weight: 800;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .feature-card p { 
+            color: rgba(255, 255, 255, 0.65); 
+            font-size: 1rem;
+            line-height: 1.7;
+            font-weight: 300;
+        }
+        
+        .status-badge { 
+            display: inline-block; 
+            padding: 0.5rem 1.2rem; 
+            border-radius: 50px; 
+            font-size: 0.75rem; 
+            font-weight: 700; 
+            margin-top: 1.8rem; 
+            background: rgba(16, 185, 129, 0.12); 
+            color: #10b981; 
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        
+        .status-badge-planned { 
+            background: rgba(99, 102, 241, 0.12); 
+            color: #6366f1; 
+            border: 1px solid rgba(99, 102, 241, 0.3); 
+        }
+
+        /* ===== PILLARS TABLE ===== */
+        .pillars-section { 
+            background: rgba(15, 23, 42, 0.4); 
+            border-radius: 40px; 
+            margin: 5rem 0; 
+            padding: 7rem 0; 
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            backdrop-filter: blur(10px);
+        }
+        
+        .pillars-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            color: white; 
+        }
+        
+        .pillars-table th { 
+            background: rgba(99, 102, 241, 0.12); 
+            padding: 1.3rem 1.8rem; 
+            text-align: left; 
+            font-size: 0.85rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.12em; 
+            color: var(--cyan);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.25);
+            font-weight: 700;
+        }
+        
+        .pillars-table td { 
+            padding: 1.2rem 1.8rem; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
+            font-size: 0.95rem; 
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+        }
+        
+        .pillars-table tr:hover td { 
+            background: rgba(99, 102, 241, 0.08); 
+        }
+        
+        .check { 
+            color: #10b981; 
+            font-weight: 700; 
+        }
+        
+        .cross { 
+            color: #ef4444;
+            font-weight: 700;
+        }
+        
+        .highlight-row td { 
+            color: white; 
+            font-weight: 700;
+            background: rgba(99, 102, 241, 0.08);
+        }
+        
+        .highlight-row td:first-child { 
+            color: var(--cyan); 
+        }
+
+        /* ===== CODE BLOCK ===== */
+        .code-block {
+            background: rgba(13, 17, 23, 0.8);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 16px;
+            padding: 2rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #e6edf3;
+            overflow-x: auto;
+            margin: 2rem 0;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+        
+        .code-block .comment { 
+            color: #8b949e; 
+        }
+        
+        .code-block .keyword { 
+            color: #ff7b72; 
+        }
+        
+        .code-block .string { 
+            color: #a5d6ff; 
+        }
+        
+        .code-block .number { 
+            color: #79c0ff; 
+        }
+
+        /* ===== EXPLORER PREVIEW ===== */
+        .explorer-preview { 
+            background: rgba(15, 23, 42, 0.4); 
+            border-radius: 40px; 
+            margin: 5rem 0; 
+            padding: 7rem 0; 
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            backdrop-filter: blur(10px);
+        }
+        
+        .explorer-content { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 5rem; 
+            align-items: center; 
+        }
+        
+        .explorer-mockup { 
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.6));
+            border-radius: 24px; 
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: 24px; 
+            aspect-ratio: 16/10; 
+            position: relative; 
+            overflow: hidden;
+        }
+        
+        .mockup-header { 
+            display: flex; 
+            gap: 8px; 
+            margin-bottom: 24px; 
+        }
+        
+        .mockup-header .dot { 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 50%; 
+            background: rgba(255, 255, 255, 0.25); 
+        }
+        
+        .mockup-body { 
+            height: 100%; 
+        }
+
+        /* ===== FOUNDER SECTION ===== */
+        .founder-section { 
+            background: rgba(15, 23, 42, 0.4); 
+            border-radius: 40px; 
+            margin: 5rem 0; 
+            padding: 7rem 0; 
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            backdrop-filter: blur(10px);
+        }
+        
+        .founder-inner { 
+            display: grid; 
+            grid-template-columns: 300px 1fr; 
+            gap: 6rem; 
+            align-items: start; 
+        }
+        
+        .founder-avatar {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .founder-avatar-ring {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--cyan), var(--accent));
+            padding: 4px;
+            box-shadow: 0 0 50px rgba(99, 102, 241, 0.5), 0 0 100px rgba(6, 182, 212, 0.2);
+            animation: ringPulse 5s ease-in-out infinite;
+        }
+        
+        @keyframes ringPulse {
+            0%, 100% { box-shadow: 0 0 50px rgba(99, 102, 241, 0.5), 0 0 100px rgba(6, 182, 212, 0.2); }
+            50% { box-shadow: 0 0 80px rgba(99, 102, 241, 0.8), 0 0 150px rgba(6, 182, 212, 0.4); }
+        }
+        
+        .founder-avatar-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .founder-avatar-svg { 
+            width: 110px; 
+            height: 110px; 
+            opacity: 0.95; 
+        }
+        
+        .founder-name-plate {
+            text-align: center;
+        }
+        
+        .founder-name-plate h3 { 
+            color: white; 
+            font-size: 1.4rem; 
+            font-weight: 800;
+            margin-bottom: 0.4rem;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .founder-name-plate span { 
+            color: var(--cyan); 
+            font-size: 0.9rem; 
+            font-weight: 700; 
+            letter-spacing: 0.08em; 
+            text-transform: uppercase; 
+        }
+        
+        .founder-credentials {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            width: 100%;
+        }
+        
+        .credential-badge {
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 10px;
+            padding: 0.6rem 1rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+        
+        .credential-badge strong { 
+            color: var(--primary); 
+            display: block; 
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        
+        .founder-content h2 { 
+            font-size: 2.8rem; 
+            font-weight: 900; 
+            color: white; 
+            margin-bottom: 0.8rem; 
+            line-height: 1.2;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .founder-content .founder-role { 
+            color: var(--cyan); 
+            font-size: 1.05rem; 
+            font-weight: 700; 
+            letter-spacing: 0.1em; 
+            text-transform: uppercase; 
+            margin-bottom: 2.5rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 0.8rem; 
+        }
+        
+        .founder-content .founder-role::before { 
+            content: ''; 
+            display: inline-block; 
+            width: 35px; 
+            height: 2px; 
+            background: var(--cyan); 
+        }
+        
+        .founder-quote {
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 4px solid var(--primary);
+            border-radius: 0 16px 16px 0;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2.5rem;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.8;
+            font-style: italic;
+            font-weight: 300;
+        }
+        
+        .founder-body p { 
+            color: rgba(255, 255, 255, 0.75); 
+            font-size: 1.1rem; 
+            line-height: 1.9; 
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+        }
+        
+        .founder-body p strong { 
+            color: white;
+            font-weight: 700;
+        }
+        
+        .founder-body p a { 
+            color: var(--cyan); 
+            text-decoration: none; 
+            border-bottom: 1px solid rgba(6, 182, 212, 0.3); 
+            transition: all 0.2s; 
+            font-weight: 600;
+        }
+        
+        .founder-body p a:hover { 
+            border-color: var(--cyan);
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+        }
+        
+        .founder-tags { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 0.8rem; 
+            margin-top: 2.5rem; 
+        }
+        
+        .founder-tag { 
+            background: rgba(6, 182, 212, 0.1); 
+            border: 1px solid rgba(6, 182, 212, 0.3); 
+            border-radius: 50px; 
+            padding: 0.45rem 1.2rem; 
+            font-size: 0.85rem; 
+            color: var(--cyan); 
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        
+        @media (max-width: 900px) { 
+            .founder-inner { 
+                grid-template-columns: 1fr; 
+            } 
+            .founder-avatar { 
+                flex-direction: row; 
+                flex-wrap: wrap; 
+                justify-content: center; 
+            } 
+        }
+
+        /* ===== FOOTER ===== */
+        footer { 
+            background: var(--darkest); 
+            color: white; 
+            padding: 7rem 0 4rem; 
+            text-align: center; 
+            border-top: 1px solid rgba(99, 102, 241, 0.15); 
+        }
+        
+        footer h3 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .footer-links { 
+            display: flex; 
+            justify-content: center; 
+            gap: 3.5rem; 
+            margin: 3.5rem 0; 
+            flex-wrap: wrap; 
+        }
+        
+        .footer-links a { 
+            color: rgba(255, 255, 255, 0.65); 
+            text-decoration: none; 
+            transition: all 0.3s;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        
+        .footer-links a:hover { 
+            color: var(--primary);
+            text-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+        }
+        
+        /* ===== ANIMATIONS ===== */
+        .fade-in { 
+            opacity: 0; 
+            transform: translateY(40px); 
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        
+        .fade-in.visible { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+        
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .hero h1 { 
+                font-size: 2.8rem; 
+            }
+            
+            .nav-links { 
+                display: none; 
+            }
+            
+            .explorer-content { 
+                grid-template-columns: 1fr; 
+            }
+            
+            .section-title { 
+                font-size: 2.5rem; 
+            }
+            
+            .stats-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 1.5rem;
+            }
+            
+            .founder-inner {
+                grid-template-columns: 1fr;
+            }
+            
+            section {
+                padding: 80px 0;
+            }
+            
+            .why-card {
+                padding: 2.5rem;
+            }
+            
+            .feature-card {
+                padding: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero h1 { 
+                font-size: 2rem; 
+            }
+            
+            .hero .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .section-title { 
+                font-size: 1.8rem; 
+            }
+            
+            .stats-grid { 
+                grid-template-columns: 1fr; 
+            }
+            
+            .btn {
+                padding: 1rem 2rem;
+                font-size: 0.95rem;
+            }
+            
+            .footer-links {
+                gap: 1.5rem;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="particle-grid"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <img src="images/LOGO.png" alt="IronDAG" style="height: 40px; vertical-align: middle; margin-right: 12px;">
+                    IronDAG Protocol
+                </a>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="dev-updates.html">Dev Updates</a>
+                    <a href="IronDAG_WHITEPAPER.html">Whitepaper</a>
+                    <a href="#roadmap">Roadmap</a>
+                    <a href="#founder">Founder</a>
+                    <a href="comparison.html">Comparison</a>
+                    <a href="http://explorer.irondag.io" target="_blank">Testnet Explorer</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container hero-content">
+            <div style="margin-bottom: 2rem;">
+                <span class="status-badge">
+                    ✓ Public Testnet Live | Multi-Datacenter | Real PoW
+                </span>
+            </div>
+            <h1>IronDAG Protocol</h1>
+            <div class="subtitle">Post-Quantum Layer 1 Blockchain</div>
+            <div class="ticker">Ticker: IDAG</div>
+            <p>The first Layer 1 combining GhostDAG BlockDAG consensus, ML-KEM-768 post-quantum cryptography (NIST FIPS 203), and full EVM compatibility. No other chain has all three. Built in Rust. Live on testnet now.</p>
+            <div class="cta-buttons">
+                <a href="http://explorer.irondag.io" class="btn btn-primary" target="_blank">Explore Testnet</a>
+                <a href="IronDAG_WHITEPAPER.html" class="btn btn-outline" target="_blank">Read Whitepaper</a>
+                <a href="https://github.com/dev-irondag/irondag-core-concepts" class="btn btn-outline" target="_blank">Core Concepts Repo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Stats Bar -->
+    <div class="stats-bar">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">~10s</div>
+                    <div class="stat-label">Median Block Time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">ML-KEM-768</div>
+                    <div class="stat-label">P2P Encryption Standard</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">129+</div>
+                    <div class="stat-label">JSON-RPC Methods</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">Live</div>
+                    <div class="stat-label">Multi-Datacenter Testnet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- The Three Pillars -->
+    <section class="pillars-section">
+        <div class="container">
+            <h2 class="section-title fade-in">The Three Pillars</h2>
+            <p class="section-subtitle fade-in">
+                No other Layer 1 combines all three. Kaspa has GhostDAG but no PQC and no EVM. Ethereum has EVM but no BlockDAG and no PQC.
+            </p>
+            <table class="pillars-table fade-in">
+                <thead>
+                    <tr>
+                        <th>Protocol</th>
+                        <th>BlockDAG Consensus</th>
+                        <th>Post-Quantum Crypto</th>
+                        <th>EVM Compatible</th>
+                        <th>Live Testnet</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="highlight-row">
+                        <td>IronDAG (IDAG)</td>
+                        <td><span class="check">✓ GhostDAG</span></td>
+                        <td><span class="check">✓ ML-KEM-768 (FIPS 203)</span></td>
+                        <td><span class="check">✓ SputnikVM</span></td>
+                        <td><span class="check">✓ Running Now</span></td>
+                    </tr>
+                    <tr>
+                        <td>Kaspa (KAS)</td>
+                        <td><span class="check">✓ GhostDAG</span></td>
+                        <td><span class="cross">✗ None</span></td>
+                        <td><span class="cross">✗ None</span></td>
+                        <td><span class="check">✓ Mainnet</span></td>
+                    </tr>
+                    <tr>
+                        <td>Ethereum (ETH)</td>
+                        <td><span class="cross">✗ Single chain</span></td>
+                        <td><span class="cross">✗ None</span></td>
+                        <td><span class="check">✓ Native</span></td>
+                        <td><span class="check">✓ Mainnet</span></td>
+                    </tr>
+                    <tr>
+                        <td>QRL</td>
+                        <td><span class="cross">✗ Single chain</span></td>
+                        <td><span class="check">✓ XMSS</span></td>
+                        <td><span class="cross">✗ None</span></td>
+                        <td><span class="check">✓ Mainnet</span></td>
+                    </tr>
+                    <tr>
+                        <td>Bitcoin (BTC)</td>
+                        <td><span class="cross">✗ Single chain</span></td>
+                        <td><span class="cross">✗ None</span></td>
+                        <td><span class="cross">✗ None</span></td>
+                        <td><span class="check">✓ Mainnet</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Why IronDAG -->
+    <section id="why" class="why">
+        <div class="container">
+            <h2 class="section-title fade-in">Why IronDAG?</h2>
+            <p class="section-subtitle fade-in">
+                Built from the ground up to solve the most critical challenges in blockchain: quantum security, scalability, and developer accessibility.
+            </p>
+            
+            <div class="why-grid">
+                <div class="why-card fade-in">
+                    <h3>
+                        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 40px; height: 40px; display: inline-block; vertical-align: middle; margin-right: 0.8rem;">
+                            <defs><linearGradient id="pqGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" /><stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" /></linearGradient></defs>
+                            <path d="M20 5L35 12V28L20 35L5 28V12L20 5Z" fill="url(#pqGrad)" stroke="#fff" stroke-width="1.5"/>
+                            <path d="M12 18L20 26L28 18" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="20" cy="15" r="3" fill="#fff"/>
+                        </svg>
+                        Post-Quantum Security
+                    </h3>
+                    <p>Every peer connection uses <strong>ML-KEM-768</strong> (CRYSTALS-Kyber, NIST FIPS 203) for key exchange — defeating Harvest Now, Decrypt Later attacks on the P2P layer. The protocol is quantum-safe from the first packet.</p>
+                    <ul style="margin-top: 1.5rem; color: rgba(255,255,255,0.7); list-style: none;">
+                        <li style="margin-bottom: 0.5rem;">✓ ML-KEM-768 P2P transport (NIST FIPS 203)</li>
+                        <li style="margin-bottom: 0.5rem;">✓ Kyber handshake on every peer connection</li>
+                        <li style="margin-bottom: 0.5rem;">✓ Ed25519 TOFU identity verification</li>
+                        <li>✓ HNDL-resistant gossip layer</li>
+                    </ul>
+                </div>
+                
+                <div class="why-card fade-in">
+                    <h3>
+                        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 40px; height: 40px; display: inline-block; vertical-align: middle; margin-right: 0.8rem;">
+                            <defs><linearGradient id="dagGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" /><stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" /></linearGradient></defs>
+                            <circle cx="20" cy="8" r="4" fill="url(#dagGrad)"/>
+                            <circle cx="8" cy="24" r="4" fill="url(#dagGrad)" opacity="0.8"/>
+                            <circle cx="32" cy="24" r="4" fill="url(#dagGrad)" opacity="0.8"/>
+                            <circle cx="20" cy="34" r="4" fill="url(#dagGrad)" opacity="0.6"/>
+                            <line x1="20" y1="12" x2="8" y2="20" stroke="#06b6d4" stroke-width="1.5"/>
+                            <line x1="20" y1="12" x2="32" y2="20" stroke="#06b6d4" stroke-width="1.5"/>
+                            <line x1="8" y1="28" x2="20" y2="30" stroke="#6366f1" stroke-width="1.5"/>
+                            <line x1="32" y1="28" x2="20" y2="30" stroke="#6366f1" stroke-width="1.5"/>
+                        </svg>
+                        GhostDAG Consensus
+                    </h3>
+                    <p>IronDAG uses the <strong>GhostDAG protocol</strong> — the same architecture powering Kaspa's $874M network. Blocks form a Directed Acyclic Graph, allowing parallel block production and eliminating orphaned blocks.</p>
+                    <ul style="margin-top: 1.5rem; color: rgba(255,255,255,0.7); list-style: none;">
+                        <li style="margin-bottom: 0.5rem;">✓ Parallel block production (K=4)</li>
+                        <li style="margin-bottom: 0.5rem;">✓ Blue/Red block classification</li>
+                        <li style="margin-bottom: 0.5rem;">✓ Hybrid sled + RAM hot-cache storage</li>
+                        <li>✓ Quorum-based fork recovery</li>
+                    </ul>
+                </div>
+                
+                <div class="why-card fade-in">
+                    <h3>
+                        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 40px; height: 40px; display: inline-block; vertical-align: middle; margin-right: 0.8rem;">
+                            <defs><linearGradient id="evmGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ec4899;stop-opacity:1" /><stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" /></linearGradient></defs>
+                            <rect x="8" y="8" width="24" height="24" rx="4" fill="url(#evmGrad)" stroke="#fff" stroke-width="1.5"/>
+                            <text x="20" y="25" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">EVM</text>
+                        </svg>
+                        Full EVM Compatibility
+                    </h3>
+                    <p>IronDAG integrates <strong>SputnikVM</strong> (Shanghai hard fork) with a fully validated JSON-RPC surface. MetaMask connects today. Deploy Solidity contracts without modification.</p>
+                    <ul style="margin-top: 1.5rem; color: rgba(255,255,255,0.7); list-style: none;">
+                        <li style="margin-bottom: 0.5rem;">✓ SputnikVM (Shanghai hard fork)</li>
+                        <li style="margin-bottom: 0.5rem;">✓ MetaMask compatible (Chain ID: 11567)</li>
+                        <li style="margin-bottom: 0.5rem;">✓ 129+ JSON-RPC methods validated</li>
+                        <li>✓ eth_call, gas estimation, receipts</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Built & Operational Features -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title fade-in">Built & Operational Features</h2>
+            <p class="section-subtitle fade-in">
+                These features are fully implemented and running on the live testnet today.
+            </p>
+            
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M50 10L70 30L50 50L30 30L50 10Z" fill="url(#grad1)" stroke="#6366f1" stroke-width="2"/>
+                            <path d="M30 40L50 60L50 90L30 70L30 40Z" fill="url(#grad2)" stroke="#8b5cf6" stroke-width="2"/>
+                            <path d="M70 40L70 70L50 90L50 60L70 40Z" fill="url(#grad3)" stroke="#ec4899" stroke-width="2"/>
+                            <circle cx="50" cy="30" r="3" fill="#06b6d4"/>
+                            <circle cx="30" cy="40" r="3" fill="#06b6d4"/>
+                            <circle cx="70" cy="40" r="3" fill="#06b6d4"/>
+                            <defs>
+                                <linearGradient id="grad1" x1="30" y1="10" x2="70" y2="50"><stop offset="0%" style="stop-color:#6366f1;stop-opacity:0.8" /><stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0.6" /></linearGradient>
+                                <linearGradient id="grad2" x1="30" y1="40" x2="50" y2="90"><stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.7" /><stop offset="100%" style="stop-color:#6366f1;stop-opacity:0.5" /></linearGradient>
+                                <linearGradient id="grad3" x1="70" y1="40" x2="50" y2="90"><stop offset="0%" style="stop-color:#ec4899;stop-opacity:0.7" /><stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0.5" /></linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <h3>BraidCore Mining</h3>
+                    <p>Dual parallel mining streams: Stream A (Blake3/ASIC) and Stream B (B3MemHash/GPU — SIMD-accelerated memory-hard). Both streams feed GhostDAG consensus for optimized block production.</p>
+                    <span class="status-badge">✅ OPERATIONAL</span>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="30" y="45" width="40" height="35" rx="4" fill="url(#lockGrad)" stroke="#6366f1" stroke-width="2"/>
+                            <path d="M35 45V35C35 26.7157 41.7157 20 50 20C58.2843 20 65 26.7157 65 35V45" stroke="#ec4899" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="50" cy="62" r="5" fill="#06b6d4"/>
+                            <rect x="48" y="62" width="4" height="10" fill="#06b6d4"/>
+                            <defs><linearGradient id="lockGrad" x1="30" y1="45" x2="70" y2="80"><stop offset="0%" style="stop-color:#6366f1;stop-opacity:0.7" /><stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0.5" /></linearGradient></defs>
+                        </svg>
+                    </div>
+                    <h3>Post-Quantum P2P</h3>
+                    <p>ML-KEM-768 (NIST FIPS 203) key exchange on every peer connection via QUIC transport. Kyber handshake completes before any block data is exchanged. Forward secrecy against quantum adversaries.</p>
+                    <span class="status-badge">✅ OPERATIONAL</span>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 20L80 20L80 80L20 80L20 20Z" fill="url(#walletGrad)" stroke="#6366f1" stroke-width="2"/>
+                            <line x1="35" y1="45" x2="65" y2="45" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="35" y1="55" x2="65" y2="55" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="35" y1="65" x2="50" y2="65" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M40 15L50 25L60 15" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            <defs><linearGradient id="walletGrad" x1="25" y1="30" x2="75" y2="75"><stop offset="0%" style="stop-color:#6366f1;stop-opacity:0.5" /><stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0.3" /></linearGradient></defs>
+                        </svg>
+                    </div>
+                    <h3>Account Abstraction</h3>
+                    <p>Native account abstraction with multi-sig, social recovery, spending limits, and batch transactions. ERC-4337 compatible smart contract wallets at the protocol level.</p>
+                    <span class="status-badge">✅ OPERATIONAL</span>
+                </div>
+                
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="10" y="30" width="25" height="40" rx="3" fill="url(#parallel1)" stroke="#6366f1" stroke-width="2"/>
+                            <rect x="40" y="20" width="25" height="50" rx="3" fill="url(#parallel2)" stroke="#8b5cf6" stroke-width="2"/>
+                            <rect x="70" y="35" width="25" height="35" rx="3" fill="url(#parallel3)" stroke="#ec4899" stroke-width="2"/>
+                            <defs>
+                                <linearGradient id="parallel1"><stop offset="0%" style="stop-color:#6366f1;stop-opacity:0.6" /><stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0.3" /></linearGradient>
+                                <linearGradient id="parallel2"><stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.6" /><stop offset="100%" style="stop-color:#ec4899;stop-opacity:0.3" /></linearGradient>
+                                <linearGradient id="parallel3"><stop offset="0%" style="stop-color:#ec4899;stop-opacity:0.6" /><stop offset="100%" style="stop-color:#06b6d4;stop-opacity:0.3" /></linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <h3>QUIC P2P Network</h3>
+                    <p>All peer connections use QUIC transport with Noise Protocol mutual authentication. Sybil resistance via Jaccard similarity detection and /16 subnet diversity limits. TOFU identity verification.</p>
+                    <span class="status-badge">✅ OPERATIONAL</span>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="35" stroke="#06b6d4" stroke-width="2" fill="none"/>
+                            <path d="M30 50 Q40 30 50 50 Q60 70 70 50" stroke="#6366f1" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                            <circle cx="50" cy="50" r="6" fill="#ec4899"/>
+                        </svg>
+                    </div>
+                    <h3>Sync Resilience</h3>
+                    <p>Compact block IBD (BIP152-style), stall detection with automatic re-sync, quorum-based fork recovery, and orphan batch handling. Hardened across multi-datacenter production runs.</p>
+                    <span class="status-badge">✅ OPERATIONAL</span>
+                </div>
+
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="15" y="25" width="70" height="50" rx="6" fill="url(#shardGrad)" stroke="#6366f1" stroke-width="2"/>
+                            <line x1="50" y1="25" x2="50" y2="75" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4,3"/>
+                            <line x1="15" y1="50" x2="85" y2="50" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4,3"/>
+                            <defs><linearGradient id="shardGrad" x1="15" y1="25" x2="85" y2="75"><stop offset="0%" style="stop-color:#6366f1;stop-opacity:0.4" /><stop offset="100%" style="stop-color:#ec4899;stop-opacity:0.2" /></linearGradient></defs>
+                        </svg>
+                    </div>
+                    <h3>Native Sharding</h3>
+                    <p>Consistent-hash shard assignment with two-phase commit cross-shard transactions. RwLock-based concurrent shard state management. Designed for linear throughput scaling.</p>
+                    <span class="status-badge status-badge-planned">🔬 TESTNET PHASE</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testnet Section -->
+    <section id="explorer" class="explorer-preview">
+        <div class="container">
+            <div class="explorer-content">
+                <div class="explorer-text fade-in">
+                    <h2 class="section-title" style="text-align: left;">Public Testnet Live</h2>
+                    <p style="color: rgba(255,255,255,0.75); margin-bottom: 2rem; font-size: 1.1rem;">The IronDAG Public Testnet is running between two datacenters. Real cryptographic PoW. Real ML-KEM-768 handshakes. MetaMask connects today.</p>
+                    
+                    <div style="background: rgba(99, 102, 241, 0.08); padding: 2rem; border-radius: 16px; margin: 2.5rem 0; border: 1px solid rgba(99, 102, 241, 0.25);">
+                        <h3 style="color: var(--cyan); margin-bottom: 1.5rem; font-weight: 700;">Connection Details</h3>
+                        <p style="margin-bottom: 0.8rem; color: rgba(255,255,255,0.85);"><strong>RPC Endpoint:</strong> <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px; color: #10b981; font-family: monospace;">http://76.13.101.31:8546</code></p>
+                        <p style="margin-bottom: 0.8rem; color: rgba(255,255,255,0.85);"><strong>Chain ID:</strong> <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px; color: #10b981; font-family: monospace;">11567</code></p>
+                        <p style="margin-bottom: 0.8rem; color: rgba(255,255,255,0.85);"><strong>Currency Symbol:</strong> <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px; color: #10b981; font-family: monospace;">IDAG</code></p>
+                        <p style="color: rgba(255,255,255,0.85);"><strong>Block Explorer:</strong> <a href="http://explorer.irondag.io" target="_blank" style="color: var(--cyan); text-decoration: none; font-weight: 600;">explorer.irondag.io</a></p>
+                    </div>
+
+                    <!-- PoW Code Snippet -->
+                    <div class="code-block">
+<span class="comment">// Real cryptographic PoW — not a simulation</span>
+<span class="comment">// SIMD-accelerated B3MemHash nonce loop</span>
+<span class="keyword">fn</span> mine_block(header: &BlockHeader, difficulty: u8) -> u64 {
+    <span class="keyword">let mut</span> nonce = <span class="number">0u64</span>;
+    <span class="keyword">loop</span> {
+        <span class="keyword">let</span> hash = b3memhash(header, nonce);
+        <span class="keyword">if</span> meets_difficulty(&hash, difficulty) {
+            <span class="keyword">return</span> nonce; <span class="comment">// Found valid PoW</span>
+        }
+        nonce += <span class="number">1</span>;
+    }
+}
+<span class="comment">// Stream A difficulty: 9–21 leading zero bits, ~10s target</span>
+<span class="comment">// Stream B difficulty: 5–21 leading zero bits, ~5s target</span>
+                    </div>
+
+                    <div style="margin-top: 2.5rem;">
+                        <a href="http://explorer.irondag.io" class="btn btn-primary" target="_blank">Explore Testnet</a>
+                        <a href="https://github.com/dev-irondag/irondag-core-concepts" class="btn btn-outline" target="_blank">Core Concepts Repo</a>
+                    </div>
+                </div>
+                <div class="explorer-mockup fade-in">
+                    <div class="mockup-header">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <span style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-left: 12px;">explorer.irondag.io</span>
+                    </div>
+                    <div class="mockup-body" style="display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--primary);">
+                        <svg viewBox="0 0 100 100" style="width: 90px; height: 90px; margin-bottom: 1.5rem;">
+                            <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="200"/>
+                            <path d="M50 20V80M20 50H80" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="50" cy="50" r="10" fill="currentColor"/>
+                        </svg>
+                        <p style="font-weight: 700; color: #10b981; font-size: 1.1rem;">TESTNET OPERATIONAL</p>
+                        <p style="font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-top: 0.8rem;">Real PoW · ML-KEM-768 · GhostDAG</p>
+                        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 0.4rem;">~10s median block time</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap -->
+    <section id="roadmap" class="features">
+        <div class="container">
+            <h2 class="section-title fade-in">Roadmap</h2>
+            <p class="section-subtitle fade-in">
+                Core protocol is implemented and running. The roadmap focuses on hardening, ecosystem tooling, and mainnet launch.
+            </p>
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <h3 style="color: #10b981;">Phase 1 – Core Protocol ✅</h3>
+                    <p style="color: rgba(255,255,255,0.65);">BraidCore mining (Blake3 + B3MemHash), GhostDAG consensus, QUIC P2P with ML-KEM-768, SputnikVM EVM, account abstraction, native sharding core.</p>
+                    <span class="status-badge">COMPLETE</span>
+                </div>
+                <div class="feature-card fade-in">
+                    <h3 style="color: #10b981;">Phase 2 – Testnet & Tooling ✅</h3>
+                    <p style="color: rgba(255,255,255,0.65);">Multi-datacenter testnet, block explorer, MetaMask compatibility, 129+ JSON-RPC methods validated, sync resilience hardening, DAA tuning.</p>
+                    <span class="status-badge">COMPLETE</span>
+                </div>
+                <div class="feature-card fade-in">
+                    <h3 style="color: var(--cyan);">Phase 3 – Public Testnet 🔴 Live</h3>
+                    <p style="color: rgba(255,255,255,0.65);">Public RPC endpoint, block explorer live, community node onboarding, bug bounty program, seed funding round, Alliance DAO application.</p>
+                    <span class="status-badge">IN PROGRESS</span>
+                </div>
+                <div class="feature-card fade-in">
+                    <h3 style="color: var(--primary);">Phase 4 – Mainnet Launch</h3>
+                    <p style="color: rgba(255,255,255,0.65);">Genesis configuration, production deployment, ecosystem integrations, ML-DSA signature migration (NIST FIPS 204), sharding throughput optimization.</p>
+                    <span class="status-badge status-badge-planned">PLANNED</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Founder Section -->
+    <section id="founder" class="founder-section">
+        <div class="container">
+            <h2 class="section-title fade-in">The Founder</h2>
+            <p class="section-subtitle fade-in">Built by someone who has shipped production infrastructure, not just whitepapers.</p>
+            <div class="founder-inner">
+                <!-- Avatar & Credentials -->
+                <div class="founder-avatar fade-in">
+                    <div class="founder-avatar-ring">
+                        <div class="founder-avatar-inner">
+                            <!-- SVG avatar icon -->
+                            <svg class="founder-avatar-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="36" r="18" fill="rgba(99,102,241,0.6)" stroke="rgba(99,102,241,0.9)" stroke-width="1.5"/>
+                                <path d="M16 85c0-18.78 15.22-34 34-34s34 15.22 34 34" fill="rgba(99,102,241,0.3)" stroke="rgba(99,102,241,0.7)" stroke-width="1.5" stroke-linecap="round"/>
+                                <!-- Shield / security motif -->
+                                <path d="M50 10 L62 16 L62 28 Q62 36 50 42 Q38 36 38 28 L38 16 Z" fill="none" stroke="rgba(6,182,212,0.6)" stroke-width="1.2" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="founder-name-plate">
+                        <h3>David Cooper</h3>
+                        <span>Founder & Lead Architect</span>
+                    </div>
+                    <div class="founder-credentials">
+                        <div class="credential-badge"><strong>CCIE #11567</strong>Network Security Architect</div>
+                        <div class="credential-badge"><strong>25 Years</strong>Production Infrastructure</div>
+                        <div class="credential-badge"><strong>U.S. Air Force</strong>Veteran</div>
+                        <div class="credential-badge"><strong>Runtime Fence</strong>Patent-Pending AI Safety</div>
+                        <div class="credential-badge"><strong>MCPShield & AI Kill Switch</strong>Open Source · In Production</div>
+                    </div>
+                </div>
+
+                <!-- Bio Content -->
+                <div class="founder-content fade-in">
+                    <h2>David Cooper</h2>
+                    <div class="founder-role">Founder & Lead Architect</div>
+                    <div class="founder-quote">
+                        Every blockchain being built today will eventually be cracked by a quantum computer. Not theoretical. Not decades away. The "harvest now, decrypt later" threat is active right now, and virtually every Layer 1 in production is ignoring it at the protocol layer. IronDAG doesn't ignore it.
+                    </div>
+                    <div class="founder-body">
+                        <p>David Cooper is <strong>CCIE #11567</strong>, a network security architect with <strong>25 years building production infrastructure</strong>, an Air Force veteran, and the creator of <strong>Runtime Fence</strong>, a patent-pending AI agent safety platform. He has shipped working AI security tools including <strong>MCPShield</strong> and the <strong>AI Agent Kill Switch</strong>, both open source and available for production use today. He has written extensively on post-quantum cryptography, AI agent identity, and blockchain infrastructure security.</p>
+                        <p>IronDAG is built from scratch in <strong>Rust</strong>. Not a fork. Not a modified template. A ground-up implementation combining three technologies no other Layer 1 has put together: <strong>GhostDAG consensus</strong> (proven by Kaspa's $874M market cap), <strong>ML-KEM-768 post-quantum key encapsulation</strong> (NIST FIPS 203), and a fully functional EVM surface with <strong>129+ JSON-RPC methods</strong>. MetaMask connects on day one.</p>
+                        <p>The core cryptographic modules are public. You can clone the repo, run <code style="background:rgba(99,102,241,0.15);padding:0.2em 0.6em;border-radius:4px;font-family:monospace;color:var(--cyan);">cargo test</code>, and watch the handshake pass.</p>
+                        <p>A live multi-node testnet is running between two datacenters right now, producing blocks at a <strong>10–11 second median interval</strong> with real proof-of-work and real post-quantum key exchange on every peer connection. The full protocol implementation is under active development and available for security review under NDA. The core cryptographic modules are public and auditable by anyone today.</p>
+                        <p>Read the code: <a href="https://github.com/dev-irondag/irondag-core-concepts" target="_blank">github.com/dev-irondag/irondag-core-concepts</a></p>
+                    </div>
+                    <div class="founder-tags">
+                        <span class="founder-tag">Post-Quantum Cryptography</span>
+                        <span class="founder-tag">Network Security</span>
+                        <span class="founder-tag">Rust Systems Programming</span>
+                        <span class="founder-tag">AI Agent Safety</span>
+                        <span class="founder-tag">Blockchain Architecture</span>
+                        <span class="founder-tag">CCIE #11567</span>
+                        <span class="founder-tag">Air Force Veteran</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <h3>IronDAG Protocol</h3>
+            <p style="opacity: 0.8; margin-bottom: 2.5rem; font-size: 1rem;">Post-Quantum Layer 1 Blockchain — Ticker: IDAG</p>
+            <div class="footer-links">
+                <a href="https://twitter.com/DevIronDAG" target="_blank">𝕏 Twitter</a>
+                <a href="https://github.com/dev-irondag/irondag-core-concepts" target="_blank">GitHub</a>
+                <a href="https://irondag.network" target="_blank">IRONDAG.network</a>
+                <a href="https://irondag.io" target="_blank">IRONDAG.io</a>
+                <a href="https://irondag.xyz" target="_blank">IRONDAG.xyz</a>
+                <a href="http://explorer.irondag.io" target="_blank">Explorer</a>
+                <a href="IronDAG_WHITEPAPER.html" target="_blank">Whitepaper</a>
+                <a href="comparison.html">Comparison</a>
+                <a href="privacy.html">Privacy</a>
+            </div>
+            <p style="margin-top: 3rem; opacity: 0.6; font-size: 0.9rem;">
+                © 2026 IronDAG Protocol. Built in Rust. Secured by NIST FIPS 203.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => { entry.target.classList.add('visible'); }, index * 100);
+                }
+            });
+        }, observerOptions);
+        document.querySelectorAll('.fade-in').forEach((el) => { observer.observe(el); });
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+data/
+logs/
+node_pids.txt
+monitor_log.txt
+monitor_errors.txt

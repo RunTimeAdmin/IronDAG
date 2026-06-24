@@ -1,0 +1,179 @@
+name: Desktop Release
+
+on:
+  push:
+    tags:
+      - 'desktop-v*'
+
+env:
+  CARGO_TERM_COLOR: always
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact: irondag-desktop-windows-x64
+          - platform: macos-latest
+            target: x86_64-apple-darwin
+            artifact: irondag-desktop-macos-x64
+          - platform: macos-latest
+            target: aarch64-apple-darwin
+            artifact: irondag-desktop-macos-arm64
+          - platform: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            artifact: irondag-desktop-linux-x64
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: irondag-desktop/src-tauri
+          key: ${{ matrix.target }}
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: irondag-desktop/package-lock.json
+
+      - name: Install Linux dependencies
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Install frontend dependencies
+        working-directory: irondag-desktop
+        run: npm ci
+
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          projectPath: irondag-desktop
+          args: --target ${{ matrix.target }}
+          tagName: ${{ github.ref_name }}
+          releaseName: "IronDAG Desktop ${{ github.ref_name }}"
+          releaseBody: |
+            See the [CHANGELOG](https://github.com/dev-irondag/irondag/blob/master/CHANGELOG.md) for details.
+            
+            **Windows users:** You may see a SmartScreen warning. Click "More info" → "Run anyway" to proceed.
+          releaseDraft: true
+          prerelease: false
+          includeUpdaterJson: true
+
+      - name: Sign Windows binary
+        if: matrix.platform == 'windows-latest'
+        shell: powershell
+        env:
+          CODESIGN_PASSWORD: ${{ secrets.CODESIGN_PASSWORD }}
+        run: |
+          $pfxPath = "irondag-desktop/certs/codesign.pfx"
+          if (Test-Path $pfxPath) {
+            $securePassword = ConvertTo-SecureString -String $env:CODESIGN_PASSWORD -Force -AsPlainText
+            $cert = Get-PfxCertificate -FilePath $pfxPath -Password $securePassword
+            Get-ChildItem -Path "irondag-desktop/src-tauri/target/${{ matrix.target }}/release/bundle" -Recurse -Include "*.exe","*.msi" | ForEach-Object {
+              Set-AuthenticodeSignature -FilePath $_.FullName -Certificate $cert -TimestampServer "http://timestamp.digicert.com" -HashAlgorithm SHA256
+              Write-Host "Signed: $($_.FullName)"
+            }
+          } else {
+            Write-Host "No certificate found, skipping signing"
+          }
+
+      - name: Sign macOS binary
+        if: matrix.platform == 'macos-latest'
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+        run: |
+          if [ -n "$APPLE_CERTIFICATE" ]; then
+            echo "Importing Apple Developer ID certificate..."
+            echo "$APPLE_CERTIFICATE" | base64 --decode > certificate.p12
+            security create-keychain -p "" build.keychain
+            security default-keychain -s build.keychain
+            security unlock-keychain -p "" build.keychain
+            security import certificate.p12 -k build.keychain -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+            security set-key-partition-list -S apple-tool:,apple: -s -k "" build.keychain
+
+            # Sign the .app bundle
+            APP_PATH=$(find irondag-desktop/src-tauri/target -name "*.app" -type d | head -1)
+            if [ -n "$APP_PATH" ]; then
+              codesign --deep --force --verify --verbose --sign "Developer ID Application: $APPLE_TEAM_ID" --options runtime "$APP_PATH"
+              echo "Signed: $APP_PATH"
+            fi
+
+            # Sign the .dmg if it exists
+            DMG_PATH=$(find irondag-desktop/src-tauri/target -name "*.dmg" -type f | head -1)
+            if [ -n "$DMG_PATH" ]; then
+              codesign --force --verify --verbose --sign "Developer ID Application: $APPLE_TEAM_ID" "$DMG_PATH"
+              echo "Signed: $DMG_PATH"
+            fi
+
+            # Notarize if credentials available
+            if [ -n "$APPLE_ID" ] && [ -n "$APPLE_APP_PASSWORD" ]; then
+              echo "Submitting for notarization..."
+              NOTARIZE_FILE="$DMG_PATH"
+              [ -z "$NOTARIZE_FILE" ] && NOTARIZE_FILE=$(find irondag-desktop/src-tauri/target -name "*.app" -type d | head -1)
+              if [ -n "$NOTARIZE_FILE" ]; then
+                xcrun notarytool submit "$NOTARIZE_FILE" --apple-id "$APPLE_ID" --team-id "$APPLE_TEAM_ID" --password "$APPLE_APP_PASSWORD" --wait --timeout 600 || echo "Notarization failed (non-blocking for alpha)"
+                xcrun stapler staple "$NOTARIZE_FILE" || echo "Stapling failed (non-blocking)"
+              fi
+            fi
+
+            # Cleanup
+            rm -f certificate.p12
+            security delete-keychain build.keychain
+          else
+            echo "No Apple certificate configured, skipping macOS signing"
+          fi
+
+      - name: Sign Linux artifacts
+        if: matrix.platform == 'ubuntu-22.04'
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          if [ -n "$GPG_PRIVATE_KEY" ]; then
+            echo "Importing GPG key..."
+            echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+
+            # Sign .deb files
+            find irondag-desktop/src-tauri/target -name "*.deb" -type f | while read f; do
+              gpg --batch --yes --passphrase "$GPG_PASSPHRASE" --pinentry-mode loopback --detach-sign --armor "$f"
+              echo "Signed: $f -> $f.asc"
+            done
+
+            # Sign .AppImage files
+            find irondag-desktop/src-tauri/target -name "*.AppImage" -type f | while read f; do
+              gpg --batch --yes --passphrase "$GPG_PASSPHRASE" --pinentry-mode loopback --detach-sign --armor "$f"
+              echo "Signed: $f -> $f.asc"
+            done
+
+            echo "Linux artifact signing complete"
+          else
+            echo "No GPG key configured, skipping Linux signing"
+          fi

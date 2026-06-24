@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# Pre-commit hook to detect IP address leaks in markdown files
+# Blocks commits containing bare IPv4 addresses (excluding safe addresses)
+
+set -e
+
+# Safe IP addresses that should not trigger the check
+SAFE_IPS=("127.0.0.1" "0.0.0.0" "255.255.255.255")
+
+# Get staged .md files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM "*.md")
+
+if [ -z "$STAGED_FILES" ]; then
+    exit 0
+fi
+
+FOUND=0
+
+for FILE in $STAGED_FILES; do
+    # Get the staged content
+    CONTENT=$(git show :"$FILE" 2>/dev/null)
+    
+    if [ -z "$CONTENT" ]; then
+        continue
+    fi
+    
+    # Find all IPv4 patterns in the file
+    while IFS= read -r LINE; do
+        # Extract IP addresses from the line
+        IPS=$(echo "$LINE" | grep -oE '\b[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\b' 2>/dev/null || true)
+        
+        for IP in $IPS; do
+            # Check if IP is in safe list
+            IS_SAFE=0
+            for SAFE in "${SAFE_IPS[@]}"; do
+                if [ "$IP" = "$SAFE" ]; then
+                    IS_SAFE=1
+                    break
+                fi
+            done
+            
+            if [ $IS_SAFE -eq 0 ]; then
+                echo "ERROR: Potential IP address leak detected in $FILE"
+                echo "  Found: $IP"
+                echo "  Line: $LINE"
+                FOUND=1
+            fi
+        done
+    done <<< "$CONTENT"
+done
+
+if [ $FOUND -eq 1 ]; then
+    echo ""
+    echo "Commit blocked: IP address(es) detected in markdown files."
+    echo "If this is intentional, use 'git commit --no-verify' to bypass."
+    exit 1
+fi
+
+exit 0

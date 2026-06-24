@@ -1,0 +1,22 @@
+# Example systemd unit for IronDAG node.
+# Install: sudo cp irondag.service.example /etc/systemd/system/irondag.service
+#          sudo systemctl daemon-reload
+#          sudo systemctl enable irondag && sudo systemctl start irondag
+#
+# Sync peer (VPS 2 / VPS 3):
+[Unit]
+Description=IronDAG Blockchain Node (Sync)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/irondag/irondag-blockchain
+ExecStart=/root/irondag/irondag-blockchain/target/release/node --port 8080 --rpc-port 8545 --peer 76.13.101.31:8080 --single-stream --disable-mining
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

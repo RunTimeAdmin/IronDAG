@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Nodes – IronDAG</title>
+    <!-- Optional: uncomment for icons (can slow or block load if CDN fails)
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    -->
+    <style>
+        :root {
+            --bg-primary: #1e1b2e;
+            --bg-secondary: #16131f;
+            --bg-card: #272439;
+            --text-primary: #fff;
+            --text-secondary: #b8b4d0;
+            --text-muted: #8a85a3;
+            --accent-blue: #6366f1;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-orange: #f59e0b;
+            --border-color: #3d3551;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            background: var(--bg-primary);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .logo { font-weight: 700; font-size: 1.25rem; color: var(--accent-blue); }
+        .refresh { color: var(--text-muted); font-size: 0.9rem; }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .summary-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+        .summary-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.25rem; }
+        .summary-value { font-size: 1.5rem; font-weight: 700; }
+        .nodes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        .node-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .node-card.down { border-color: var(--accent-red); opacity: 0.85; }
+        .node-header {
+            padding: 1rem 1.25rem;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .node-title { font-weight: 600; font-size: 1.1rem; }
+        .node-badge {
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .node-badge.up { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .node-badge.down { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .node-body { padding: 1.25rem; }
+        .node-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .node-row:last-child { border-bottom: none; }
+        .node-row label { color: var(--text-muted); font-size: 0.9rem; }
+        .node-row span { font-weight: 600; }
+        .footer-note {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <span class="logo">&#9650; Local Node Dashboard</span>
+            <span class="refresh" id="last-update">Refreshing...</span>
+        </header>
+
+        <div class="summary">
+            <div class="summary-card">
+                <div class="summary-label">Nodes up</div>
+                <div class="summary-value" id="nodes-up">0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Latest block</div>
+                <div class="summary-value" id="latest-block">--</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">TPS (N1)</div>
+                <div class="summary-value" id="summary-tps">--</div>
+            </div>
+        </div>
+
+        <div class="nodes-grid">
+            <div class="node-card" id="card-1">
+                <div class="node-header">
+                    <span class="node-title">Node 1 (Bootstrap + Mining)</span>
+                    <span class="node-badge down" id="badge-1">Checking...</span>
+                </div>
+                <div class="node-body">
+                    <div class="node-row"><label>RPC</label><span>http://127.0.0.1:8545</span></div>
+                    <div class="node-row"><label>Block</label><span id="block-1">--</span></div>
+                    <div class="node-row"><label>Peers</label><span id="peers-1">--</span></div>
+                    <div class="node-row"><label>TPS (10s)</label><span id="tps-1">--</span></div>
+                </div>
+            </div>
+            <div class="node-card" id="card-2">
+                <div class="node-header">
+                    <span class="node-title">Node 2 (Mining)</span>
+                    <span class="node-badge down" id="badge-2">Checking...</span>
+                </div>
+                <div class="node-body">
+                    <div class="node-row"><label>RPC</label><span>http://127.0.0.1:8546</span></div>
+                    <div class="node-row"><label>Block</label><span id="block-2">--</span></div>
+                    <div class="node-row"><label>Peers</label><span id="peers-2">--</span></div>
+                    <div class="node-row"><label>TPS (10s)</label><span id="tps-2">--</span></div>
+                </div>
+            </div>
+            <div class="node-card" id="card-3">
+                <div class="node-header">
+                    <span class="node-title">Node 3 (RPC-only)</span>
+                    <span class="node-badge down" id="badge-3">Checking...</span>
+                </div>
+                <div class="node-body">
+                    <div class="node-row"><label>RPC</label><span>http://127.0.0.1:8547</span></div>
+                    <div class="node-row"><label>Block</label><span id="block-3">--</span></div>
+                    <div class="node-row"><label>Peers</label><span id="peers-3">--</span></div>
+                    <div class="node-row"><label>TPS (10s)</label><span id="tps-3">--</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-note">
+            <strong>To see live data</strong>: Open this page via a local server (browsers block file:// from calling localhost). In PowerShell run: <code>cd D:\MondoShawan\local_env</code> then <code>python -m http.server 8888</code>. Open <strong>http://localhost:8888/node-dashboard.html</strong> in your browser. Start nodes with <code>.\local_env\start_local_testnet.ps1</code>.
+        </div>
+    </div>
+
+    <script>
+        const PORTS = [8545, 8546, 8547];
+        const INTERVAL_MS = 10000;
+        const RPC_TIMEOUT_MS = 3000;
+
+        function fetchWithTimeout(url, options, ms) {
+            const ctrl = new AbortController();
+            const t = setTimeout(function() { ctrl.abort(); }, ms);
+            return fetch(url, { ...options, signal: ctrl.signal })
+                .finally(function() { clearTimeout(t); });
+        }
+
+        async function rpc(port, method, params = []) {
+            try {
+                const r = await fetchWithTimeout('http://127.0.0.1:' + port, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params })
+                }, RPC_TIMEOUT_MS);
+                const data = await r.json();
+                return data.error ? null : data.result;
+            } catch (e) { return null; }
+        }
+
+        function setNode(i, ok, block, peers, tps) {
+            const idx = i + 1;
+            const card = document.getElementById('card-' + idx);
+            const badge = document.getElementById('badge-' + idx);
+            if (ok) {
+                card.classList.remove('down');
+                badge.className = 'node-badge up';
+                badge.textContent = 'Up';
+            } else {
+                card.classList.add('down');
+                badge.className = 'node-badge down';
+                badge.textContent = 'Down';
+            }
+            document.getElementById('block-' + idx).textContent = block != null ? block.toLocaleString() : '--';
+            document.getElementById('peers-' + idx).textContent = peers != null ? peers : '--';
+            document.getElementById('tps-' + idx).textContent = tps != null ? Number(tps).toFixed(2) : '--';
+        }
+
+        async function refresh() {
+            // All 9 RPC calls in parallel so first load never waits more than RPC_TIMEOUT_MS
+            const all = [];
+            for (var i = 0; i < 3; i++) {
+                var p = PORTS[i];
+                all.push(rpc(p, 'eth_blockNumber'), rpc(p, 'net_peerCount'), rpc(p, 'irondag_getTps', ['0xa']));
+            }
+            const res = await Promise.all(all);
+
+            var up = 0, maxBlock = null, tps1 = null;
+            for (var i = 0; i < 3; i++) {
+                var blockHex = res[i * 3], peersHex = res[i * 3 + 1], tpsResult = res[i * 3 + 2];
+                var block = blockHex != null ? parseInt(blockHex, 16) : null;
+                var peers = peersHex != null ? parseInt(peersHex, 16) : null;
+                var tps = null;
+                if (typeof tpsResult === 'string' && /[\d.]+/.test(tpsResult)) tps = parseFloat(tpsResult.match(/[\d.]+/)[0]);
+                var ok = block != null;
+                if (ok) up++;
+                if (block != null && (maxBlock == null || block > maxBlock)) maxBlock = block;
+                if (i === 0) tps1 = tps;
+                setNode(i, ok, block, peers, tps);
+            }
+
+            document.getElementById('nodes-up').textContent = up + ' / 3';
+            document.getElementById('latest-block').textContent = maxBlock != null ? maxBlock.toLocaleString() : '--';
+            document.getElementById('summary-tps').textContent = tps1 != null ? tps1.toFixed(2) : '--';
+            document.getElementById('last-update').textContent = 'Updated ' + new Date().toLocaleTimeString();
+        }
+
+        // First paint: show page immediately, then refresh data after short delay
+        document.getElementById('last-update').textContent = 'Loading...';
+        setTimeout(function() {
+            refresh();
+            setInterval(refresh, INTERVAL_MS);
+        }, 100);
+    </script>
+</body>
+</html>

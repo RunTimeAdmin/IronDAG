@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IronDAG Mining Monitor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #f8fafc;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .status-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .status-card {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 12px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .status-card h3 {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .status-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #06b6d4;
+        }
+        
+        .streams {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stream-card {
+            padding: 25px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 16px;
+            border: 2px solid;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stream-a {
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+        
+        .stream-b {
+            border-color: rgba(139, 92, 246, 0.5);
+        }
+        
+        .stream-c {
+            border-color: rgba(236, 72, 153, 0.5);
+        }
+        
+        .stream-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .stream-a .stream-header { color: #10b981; }
+        .stream-b .stream-header { color: #8b5cf6; }
+        .stream-c .stream-header { color: #ec4899; }
+        
+        .stream-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            padding: 15px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 8px;
+        }
+        
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+        
+        .recent-blocks {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .recent-blocks h2 {
+            margin-bottom: 20px;
+            color: #f8fafc;
+        }
+        
+        .block-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 8px;
+            border-left: 4px solid #6366f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .block-info {
+            flex: 1;
+        }
+        
+        .block-number {
+            font-weight: 700;
+            color: #06b6d4;
+            font-size: 1.1rem;
+        }
+        
+        .block-details {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .nonce {
+            font-family: 'Courier New', monospace;
+            background: rgba(99, 102, 241, 0.2);
+            padding: 5px 10px;
+            border-radius: 4px;
+            color: #a78bfa;
+            font-weight: 600;
+        }
+        
+        .error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+        }
+        
+        .auto-refresh {
+            text-align: center;
+            margin-top: 20px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .pulse {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⛏️ IronDAG Mining Monitor</h1>
+        
+        <div id="error" class="error" style="display: none;"></div>
+        
+        <div class="status-bar">
+            <div class="status-card">
+                <h3>Node Status</h3>
+                <div class="value" id="node-status">-</div>
+            </div>
+            <div class="status-card">
+                <h3>Block Height</h3>
+                <div class="value" id="block-height">-</div>
+            </div>
+            <div class="status-card">
+                <h3>Total Transactions</h3>
+                <div class="value" id="tx-count">-</div>
+            </div>
+            <div class="status-card">
+                <h3>Connected Peers</h3>
+                <div class="value" id="peer-count">-</div>
+            </div>
+        </div>
+        
+        <div class="streams">
+            <div class="stream-card stream-a">
+                <div class="stream-header">
+                    <span>🟢</span>
+                    <span>Stream A (ASIC)</span>
+                </div>
+                <div class="stream-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Blocks Mined</div>
+                        <div class="stat-value" id="stream-a-blocks">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Hashrate</div>
+                        <div class="stat-value" id="stream-a-hashrate">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Earnings (IDAG)</div>
+                        <div class="stat-value" id="stream-a-earnings">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Block Time</div>
+                        <div class="stat-value" id="stream-a-time">-</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stream-card stream-b">
+                <div class="stream-header">
+                    <span>🔵</span>
+                    <span>Stream B (CPU; GPU planned)</span>
+                </div>
+                <div class="stream-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Blocks Mined</div>
+                        <div class="stat-value" id="stream-b-blocks">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Hashrate</div>
+                        <div class="stat-value" id="stream-b-hashrate">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Earnings (IDAG)</div>
+                        <div class="stat-value" id="stream-b-earnings">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Block Time</div>
+                        <div class="stat-value" id="stream-b-time">-</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stream-card stream-c">
+                <div class="stream-header">
+                    <span>🟣</span>
+                    <span>Stream C (ZK)</span>
+                </div>
+                <div class="stream-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Blocks Mined</div>
+                        <div class="stat-value" id="stream-c-blocks">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Hashrate</div>
+                        <div class="stat-value" id="stream-c-hashrate">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Earnings (IDAG)</div>
+                        <div class="stat-value" id="stream-c-earnings">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Block Time</div>
+                        <div class="stat-value" id="stream-c-time">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="recent-blocks">
+            <h2>📊 Recent Blocks</h2>
+            <div id="recent-blocks">
+                <div class="loading">Loading blocks...</div>
+            </div>
+        </div>
+        
+        <div class="auto-refresh">
+            <span class="pulse"></span>
+            Auto-refreshing every 2 seconds
+        </div>
+    </div>
+    
+    <script>
+        const RPC_URL = 'http://127.0.0.1:8545';
+        let requestId = 1;
+        
+        async function callRPC(method, params = null) {
+            try {
+                // Create the JSON-RPC request
+                const requestBody = {
+                    jsonrpc: '2.0',
+                    method: method,
+                    params: params || [],
+                    id: requestId++
+                };
+                
+                // Convert to string and create proper HTTP request
+                const bodyString = JSON.stringify(requestBody);
+                
+                const response = await fetch(RPC_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: bodyString,
+                    mode: 'cors',
+                    credentials: 'omit'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                if (data.error) {
+                    throw new Error(`RPC Error ${data.error.code}: ${data.error.message}`);
+                }
+                return data.result;
+            } catch (error) {
+                // More detailed error message
+                if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+                    throw new Error(`Cannot connect to node at ${RPC_URL}. Make sure the node is running and RPC server is listening.`);
+                }
+                throw error;
+            }
+        }
+        
+        async function testConnection() {
+            try {
+                const response = await fetch('http://127.0.0.1:8545/health', {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.status === 'healthy';
+                }
+                return false;
+            } catch (error) {
+                return false;
+            }
+        }
+        
+        async function updateStatus() {
+            try {
+                // First test connection with health endpoint
+                const isConnected = await testConnection();
+                if (!isConnected) {
+                    throw new Error('Cannot connect to node. Make sure the node is running: cargo run --release --bin node');
+                }
+                
+                // Get node status
+                const nodeStatus = await callRPC('irondag_getNodeStatus');
+                document.getElementById('node-status').textContent = nodeStatus.is_mining ? '🟢 Mining' : '🔴 Stopped';
+                document.getElementById('block-height').textContent = nodeStatus.height || 0;
+                document.getElementById('tx-count').textContent = nodeStatus.tx_count || 0;
+                document.getElementById('peer-count').textContent = nodeStatus.peer_count || 0;
+                
+                // Get mining dashboard
+                const miningDashboard = await callRPC('irondag_getMiningDashboard');
+                if (miningDashboard && miningDashboard.streams) {
+                    // Stream A
+                    if (miningDashboard.streams.stream_a) {
+                        document.getElementById('stream-a-blocks').textContent = miningDashboard.streams.stream_a.blocks_mined || 0;
+                        document.getElementById('stream-a-hashrate').textContent = 
+                            (miningDashboard.streams.stream_a.hashrate_estimate_blocks_per_hour || 0).toFixed(1) + '/hr';
+                        document.getElementById('stream-a-earnings').textContent = 
+                            (parseInt(miningDashboard.streams.stream_a.earnings || '0', 16) / 1e18).toFixed(2);
+                        document.getElementById('stream-a-time').textContent = 
+                            (miningDashboard.streams.stream_a.avg_block_time_ms || 0) / 1000 + 's';
+                    }
+                    
+                    // Stream B
+                    if (miningDashboard.streams.stream_b) {
+                        document.getElementById('stream-b-blocks').textContent = miningDashboard.streams.stream_b.blocks_mined || 0;
+                        document.getElementById('stream-b-hashrate').textContent = 
+                            (miningDashboard.streams.stream_b.hashrate_estimate_blocks_per_hour || 0).toFixed(1) + '/hr';
+                        document.getElementById('stream-b-earnings').textContent = 
+                            (parseInt(miningDashboard.streams.stream_b.earnings || '0', 16) / 1e18).toFixed(2);
+                        document.getElementById('stream-b-time').textContent = 
+                            (miningDashboard.streams.stream_b.avg_block_time_ms || 0) / 1000 + 's';
+                    }
+                    
+                    // Stream C
+                    if (miningDashboard.streams.stream_c) {
+                        document.getElementById('stream-c-blocks').textContent = miningDashboard.streams.stream_c.blocks_mined || 0;
+                        document.getElementById('stream-c-hashrate').textContent = 
+                            (miningDashboard.streams.stream_c.hashrate_estimate_blocks_per_hour || 0).toFixed(1) + '/hr';
+                        document.getElementById('stream-c-earnings').textContent = 
+                            (parseInt(miningDashboard.streams.stream_c.earnings || '0', 16) / 1e18).toFixed(2);
+                        document.getElementById('stream-c-time').textContent = 
+                            (miningDashboard.streams.stream_c.avg_block_time_ms || 0) + 'ms';
+                    }
+                }
+                
+                // Get recent blocks
+                const blockNumber = await callRPC('eth_blockNumber');
+                const height = parseInt(blockNumber, 16);
+                const blocksHtml = [];
+                
+                // Get last 10 blocks
+                for (let i = 0; i < Math.min(10, height + 1); i++) {
+                    const blockNum = height - i;
+                    try {
+                        const block = await callRPC('eth_getBlockByNumber', [`0x${blockNum.toString(16)}`, true]);
+                        if (block) {
+                            const nonce = block.nonce ? parseInt(block.nonce, 16) : 0;
+                            const txCount = block.transactions ? block.transactions.length : 0;
+                            blocksHtml.push(`
+                                <div class="block-item">
+                                    <div class="block-info">
+                                        <div class="block-number">Block #${blockNum}</div>
+                                        <div class="block-details">
+                                            ${txCount} transactions | 
+                                            ${block.timestamp ? new Date(parseInt(block.timestamp, 16) * 1000).toLocaleTimeString() : 'N/A'}
+                                        </div>
+                                    </div>
+                                    <div class="nonce">Nonce: ${nonce}</div>
+                                </div>
+                            `);
+                        }
+                    } catch (e) {
+                        // Skip blocks that fail to load
+                    }
+                }
+                
+                document.getElementById('recent-blocks').innerHTML = blocksHtml.length > 0 
+                    ? blocksHtml.join('') 
+                    : '<div class="loading">No blocks found</div>';
+                
+                // Hide error
+                document.getElementById('error').style.display = 'none';
+            } catch (error) {
+                document.getElementById('error').textContent = `Error: ${error.message}. Make sure the node is running on ${RPC_URL}`;
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+        
+        // Initial load
+        updateStatus();
+        
+        // Auto-refresh every 2 seconds
+        setInterval(updateStatus, 2000);
+    </script>
+</body>
+</html>

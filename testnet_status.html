@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IronDAG Testnet Status</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+            background: #0f172a; 
+            color: #e2e8f0; 
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        h1 { color: #38bdf8; margin-bottom: 2rem; text-align: center; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 0 auto; }
+        .node { background: #1e293b; border-radius: 12px; padding: 1.5rem; border-left: 4px solid #64748b; }
+        .node.online { border-left-color: #10b981; }
+        .node.offline { border-left-color: #ef4444; }
+        .node h2 { font-size: 1.25rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .node .status { font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 4px; background: #64748b; }
+        .node.online .status { background: #10b981; }
+        .node.offline .status { background: #ef4444; }
+        .node p { margin: 0.5rem 0; color: #94a3b8; }
+        .node .value { color: #f1f5f9; font-weight: 600; }
+        .node .ip { font-family: monospace; font-size: 0.9rem; color: #38bdf8; }
+        .summary { background: #1e293b; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; max-width: 1200px; margin: 0 auto 2rem; }
+        .summary h2 { color: #38bdf8; margin-bottom: 1rem; }
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; text-align: center; }
+        .summary-item { padding: 1rem; background: #0f172a; border-radius: 8px; }
+        .summary-item .label { font-size: 0.875rem; color: #64748b; }
+        .summary-item .value { font-size: 1.5rem; font-weight: bold; color: #10b981; }
+        .refresh { text-align: center; margin-top: 2rem; color: #64748b; font-size: 0.875rem; }
+        .endpoints { background: #1e293b; border-radius: 12px; padding: 1.5rem; margin-top: 2rem; max-width: 1200px; margin: 2rem auto 0; }
+        .endpoints h2 { color: #38bdf8; margin-bottom: 1rem; }
+        .endpoints code { background: #0f172a; padding: 0.5rem 1rem; border-radius: 6px; display: block; margin: 0.5rem 0; font-size: 0.9rem; color: #38bdf8; }
+    </style>
+</head>
+<body>
+    <h1>🌐 IronDAG Public Testnet</h1>
+    
+    <div class="summary">
+        <h2>Network Summary</h2>
+        <div class="summary-grid">
+            <div class="summary-item">
+                <div class="label">Nodes Online</div>
+                <div class="value" id="nodes-online">-</div>
+            </div>
+            <div class="summary-item">
+                <div class="label">Highest Block</div>
+                <div class="value" id="highest-block">-</div>
+            </div>
+            <div class="summary-item">
+                <div class="label">Network Status</div>
+                <div class="value" id="network-status">-</div>
+            </div>
+            <div class="summary-item">
+                <div class="label">Last Update</div>
+                <div class="value" id="last-update">-</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid" id="nodes-grid"></div>
+    
+    <div class="endpoints">
+        <h2>Public RPC Endpoints</h2>
+        <code>http://76.13.101.31:8545</code>
+        <code>http://76.13.101.39:8545</code>
+        <code>http://76.13.101.41:8545</code>
+    </div>
+    
+    <div class="refresh">Auto-refreshes every 5 seconds</div>
+
+    <script>
+        const nodes = [
+            { name: 'Node 1 (Bootstrap)', ip: '76.13.101.31', port: 8545 },
+            { name: 'Node 2', ip: '76.13.101.39', port: 8545 },
+            { name: 'Node 3', ip: '76.13.101.41', port: 8545 }
+        ];
+
+        async function checkNode(node) {
+            const url = `http://${node.ip}:${node.port}`;
+            try {
+                const start = Date.now();
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ jsonrpc: '2.0', method: 'eth_blockNumber', params: [], id: 1 })
+                });
+                const latency = Date.now() - start;
+                const data = await response.json();
+                const block = parseInt(data.result, 16);
+                return { online: true, block, latency, error: null };
+            } catch (e) {
+                return { online: false, block: 0, latency: 0, error: e.message };
+            }
+        }
+
+        async function updateStatus() {
+            const results = await Promise.all(nodes.map(async (node) => {
+                const status = await checkNode(node);
+                return { ...node, ...status };
+            }));
+
+            const grid = document.getElementById('nodes-grid');
+            grid.innerHTML = results.map(node => `
+                <div class="node ${node.online ? 'online' : 'offline'}">
+                    <h2>${node.name} <span class="status">${node.online ? 'ONLINE' : 'OFFLINE'}</span></h2>
+                    <p class="ip">${node.ip}:${node.port}</p>
+                    <p>Block: <span class="value">${node.online ? node.block.toLocaleString() : 'N/A'}</span></p>
+                    <p>Latency: <span class="value">${node.online ? node.latency + 'ms' : 'N/A'}</span></p>
+                    ${node.error ? `<p style="color: #ef4444;">Error: ${node.error}</p>` : ''}
+                </div>
+            `).join('');
+
+            const onlineNodes = results.filter(n => n.online);
+            const highestBlock = Math.max(...results.map(n => n.block));
+            
+            document.getElementById('nodes-online').textContent = `${onlineNodes.length}/${nodes.length}`;
+            document.getElementById('highest-block').textContent = highestBlock.toLocaleString();
+            document.getElementById('network-status').textContent = onlineNodes.length >= 2 ? '✅ Healthy' : '⚠️ Degraded';
+            document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+        }
+
+        updateStatus();
+        setInterval(updateStatus, 5000);
+    </script>
+</body>
+</html>

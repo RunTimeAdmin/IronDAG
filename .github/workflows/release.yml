@@ -1,0 +1,119 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (e.g., v0.1.0-alpha)'
+        required: false
+        default: 'dev-build'
+
+env:
+  CARGO_TERM_COLOR: always
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            artifact: node
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            artifact: node.exe
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            artifact: node
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            artifact: node
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: "25.x"
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            irondag-blockchain/target
+          key: ${{ runner.os }}-${{ matrix.target }}-cargo-${{ hashFiles('irondag-blockchain/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.target }}-cargo-
+
+      - name: Build release
+        working-directory: irondag-blockchain
+        run: cargo build --release --bin node --features kyber --target ${{ matrix.target }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-${{ matrix.target }}
+          path: irondag-blockchain/target/${{ matrix.target }}/release/${{ matrix.artifact }}
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare release files
+        run: |
+          mkdir -p release
+          for dir in artifacts/node-*; do
+            if [ -d "$dir" ]; then
+              target=$(basename "$dir" | sed 's/node-//')
+              for file in "$dir"/*; do
+                if [ -f "$file" ]; then
+                  filename=$(basename "$file")
+                  # Add target suffix to filename
+                  name="${filename%.*}"
+                  ext="${filename##*.}"
+                  if [ "$name" = "$ext" ]; then
+                    cp "$file" "release/${filename}-${target}"
+                  else
+                    cp "$file" "release/${name}-${target}.${ext}"
+                  fi
+                fi
+              done
+            fi
+          done
+          ls -la release/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*
+          generate_release_notes: true
+          draft: ${{ github.event_name == 'workflow_dispatch' }}
+          prerelease: ${{ contains(github.ref, 'alpha') || contains(github.ref, 'beta') || github.event_name == 'workflow_dispatch' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

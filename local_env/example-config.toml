@@ -1,0 +1,40 @@
+# IronDAG Node Configuration
+# CLI flags override these values
+# Usage: node --config path/to/config.toml
+
+# Network
+port = 8080
+rpc_port = 8545
+max_peers = 50
+
+# Mining
+# miner_address = "0x0000000000000000000000000000000000000001"
+# disable_mining = false
+# single_stream = false
+# enable_stream_c = false
+
+# Chain
+chain_id = 1338
+# genesis_file = "path/to/genesis.json"
+
+# Data
+# data_dir = "data/node1"
+
+# Peers
+# bootstrap_peers = ["127.0.0.1:30303"]
+# peers = ["127.0.0.1:30304"]
+# advertise = "1.2.3.4:30303"
+
+# TLS
+# tls_cert = "path/to/cert.pem"
+# tls_key = "path/to/key.pem"
+
+# CORS
+# cors_origin = "*"
+
+# Test mode (dev only)
+# test_txs = false
+
+# Pruning
+# prune_interval_secs = 60
+# keep_red_blocks = false

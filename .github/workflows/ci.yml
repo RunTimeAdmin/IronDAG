@@ -1,0 +1,155 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, feature/alpha-hardening]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 4 * * *'  # Nightly at 4 AM UTC
+
+env:
+  CARGO_TERM_COLOR: always
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  check:
+    name: Check & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Install protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: "25.x"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            irondag-blockchain/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('irondag-blockchain/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Cargo fmt
+        working-directory: irondag-blockchain
+        run: cargo fmt -- --check
+
+      - name: Cargo check
+        working-directory: irondag-blockchain
+        run: cargo check --all-targets
+
+      - name: Cargo clippy
+        working-directory: irondag-blockchain
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Cargo test
+        working-directory: irondag-blockchain
+        run: cargo test --lib --bins
+
+      - name: Run integration tests
+        run: cargo test --tests
+        working-directory: irondag-blockchain
+
+      - name: Cargo build
+        working-directory: irondag-blockchain
+        run: cargo build --release --bin node --features kyber
+
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --locked
+
+      - name: Security audit dependencies
+        working-directory: irondag-blockchain
+        run: cargo audit
+
+  slow-tests:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Install protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: "25.x"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            irondag-blockchain/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('irondag-blockchain/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Run slow tests
+        run: cargo test -- --ignored
+        working-directory: irondag-blockchain
+
+  coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    needs: check
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: "25.x"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            irondag-blockchain/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('irondag-blockchain/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Install tarpaulin
+        run: cargo install cargo-tarpaulin
+
+      # Coverage threshold: 50% minimum (conservative initial target)
+      # Increase gradually as test coverage improves
+      - name: Run coverage
+        continue-on-error: true
+        run: cargo tarpaulin --manifest-path irondag-blockchain/Cargo.toml --out xml --output-dir coverage --skip-clean --exclude-files "tests/sharding*" --fail-under 50 -- --test-threads=1
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/

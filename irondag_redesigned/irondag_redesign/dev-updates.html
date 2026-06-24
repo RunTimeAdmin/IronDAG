@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Updates - IronDAG Protocol</title>
+    <meta name="description" content="Latest development updates and technical progress for the IronDAG Protocol.">
+    <link rel="icon" type="image/png" href="images/coin.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --cyan: #06b6d4;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --darkest: #020617;
+            --light: #f8fafc;
+            --text: #334155;
+            --text-light: #64748b;
+            --success: #10b981;
+            --warning: #fbbf24;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--light);
+            background: var(--darkest);
+            overflow-x: hidden;
+            letter-spacing: 0.3px;
+        }
+        
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 20px; 
+        }
+        
+        /* Animated Background */
+        .animated-bg {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: -1;
+            background: linear-gradient(135deg, #020617 0%, #0f172a 25%, #1a0f3f 50%, #0f172a 75%, #020617 100%);
+            background-size: 400% 400%; 
+            animation: gradientShift 20s ease infinite;
+        }
+        
+        @keyframes gradientShift { 
+            0% { background-position: 0% 50%; } 
+            50% { background-position: 100% 50%; } 
+            100% { background-position: 0% 50%; } 
+        }
+
+        header {
+            background: rgba(15, 23, 42, 0.7); 
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.15); 
+            padding: 1.5rem 0;
+            position: sticky; 
+            top: 0; 
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        nav { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        
+        .logo {
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            text-decoration: none;
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 50%, #06b6d4 100%);
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.5px;
+            animation: shimmer 4s ease-in-out infinite;
+            background-size: 200% 200%;
+            display: flex;
+            align-items: center;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .logo img {
+            height: 40px;
+            margin-right: 12px;
+        }
+        
+        .nav-links { 
+            display: flex; 
+            list-style: none; 
+            gap: 2.5rem; 
+        }
+        
+        .nav-links a { 
+            color: rgba(255, 255, 255, 0.85); 
+            text-decoration: none; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0;
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav-links a:hover { 
+            color: white; 
+            text-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hero { 
+            padding: 6rem 0 3rem; 
+            text-align: center; 
+        }
+        
+        .hero h1 { 
+            font-size: 3.5rem; 
+            margin-bottom: 1.5rem; 
+            background: linear-gradient(135deg, #ffffff 0%, #6366f1 40%, #ec4899 70%, #06b6d4 100%);
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -1px;
+        }
+        
+        .hero p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+        
+        .status-card {
+            background: rgba(30, 41, 59, 0.5); 
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 24px; 
+            padding: 2.5rem; 
+            margin-bottom: 3rem; 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .status-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 2rem; 
+            border-bottom: 1px solid rgba(99, 102, 241, 0.15); 
+            padding-bottom: 1.5rem; 
+        }
+        
+        .status-header h3 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .status-header p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
+            margin-top: 0.3rem;
+        }
+        
+        .status-badge { 
+            padding: 0.7rem 1.5rem; 
+            border-radius: 50px; 
+            font-weight: 700; 
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-badge.complete { 
+            background: rgba(16, 185, 129, 0.15); 
+            color: var(--success); 
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+        }
+        
+        .status-badge.warning { 
+            background: rgba(251, 191, 36, 0.15); 
+            color: var(--warning); 
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .update-section { 
+            margin-bottom: 4rem; 
+        }
+        
+        .update-section h2 { 
+            font-size: 2.2rem; 
+            margin-bottom: 2rem; 
+            color: white;
+            border-left: 4px solid var(--primary); 
+            padding-left: 1.5rem;
+            font-weight: 800;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .changelog-item {
+            background: rgba(15, 23, 42, 0.5); 
+            border-radius: 16px; 
+            padding: 2rem; 
+            margin-bottom: 2rem;
+            border-left: 3px solid var(--primary); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            backdrop-filter: blur(10px);
+        }
+        
+        .changelog-item:hover { 
+            background: rgba(30, 41, 59, 0.6); 
+            transform: translateX(8px);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15);
+        }
+        
+        .changelog-date { 
+            color: var(--cyan); 
+            font-size: 0.9rem; 
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .changelog-title { 
+            font-size: 1.3rem; 
+            font-weight: 800; 
+            margin-bottom: 1.2rem; 
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .changelog-tags { 
+            display: flex; 
+            gap: 0.8rem; 
+            margin-bottom: 1.5rem; 
+            flex-wrap: wrap;
+        }
+        
+        .tag { 
+            font-size: 0.7rem; 
+            padding: 0.35rem 0.8rem; 
+            border-radius: 6px; 
+            text-transform: uppercase; 
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .tag.added { 
+            background: rgba(16, 185, 129, 0.15); 
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .tag.fixed { 
+            background: rgba(99, 102, 241, 0.15); 
+            color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+        
+        .tag.performance { 
+            background: rgba(236, 72, 153, 0.15); 
+            color: var(--accent);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+        }
+        
+        .tag.infra { 
+            background: rgba(6, 182, 212, 0.15); 
+            color: var(--cyan);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        ul { 
+            list-style: none; 
+        }
+        
+        li { 
+            margin-bottom: 0.8rem; 
+            position: relative; 
+            padding-left: 1.8rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+        }
+        
+        li::before { 
+            content: '→'; 
+            position: absolute; 
+            left: 0; 
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        li strong {
+            color: white;
+            font-weight: 700;
+        }
+
+        footer { 
+            padding: 4rem 0; 
+            text-align: center; 
+            border-top: 1px solid rgba(99, 102, 241, 0.15); 
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 300;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .status-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .update-section h2 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <img src="images/LOGO.png" alt="IronDAG">
+                    IronDAG Protocol
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#features">Features</a></li>
+                    <li><a href="dev-updates.html">Dev Updates</a></li>
+                    <li><a href="IronDAG_WHITEPAPER.html">Whitepaper</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h1>Development Updates</h1>
+            <p>Real-time progress tracking from the core development team.</p>
+        </section>
+
+        <div class="status-card">
+            <div class="status-header">
+                <div>
+                    <h3>Current Project Status</h3>
+                    <p>Last Updated: June 15, 2026</p>
+                </div>
+                <span class="status-badge complete">Phase 3 Live - Public Testnet</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2.5rem;">
+                <div>
+                    <h4 style="color: var(--primary); margin-bottom: 1rem; font-weight: 700;">Core Systems</h4>
+                    <ul>
+                        <li>Mining: ✅ Operational</li>
+                        <li>EVM: ✅ Operational</li>
+                        <li>Consensus: ✅ GhostDAG</li>
+                        <li>P2P Network: ✅ Live</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: var(--accent); margin-bottom: 1rem; font-weight: 700;">Network Status</h4>
+                    <ul>
+                        <li>Testnet: 🟢 Public Live</li>
+                        <li>Nodes: 3 (Distributed)</li>
+                        <li>Explorer: 🟢 Live</li>
+                        <li>RPC: 🟢 Public</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: var(--cyan); margin-bottom: 1rem; font-weight: 700;">Infrastructure</h4>
+                    <ul>
+                        <li>Uptime: 24/7 (Systemd)</li>
+                        <li>Location: Multi-Datacenter</li>
+                        <li>DNS: Configured</li>
+                        <li>Security: ML-KEM-768</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <section class="update-section">
+            <h2>Recent Changelog</h2>
+
+            <div class="changelog-item">
+                <div class="changelog-date">June 15, 2026</div>
+                <div class="changelog-title">Performance Hardening + 3 New Protocol Features</div>
+                <div class="changelog-tags">
+                    <span class="tag performance">Performance</span>
+                    <span class="tag added">Added</span>
+                    <span class="tag fixed">Fixed</span>
+                </div>
+                <ul>
+                    <li><strong>Lock-Free RPC Reads</strong>: <code>eth_getBalance</code>, <code>eth_getTransactionCount</code>, and <code>eth_blockNumber</code> now bypass the mining write lock entirely — reads directly from the live DashMap/AtomicU64, eliminating "Node busy" errors under load</li>
+                    <li><strong>Parallel Transaction Validation</strong>: Signature verification, fee checks, chain ID, and hash validation all run in parallel across a block's transactions using Rayon before the serial stateful pass — significant throughput improvement at high tx counts</li>
+                    <li><strong>Topological Sync Sort</strong>: Kahn's O(N+E) sort applied to sync batches before the write lock, ensuring parent-before-child ordering so the multi-pass retry loop completes in one pass</li>
+                    <li><strong>Programmable Gas Sponsorship</strong>: Sponsors register an on-chain policy (sender allowlist, per-tx fee cap, expiry block, rolling daily spend limit). Node enforces at validation time and debits the sponsor — no changes required by the sender. RPC: <code>irondag_registerSponsorPolicy</code>, <code>irondag_deregisterSponsorPolicy</code>, <code>irondag_getSponsorPolicy</code></li>
+                    <li><strong>Native Recurring Transactions</strong>: Schedule repeating value transfers (daily / weekly / monthly / custom interval) with optional end date and execution cap. Node executes each cycle automatically at block time — no re-signing required. RPC: <code>irondag_createRecurringTransaction</code>, <code>irondag_cancelRecurringTransaction</code>, <code>irondag_getRecurringTransaction</code></li>
+                    <li><strong>Built-in Privacy Pool</strong>: Fixed-denomination (1 IDAG) shielded pool at system address <code>0x0000…0002</code>. Deposit by sending a tx with a 32-byte commitment hash in calldata; withdraw by revealing the nullifier. Nullifier registry prevents double-spend. Stub mode active now; zk-SNARK proof verification (Groth16) wired in when the privacy feature flag is enabled. RPC: <code>irondag_depositToPool</code>, <code>irondag_poolWithdraw</code>, <code>irondag_getPoolInfo</code>, <code>irondag_isNullifierSpent</code></li>
+                </ul>
+            </div>
+
+            <div class="changelog-item">
+                <div class="changelog-date">June 14, 2026</div>
+                <div class="changelog-title">Website Redesign & Visual Refresh</div>
+                <div class="changelog-tags">
+                    <span class="tag added">Added</span>
+                    <span class="tag infra">Design</span>
+                </div>
+                <ul>
+                    <li><strong>Modern Web3 Aesthetic</strong>: Implemented premium glassmorphism design with enhanced visual hierarchy</li>
+                    <li><strong>Typography Upgrade</strong>: Integrated Inter + Space Grotesk for cutting-edge appearance</li>
+                    <li><strong>Enhanced Animations</strong>: Added smooth micro-interactions and glowing effects throughout</li>
+                    <li><strong>Responsive Design</strong>: Full mobile optimization with proper breakpoints</li>
+                    <li><strong>Visual Consistency</strong>: Updated all pages with unified design language</li>
+                </ul>
+            </div>
+
+            <div class="changelog-item">
+                <div class="changelog-date">January 31, 2026</div>
+                <div class="changelog-title">IDAG Rebranding + Documentation Update</div>
+                <div class="changelog-tags">
+                    <span class="tag added">Added</span>
+                    <span class="tag infra">Branding</span>
+                </div>
+                <ul>
+                    <li><strong>Token Ticker Rebrand</strong>: MSHW → IDAG (Q=Quantum, MON=IronDAG)</li>
+                    <li><strong>New Brand Assets</strong>: Professional token logo, project logo, and marketing banners</li>
+                    <li><strong>Documentation Refresh</strong>: Updated 52+ files across codebase, wiki, and website</li>
+                    <li><strong>PoW Test Fixes</strong>: Fixed difficulty clamping issues in mining tests</li>
+                    <li><strong>Competitor Analysis</strong>: Added comprehensive comparison vs Ethereum, Solana, Avalanche, Sui, Aptos</li>
+                </ul>
+            </div>
+
+            <div class="changelog-item">
+                <div class="changelog-date">January 27, 2026</div>
+                <div class="changelog-title">3-Node Testnet Deployment</div>
+                <div class="changelog-tags">
+                    <span class="tag added">Added</span>
+                    <span class="tag infra">Infrastructure</span>
+                </div>
+                <ul>
+                    <li><strong>Multi-Node Sync Verified</strong>: Node 2 synced 394/395 blocks from Node 1</li>
+                    <li><strong>Lock Contention Fix</strong>: Resolved mining halt during peer synchronization</li>
+                    <li><strong>MetaMask Wallet Integration</strong>: Added to explorer dashboard</li>
+                    <li><strong>Peer Count Display</strong>: Real-time peer count in explorer</li>
+                </ul>
+            </div>
+
+            <div class="changelog-item">
+                <div class="changelog-date">January 24, 2026</div>
+                <div class="changelog-title">Version 0.3.0 - Phase 3: Public Testnet Launch</div>
+                <div class="changelog-tags">
+                    <span class="tag added">Added</span>
+                    <span class="tag infra">Infrastructure</span>
+                </div>
+                <ul>
+                    <li><strong>3-Node Public Testnet</strong>: Live network running on geographically distributed VPS infrastructure</li>
+                    <li><strong>Public RPC Endpoints</strong>: External JSON-RPC access enabled for wallet and dApp connectivity</li>
+                    <li><strong>Block Explorer</strong>: Live explorer at explorer.irondag.io for real-time chain monitoring</li>
+                    <li><strong>P2P Network Layer</strong>: Cross-node communication with headers-first sync and orphan block handling</li>
+                    <li><strong>Systemd Services</strong>: 24/7 uptime with automatic restart and boot persistence</li>
+                    <li><strong>External Network Binding</strong>: P2P and RPC servers now bind to 0.0.0.0 for public accessibility</li>
+                </ul>
+            </div>
+
+            <div class="changelog-item">
+                <div class="changelog-date">January 15, 2026</div>
+                <div class="changelog-title">Version 0.2.0 - Phase 2: Transaction Pipeline & Web3 Compatibility</div>
+                <div class="changelog-tags">
+                    <span class="tag added">Added</span>
+                    <span class="tag fixed">Fixed</span>
+                    <span class="tag performance">Performance</span>
+                </div>
+                <ul>
+                    <li><strong>MetaMask Compatibility</strong>: Implemented EIP-155 transaction hashing and ECDSA signature verification</li>
+                    <li><strong>Fine-Grained Locking</strong>: 300x improvement in RPC response time (&lt;100ms)</li>
+                    <li><strong>Smart Contract Deployment</strong>: Verified working via ethers.js and MetaMask</li>
+                    <li><strong>Connection Stability</strong>: Fixed ECONNRESET errors for large contract payloads</li>
+                </ul>
+            </div>
+
+            <div class="changelog-item">
+                <div class="changelog-date">January 14, 2026</div>
+                <div class="changelog-title">Version 0.1.0 - Fine-Grained Locking Architecture</div>
+                <div class="changelog-tags">
+                    <span class="tag performance">Performance</span>
+                    <span class="tag added">Added</span>
+                </div>
+                <ul>
+                    <li><strong>Lock-Free Account Storage</strong>: Implemented DashMap for unlimited concurrent reads</li>
+                    <li><strong>Zero Lock Contention</strong>: Mining, RPC, and Desktop app now run fully concurrent</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="update-section">
+            <h2>Next Priorities</h2>
+            <div class="status-card" style="margin-bottom: 0;">
+                <ul>
+                    <li><strong>Privacy Pool — zk-SNARK Proofs</strong>: Wire in Groth16 verifier (arkworks) behind the <code>privacy</code> feature flag to provide real on-chain unlinkability</li>
+                    <li><strong>RPC Lock Timeout Elimination</strong>: Extend the lock-free fast path to additional high-frequency read methods (<code>eth_getBlockByNumber</code>, <code>eth_getLogs</code>)</li>
+                    <li><strong>Mainnet Preparation</strong>: Final security audits and production hardening</li>
+                    <li><strong>Ecosystem Integrations</strong>: Partnerships with wallets and DeFi protocols</li>
+                    <li><strong>Community Governance</strong>: DAO formation and governance token distribution</li>
+                    <li><strong>Security Audit</strong>: Third-party code review and penetration testing before mainnet launch</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 IronDAG Protocol. Built in Rust. Secured by NIST FIPS 203.</p>
+        </div>
+    </footer>
+</body>
+</html>

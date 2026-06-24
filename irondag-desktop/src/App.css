@@ -1,0 +1,222 @@
+/* Modern Dark Theme for IronDAG Desktop */
+:root {
+  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 400;
+
+  /* Color Palette */
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --secondary: #8b5cf6;
+  --accent: #ec4899;
+  --cyan: #06b6d4;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  
+  --bg-dark: #020617;
+  --bg-darker: #0f172a;
+  --bg-card: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border: rgba(148, 163, 184, 0.1);
+
+  color: var(--text-primary);
+  background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Glassmorphism effect */
+.glass {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary), var(--accent), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animated gradient background */
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Logo pulse animation */
+@keyframes pulse {
+  0%, 100% { 
+    filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.4));
+    transform: scale(1);
+  }
+  50% { 
+    filter: drop-shadow(0 0 40px rgba(99, 102, 241, 0.7));
+    transform: scale(1.02);
+  }
+}
+
+/* Buttons */
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.75em 1.5em;
+  font-size: 0.95em;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+
+button:not(:disabled) {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+button:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+}
+
+button:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+button:disabled {
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Success button variant */
+button.success {
+  background: linear-gradient(135deg, var(--success), #059669);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+button.success:hover {
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Danger button variant */
+button.danger {
+  background: linear-gradient(135deg, var(--danger), #dc2626);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+button.danger:hover {
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* Inputs */
+input {
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 0.75em 1em;
+  font-size: 0.95em;
+  font-weight: 400;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: rgba(30, 41, 59, 0.5);
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+input:focus {
+  border-color: var(--primary);
+  background: rgba(30, 41, 59, 0.7);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-card);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Confirmation Dialog */
+.confirm-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center;
+  z-index: 1000; backdrop-filter: blur(4px);
+}
+.confirm-dialog {
+  background: #1e1e2e; border: 1px solid rgba(99,102,241,0.3);
+  border-radius: 12px; padding: 24px; max-width: 420px; width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.confirm-dialog h3 { color: #e2e8f0; margin: 0 0 12px; }
+.confirm-dialog p { color: #94a3b8; margin: 0 0 20px; line-height: 1.5; }
+.confirm-actions { display: flex; gap: 12px; justify-content: flex-end; }
+.btn-cancel {
+  padding: 8px 20px; border-radius: 8px; border: 1px solid #475569;
+  background: transparent; color: #94a3b8; cursor: pointer;
+}
+.btn-cancel:hover { background: #334155; }
+.btn-confirm {
+  padding: 8px 20px; border-radius: 8px; border: none;
+  background: #6366f1; color: white; cursor: pointer;
+}
+.btn-confirm:hover { background: #4f46e5; }
+
+/* Update Banner */
+.update-banner {
+  background: linear-gradient(135deg, #6366f1, #06b6d4);
+  color: white; padding: 10px 20px; display: flex; align-items: center;
+  gap: 12px; font-size: 14px; border-radius: 0 0 8px 8px;
+}
+.update-banner button {
+  background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+  color: white; padding: 4px 12px; border-radius: 6px; cursor: pointer;
+}
+.update-banner button:hover { background: rgba(255,255,255,0.3); }
+.update-banner .dismiss {
+  margin-left: auto; background: none; border: none; font-size: 18px;
+  padding: 0 4px; opacity: 0.7;
+}
+.update-banner .dismiss:hover { opacity: 1; }

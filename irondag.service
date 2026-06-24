@@ -1,0 +1,14 @@
+[Unit]
+Description=IronDAG Blockchain Node
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/var/lib/irondag
+ExecStart=/opt/irondag/irondag-blockchain/target/release/node P2P_PORT RPC_PORT BOOTSTRAP_PEERS
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
