@@ -32,4 +32,3 @@ pub fn create_test_transaction(
 ) -> Transaction {
     Transaction::new(sender, recipient, value, fee, nonce)
 }
-

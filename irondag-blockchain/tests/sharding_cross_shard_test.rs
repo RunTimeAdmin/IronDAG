@@ -7,9 +7,7 @@
 //! - Shard height tracking for catch-up protocol
 
 use irondag::blockchain::Transaction;
-use irondag::sharding::{
-    AssignmentStrategy, CrossShardStatus, ShardConfig, ShardManager,
-};
+use irondag::sharding::{AssignmentStrategy, CrossShardStatus, ShardConfig, ShardManager};
 use irondag::types::Address;
 
 /// Test the full cross-shard flow:

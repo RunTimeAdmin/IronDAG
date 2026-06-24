@@ -7,9 +7,7 @@
 //! submit -> route -> process -> receipt creation -> balance update
 
 use irondag::blockchain::Transaction;
-use irondag::sharding::{
-    AssignmentStrategy, CrossShardStatus, ShardConfig, ShardManager,
-};
+use irondag::sharding::{AssignmentStrategy, CrossShardStatus, ShardConfig, ShardManager};
 use irondag::types::Address;
 
 /// Test shard creation

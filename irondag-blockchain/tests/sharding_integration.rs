@@ -5,9 +5,7 @@
 
 use irondag::blockchain::block::BlockHeader;
 use irondag::blockchain::{Block, Transaction};
-use irondag::sharding::{
-    AssignmentStrategy, CrossShardStatus, ShardConfig, ShardManager,
-};
+use irondag::sharding::{AssignmentStrategy, CrossShardStatus, ShardConfig, ShardManager};
 use irondag::types::{Address, StreamType};
 
 /// Test shard creation and initialization
