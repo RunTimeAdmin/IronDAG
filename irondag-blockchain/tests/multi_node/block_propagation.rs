@@ -16,7 +16,7 @@ async fn test_block_structure_for_propagation() {
     assert!(block.validate());
     
     // Add to blockchain
-    let result = blockchain.add_block(block.clone());
+    let result = blockchain.add_block(block.clone()).await;
     assert!(result.is_ok());
     
     // Verify block is in chain

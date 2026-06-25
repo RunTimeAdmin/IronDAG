@@ -80,7 +80,7 @@ async fn test_multi_shard_workflow() {
             let header =
                 BlockHeader::new(vec![parent_hash], 1, StreamType::StreamA, 4, 1_000_000_000);
             let block = Block::new(header, txs);
-            let _ = blockchain.write().await.add_block(block);
+            let _ = blockchain.write().await.add_block(block).await;
         }
     }
 

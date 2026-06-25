@@ -238,7 +238,7 @@ async fn sec_003_empty_signature_returns_error() {
     let header2 = BlockHeader::new(vec![Hash::zero()], 1, StreamType::StreamC, 4, 1_000_000_000);
     let block2 = Block::new(header2, vec![tx2]);
 
-    let result2 = blockchain2.add_block(block2);
+    let result2 = blockchain2.add_block(block2).await;
     assert!(
         result2.is_err(),
         "Transaction with zero-filled signature should be rejected (SEC-003)"
