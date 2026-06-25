@@ -2,7 +2,7 @@
 
 ## Connection
 
-- **Default endpoint**: `http://localhost:8545`
+- **Default endpoint**: `http://localhost:8546`
 - **CORS**: Configurable via `--cors-origin` flag or `cors_origins` in TOML config
 - **Authentication**: API key required by default; disable with `--rpc-no-auth` (dev only)
 - **Rate limiting**: 1000 requests/minute per IP default (configurable via `--rpc-rate-limit`)
@@ -13,7 +13,7 @@
 By default, the RPC server requires API key authentication via the `X-API-Key` header:
 
 ```bash
-curl -X POST http://localhost:8545 \
+curl -X POST http://localhost:8546 \
   -H "Content-Type: application/json" \
   -H "X-API-Key: your-api-key" \
   -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'

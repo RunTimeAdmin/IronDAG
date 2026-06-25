@@ -29,6 +29,6 @@
 - [Security](Module-Reference#security---ai-security)
 
 ### Links
-- [GitHub Repository](https://github.com/dev-irondag/irondag)
+- [GitHub Repository](https://github.com/RunTimeAdmin/IronDAG)
 - [Website](https://irondag.io)
 - [Whitepaper](https://irondag.io/IronDAG_WHITEPAPER.html)

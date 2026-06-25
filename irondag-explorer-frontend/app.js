@@ -8,7 +8,7 @@
 const urlParams = new URLSearchParams(window.location.search);
 // When on explorer domain, use /rpc (nginx should proxy to testnet). Else use public testnet.
 const isExplorerHost = window.location.hostname === 'explorer.irondag.io' || window.location.hostname === 'localhost';
-const DEFAULT_RPC = isExplorerHost ? '/rpc' : 'http://76.13.101.31:8545';
+const DEFAULT_RPC = isExplorerHost ? '/rpc' : 'http://localhost:8546';
 const RPC_BASE = urlParams.get('rpc') || DEFAULT_RPC;
 
 // Cache for DAG health to avoid showing 0% on RPC failures

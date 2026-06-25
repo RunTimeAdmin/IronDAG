@@ -2,7 +2,7 @@
 const { ethers } = require('ethers');
 
 // Connect to local node
-const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
+const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8546');
 
 // Test wallet with deterministic private key (only for testing!)
 // Address: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266

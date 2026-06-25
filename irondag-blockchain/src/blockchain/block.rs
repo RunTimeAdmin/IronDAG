@@ -1122,10 +1122,10 @@ mod tests {
         // Now create a transaction with WRONG chain_id in the transaction field
         // but the signature v value still encodes chain_id 1337
         let mut tx_wrong_chain = tx.clone();
-        tx_wrong_chain.chain_id = Some(1338); // Different chain_id in tx field
+        tx_wrong_chain.chain_id 11567); // Different chain_id in tx field
         tx_wrong_chain.hash = tx_wrong_chain.calculate_hash();
 
-        // The signature was computed with chain_id 1337, but tx.chain_id is 1338
+        // The signature was computed with chain_id 11567
         // Verification should fail because the derived address won't match
         let result = tx_wrong_chain.verify_signature(1);
         assert!(result.is_ok(), "verify_signature should return Ok");

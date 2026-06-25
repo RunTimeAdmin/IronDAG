@@ -33,7 +33,7 @@ This directory contains Grafana dashboard configurations for monitoring the Iron
 
 2. **Update the target URL** in `prometheus.yml`:
    ```yaml
-   - targets: ['localhost:8545']  # Change to your node's RPC port
+   - targets: ['localhost:8546']  # Change to your node's RPC port
    ```
 
 3. **Start Prometheus:**
@@ -121,7 +121,7 @@ Transaction processing metrics:
 
 The IronDAG node exposes metrics at:
 ```
-http://localhost:8545/metrics
+http://localhost:8546/metrics
 ```
 
 Make sure your Prometheus configuration points to this endpoint.
@@ -162,7 +162,7 @@ Edit the `time` field in each dashboard JSON:
 
 1. **Check if metrics endpoint is accessible:**
    ```bash
-   curl http://localhost:8545/metrics
+   curl http://localhost:8546/metrics
    ```
 
 2. **Verify Prometheus target status:**
@@ -170,7 +170,7 @@ Edit the `time` field in each dashboard JSON:
    - Check if `IronDAG-node` is UP
 
 3. **Check firewall/network:**
-   - Ensure port 8545 is accessible
+   - Ensure port 8546 is accessible
    - For Docker, use `host.docker.internal` instead of `localhost`
 
 ### Grafana Shows "No Data"
@@ -193,10 +193,10 @@ Edit the `time` field in each dashboard JSON:
 If using Docker and metrics aren't accessible:
 
 1. **For Windows/Mac:**
-   - Use `host.docker.internal:8545` in Prometheus config
+   - Use `host.docker.internal:8546` in Prometheus config
 
 2. **For Linux:**
-   - Use `host.docker.internal:8545` or add `network_mode: host` to docker-compose
+   - Use `host.docker.internal:8546` or add `network_mode: host` to docker-compose
 
 ## Metrics Reference
 

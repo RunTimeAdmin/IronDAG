@@ -34,7 +34,7 @@ use one of the options below.
 
 5. **Rebuild the node:**
    ```powershell
-   cd "c:\Users\Admin01\Desktop\MondoShawan Blockchain\irondag\irondag-blockchain"
+   cd irondag\irondag-blockchain
    cargo build --release --bin node
    ```
 

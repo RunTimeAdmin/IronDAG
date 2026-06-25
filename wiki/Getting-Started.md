@@ -56,7 +56,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### 2. Clone Repository
 
 ```bash
-git clone https://github.com/dev-irondag/irondag.git
+git clone https://github.com/RunTimeAdmin/IronDAG.git
 cd irondag
 ```
 
@@ -107,7 +107,7 @@ log_level = "info"
 
 [rpc]
 host = "127.0.0.1"
-port = 8545
+port = 8546
 cors_origins = ["*"]
 
 [mining]
@@ -131,7 +131,7 @@ cargo run --release --bin node -- --config config.toml
 |--------|-------------|---------|
 | `--config` | Config file path | None |
 | `--data-dir` | Data directory | `./data` |
-| `--rpc-port` | JSON-RPC port | 8545 |
+| `--rpc-port` | JSON-RPC port | 8546 |
 | `--p2p-port` | P2P network port | 30303 |
 | `--mining` | Enable mining | false |
 | `--log-level` | Log verbosity | info |
@@ -143,20 +143,20 @@ cargo run --release --bin node -- --config config.toml
 ### Check RPC
 
 ```bash
-curl -X POST http://localhost:8545 \
+curl -X POST http://localhost:8546 \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'
 ```
 
 Expected response:
 ```json
-{"jsonrpc":"2.0","id":1,"result":"0x53a"}
+{"jsonrpc":"2.0","id":1,"result":"0x2D2F"}
 ```
 
 ### Check Block Height
 
 ```bash
-curl -X POST http://localhost:8545 \
+curl -X POST http://localhost:8546 \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 ```
@@ -172,8 +172,8 @@ curl -X POST http://localhost:8545 \
 | Setting | Value |
 |---------|-------|
 | Network Name | IronDAG Testnet |
-| RPC URL | http://localhost:8545 |
-| Chain ID | 1338 |
+| RPC URL | http://localhost:8546 |
+| Chain ID | 11567 |
 | Currency Symbol | IDAG |
 
 4. Click "Save"
@@ -200,7 +200,7 @@ A pre-funded test account is available:
 ```javascript
 const { ethers } = require('ethers');
 
-const provider = new ethers.JsonRpcProvider('http://localhost:8545');
+const provider = new ethers.JsonRpcProvider('http://localhost:8546');
 const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 
 // SimpleStorage contract
@@ -221,7 +221,7 @@ console.log('Contract deployed at:', await contract.getAddress());
 
 ```bash
 forge create src/SimpleStorage.sol:SimpleStorage \
-  --rpc-url http://localhost:8545 \
+  --rpc-url http://localhost:8546 \
   --private-key $PRIVATE_KEY
 ```
 
@@ -283,10 +283,10 @@ The node automatically tries alternative ports if the default is occupied.
 Check what's using a port:
 ```bash
 # Windows
-netstat -ano | findstr :8545
+netstat -ano | findstr :8546
 
 # Linux/macOS
-lsof -i :8545
+lsof -i :8546
 ```
 
 ### Node Won't Start

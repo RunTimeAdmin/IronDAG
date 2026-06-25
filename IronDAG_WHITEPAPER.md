@@ -1119,7 +1119,7 @@ The IronDAG Protocol implements a **90% fair launch model**, the fairest in the 
 
 ```powershell
 # Clone repository
-git clone https://github.com/dev-irondag/irondag
+git clone https://github.com/RunTimeAdmin/IronDAG
 cd irondag/irondag-blockchain
 
 # Build node
@@ -1162,7 +1162,7 @@ docker-compose up -d
 ### Get Fairness Metrics
 
 ```bash
-curl -X POST http://localhost:8545 \
+curl -X POST http://localhost:8546 \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -1175,7 +1175,7 @@ curl -X POST http://localhost:8545 \
 ### Check Risk Score
 
 ```bash
-curl -X POST http://localhost:8545 \
+curl -X POST http://localhost:8546 \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -1188,7 +1188,7 @@ curl -X POST http://localhost:8545 \
 ### Trace Funds
 
 ```bash
-curl -X POST http://localhost:8545 \
+curl -X POST http://localhost:8546 \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -1219,7 +1219,7 @@ curl -X POST http://localhost:8545 \
 
 ### Resources
 - **Website**: https://IronDAG.io 
-- **GitHub**: https://github.com/dev-irondag/irondag
+- **GitHub**: https://github.com/RunTimeAdmin/IronDAG
 - **Documentation**: https://docs.IronDAG.io 
 - **Discord**: https://discord.gg/IronDAG (Coming soon)
 - **Twitter**: @DevIronDAG (https://x.com/DevIronDAG)

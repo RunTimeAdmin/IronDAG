@@ -3,7 +3,7 @@
 ## Prerequisites
 
 1. **Docker Desktop** must be installed and running
-2. **IronDAG node** should be running and exposing metrics at `http://localhost:8545/metrics`
+2. **IronDAG node** should be running and exposing metrics at `http://localhost:8546/metrics`
 
 ## Quick Start
 
@@ -60,12 +60,12 @@ You should see:
 **Check 1:** Verify IronDAG node is running
 ```powershell
 # Check if node is running
-curl http://localhost:8545/metrics
+curl http://localhost:8546/metrics
 ```
 
 **Check 2:** Update Prometheus config
 - Edit `grafana/prometheus/prometheus.yml`
-- Change `host.docker.internal:8545` to `localhost:8545` if needed
+- Change `host.docker.internal:8546` to `localhost:8546` if needed
 - Restart Prometheus: `docker-compose restart prometheus`
 
 **Check 3:** Check Prometheus targets
@@ -96,7 +96,7 @@ If `host.docker.internal` doesn't work:
 
 1. **Option 1:** Use `localhost` in `prometheus.yml`
    ```yaml
-   - targets: ['localhost:8545']
+   - targets: ['localhost:8546']
    ```
 
 2. **Option 2:** Use host network mode (Linux only)

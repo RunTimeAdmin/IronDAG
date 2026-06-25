@@ -19,8 +19,8 @@ For the live site, nginx must **proxy /rpc** to the testnet node or the explorer
 
 ```nginx
 location /rpc {
-    # srv1296980 (76.13.101.31) - miner node
-    proxy_pass http://76.13.101.31:8545;
+    # srv1296980 (<vps-ip>) - miner node
+    proxy_pass https://rpc.irondag.io;
     proxy_http_version 1.1;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
@@ -60,7 +60,7 @@ Testnet faucet enabled — mints 10 IDAG per request. Access via the explorer UI
 
 3. **Access the explorer:**
    - Open `http://localhost:3000` in your browser
-   - The explorer will connect to the API at `http://localhost:8545`
+   - The explorer will connect to the API at `http://localhost:8546`
 
 ## API Endpoints Used
 
@@ -78,7 +78,7 @@ Testnet faucet enabled — mints 10 IDAG per request. Access via the explorer UI
 To change the API endpoint, edit `app.js`:
 
 ```javascript
-const API_BASE = 'http://localhost:8545/api';
+const API_BASE = 'http://localhost:8546/api';
 ```
 
 ## Browser Support

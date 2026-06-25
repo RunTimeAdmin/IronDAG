@@ -64,18 +64,18 @@
     
     <div class="endpoints">
         <h2>Public RPC Endpoints</h2>
-        <code>http://76.13.101.31:8545</code>
-        <code>http://76.13.101.39:8545</code>
-        <code>http://76.13.101.41:8545</code>
+        <code>https://rpc.irondag.io</code>
+        <code>http://76.13.101.39:8546</code>
+        <code>http://76.13.101.41:8546</code>
     </div>
     
     <div class="refresh">Auto-refreshes every 5 seconds</div>
 
     <script>
         const nodes = [
-            { name: 'Node 1 (Bootstrap)', ip: '76.13.101.31', port: 8545 },
-            { name: 'Node 2', ip: '76.13.101.39', port: 8545 },
-            { name: 'Node 3', ip: '76.13.101.41', port: 8545 }
+            { name: 'Node 1 (Bootstrap)', ip: '<vps-ip>', port: 8546 },
+            { name: 'Node 2', ip: '76.13.101.39', port: 8546 },
+            { name: 'Node 3', ip: '76.13.101.41', port: 8546 }
         ];
 
         async function checkNode(node) {

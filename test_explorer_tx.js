@@ -1,7 +1,7 @@
 const { ethers } = require('ethers');
 
 // Default to local node, can override with env var or command line
-const RPC_URL = process.env.RPC_URL || process.argv[2] || 'http://127.0.0.1:8545';
+const RPC_URL = process.env.RPC_URL || process.argv[2] || 'http://127.0.0.1:8546';
 
 // Test wallet with private key 0x01 - has 1000 MSHW on testnet
 const TEST_PRIVATE_KEY = '0x0000000000000000000000000000000000000000000000000000000000000001';

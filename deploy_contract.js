@@ -24,10 +24,10 @@ async function main() {
     console.log('🚀 Deploying SimpleStorage Contract...\n');
     
     // Connect to local node
-    const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545');
+    const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8546');
     
     // Test connection
-    console.log('✅ Connected to http://127.0.0.1:8545');
+    console.log('✅ Connected to http://127.0.0.1:8546');
     
     // Use funded test account: 0x7e5f4552091a69125d5dfcb7b8c2659029395bdf
     // Private key: 0x0000000000000000000000000000000000000000000000000000000000000001

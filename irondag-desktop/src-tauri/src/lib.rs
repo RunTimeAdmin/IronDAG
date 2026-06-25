@@ -1883,7 +1883,7 @@ struct AppSettings {
 impl Default for AppSettings {
     fn default() -> Self {
         Self {
-            rpc_url: "http://127.0.0.1:8545".to_string(),
+            rpc_url: "http://127.0.0.1:8546".to_string(),
             active_tab: "dashboard".to_string(),
             window_width: 1200,
             window_height: 800,

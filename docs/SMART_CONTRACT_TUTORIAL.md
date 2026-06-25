@@ -32,7 +32,7 @@ IronDAG uses **Chain ID 1337** by default (configurable via `--chain-id`).
 
 | Environment | URL |
 |-------------|-----|
-| Local node | `http://localhost:8545` |
+| Local node | `http://localhost:8546` |
 | Testnet | `https://rpc.testnet.irondag.io` |
 | With Nginx proxy | `https://rpc.irondag.io` |
 
@@ -66,7 +66,7 @@ IronDAG uses **Chain ID 1337** by default (configurable via `--chain-id`).
 | Field | Value |
 |-------|-------|
 | Network Name | IronDAG Testnet |
-| RPC URL | http://localhost:8545 (or your node) |
+| RPC URL | http://localhost:8546 (or your node) |
 | Chain ID | 1337 |
 | Currency Symbol | IDAG |
 | Block Explorer URL | (optional) |
@@ -85,7 +85,7 @@ If running a local node with test mode:
 Or use the faucet method (test builds only):
 
 ```javascript
-const provider = new ethers.JsonRpcProvider('http://localhost:8545');
+const provider = new ethers.JsonRpcProvider('http://localhost:8546');
 
 // Request faucet tokens
 await provider.send('irondag_faucet', [
@@ -217,11 +217,11 @@ const txHash = await window.ethereum.request({
 const { ethers } = require('ethers');
 
 // Connect to local node
-const provider = new ethers.JsonRpcProvider('http://localhost:8545');
+const provider = new ethers.JsonRpcProvider('http://localhost:8546');
 
 // Or with API key
 const provider = new ethers.JsonRpcProvider({
-  url: 'http://localhost:8545',
+  url: 'http://localhost:8546',
   headers: {
     'X-API-Key': 'your-api-key'
   }
@@ -313,7 +313,7 @@ const bytecode = fs.readFileSync('build/Storage.bin', 'utf8');
 const abi = JSON.parse(fs.readFileSync('build/Storage.abi', 'utf8'));
 
 // Connect to provider
-const provider = new ethers.JsonRpcProvider('http://localhost:8545');
+const provider = new ethers.JsonRpcProvider('http://localhost:8546');
 
 // Create wallet
 const privateKey = '0x...'; // Your private key
@@ -367,7 +367,7 @@ module.exports = {
   solidity: '0.8.19',
   networks: {
     irondag: {
-      url: 'http://localhost:8545',
+      url: 'http://localhost:8546',
       chainId: 1337,
       accounts: ['0xPrivateKey1', '0xPrivateKey2'],
       gasPrice: 20000000000, // 20 gwei
@@ -419,7 +419,7 @@ out = "out"
 libs = ["lib"]
 
 [rpc_endpoints]
-irondag = "http://localhost:8545"
+irondag = "http://localhost:8546"
 ```
 
 ### Deploy
@@ -554,7 +554,7 @@ const contract = await factory.deploy({ gasLimit: 500000 });
 **Authentication error:**
 ```javascript
 const provider = new ethers.JsonRpcProvider({
-  url: 'http://localhost:8545',
+  url: 'http://localhost:8546',
   headers: { 'X-API-Key': 'your-key' }
 });
 ```

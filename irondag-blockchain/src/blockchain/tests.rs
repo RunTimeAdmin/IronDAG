@@ -572,7 +572,7 @@ mod tests {
 
     #[test]
     fn test_transaction_with_wrong_chain_id_rejected() {
-        // Create blockchain with default chain ID (1338)
+        // Create blockchain with default chain ID (11567)
         let mut blockchain = Blockchain::new();
 
         let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4, 1_000_000_000);
@@ -613,7 +613,7 @@ mod tests {
 
     #[test]
     fn test_transaction_with_zero_chain_id_rejected() {
-        // Create blockchain with default chain ID (1338)
+        // Create blockchain with default chain ID (11567)
         let mut blockchain = Blockchain::new();
 
         let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4, 1_000_000_000);
@@ -641,7 +641,7 @@ mod tests {
             BlockHeader::new(vec![genesis_hash], 1, StreamType::StreamA, 4, 1_000_000_000);
         let block = Block::new(block_header, vec![tx]);
 
-        // Should be rejected due to chain ID mismatch (expected 1338, got 0)
+        // Should be rejected due to chain ID mismatch (expected 11567, got 0)
         let result = futures::executor::block_on(blockchain.add_block(block));
         assert!(result.is_err());
         let err_msg = format!("{}", result.unwrap_err());
@@ -654,7 +654,7 @@ mod tests {
 
     #[test]
     fn test_transaction_without_chain_id_rejected() {
-        // Create blockchain with default chain ID (1338)
+        // Create blockchain with default chain ID (11567)
         let mut blockchain = Blockchain::new();
 
         let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4, 1_000_000_000);

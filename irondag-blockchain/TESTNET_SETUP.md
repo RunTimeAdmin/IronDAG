@@ -143,7 +143,7 @@ powershell -ExecutionPolicy Bypass -File test-testnet.ps1
 ```
 Testing IronDAG 3-Node Testnet...
 
-Node 1 (http://127.0.0.1:8545):
+Node 1 (http://127.0.0.1:8546):
   Block Height: 1234
   Peer Count: 2
 
@@ -171,12 +171,12 @@ Testnet Status:
 **Using PowerShell**:
 ```powershell
 $body = '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
-Invoke-RestMethod -Uri "http://127.0.0.1:8545" -Method Post -Body $body -ContentType "application/json"
+Invoke-RestMethod -Uri "http://127.0.0.1:8546" -Method Post -Body $body -ContentType "application/json"
 ```
 
 **Using curl**:
 ```powershell
-curl.exe http://127.0.0.1:8545 -H "Content-Type: application/json" -d '{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":1}'
+curl.exe http://127.0.0.1:8546 -H "Content-Type: application/json" -d '{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":1}'
 ```
 
 ### Test Peer Connectivity
@@ -184,7 +184,7 @@ curl.exe http://127.0.0.1:8545 -H "Content-Type: application/json" -d '{\"jsonrp
 ```powershell
 # Check peer count on Node 1
 $body = '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}'
-Invoke-RestMethod -Uri "http://127.0.0.1:8545" -Method Post -Body $body -ContentType "application/json"
+Invoke-RestMethod -Uri "http://127.0.0.1:8546" -Method Post -Body $body -ContentType "application/json"
 ```
 
 ### Verify Block Sync

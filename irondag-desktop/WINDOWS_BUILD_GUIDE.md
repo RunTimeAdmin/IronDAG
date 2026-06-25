@@ -54,7 +54,7 @@
 
 ```powershell
 # Clone the IronDAG repository
-git clone https://github.com/dev-irondag/irondag.git
+git clone https://github.com/RunTimeAdmin/IronDAG.git
 cd irondag/irondag-desktop
 ```
 
@@ -130,7 +130,7 @@ cargo run --release --bin node
 
 **Wait for:**
 ```
-✅ JSON-RPC server listening on http://127.0.0.1:8545
+✅ JSON-RPC server listening on http://127.0.0.1:8546
 ✅ Node initialization complete - ready to accept RPC requests
 ```
 
@@ -202,12 +202,12 @@ npm run tauri build
 2. Test RPC manually:
    ```powershell
    $body = @{jsonrpc='2.0'; method='eth_blockNumber'; params=@(); id=1} | ConvertTo-Json
-   Invoke-WebRequest -Uri 'http://127.0.0.1:8545' -Method POST -ContentType 'application/json' -Body $body
+   Invoke-WebRequest -Uri 'http://127.0.0.1:8546' -Method POST -ContentType 'application/json' -Body $body
    ```
    Should return: `{"jsonrpc":"2.0","result":"0x...","id":1}`
 
 3. Check Windows Firewall:
-   - Allow incoming connections on port 8545
+   - Allow incoming connections on port 8546
    - Add exception for `node.exe`
 
 #### "Connection timeout" or "UI freezes"
@@ -315,7 +315,7 @@ After successful build, you'll have:
 
 ## Support
 
-**Issues:** https://github.com/dev-irondag/irondag/issues  
+**Issues:** https://github.com/RunTimeAdmin/IronDAG/issues  
 **Documentation:** https://irondag.io/docs  
 **Community:** https://discord.gg/irondag  
 

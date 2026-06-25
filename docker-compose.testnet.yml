@@ -9,7 +9,7 @@ services:
     container_name: irondag-bootstrap1
     ports:
       - "8080:8080"  # P2P
-      - "8545:8545"  # RPC
+      - "8545:8546"  # RPC
       - "9090:9090"  # Metrics
     volumes:
       - bootstrap1-data:/data
@@ -26,7 +26,7 @@ services:
     container_name: irondag-bootstrap2
     ports:
       - "8081:8080"  # P2P
-      - "8546:8545"  # RPC
+      - "8546:8546"  # RPC
       - "9091:9090"  # Metrics
     volumes:
       - bootstrap2-data:/data
@@ -45,7 +45,7 @@ services:
     container_name: irondag-bootstrap3
     ports:
       - "8082:8080"  # P2P
-      - "8547:8545"  # RPC
+      - "8547:8546"  # RPC
       - "9092:9090"  # Metrics
     volumes:
       - bootstrap3-data:/data

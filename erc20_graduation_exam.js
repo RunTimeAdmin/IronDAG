@@ -6,8 +6,8 @@
 
 const { ethers } = require('ethers');
 
-const RPC_URL = 'http://127.0.0.1:8545';
-const CHAIN_ID = 1338;
+const RPC_URL = 'http://127.0.0.1:8546';
+const CHAIN_ID = 11567;
 
 // Test account funded by node genesis (private key = 1)
 const TEST_PRIVATE_KEY = '0x0000000000000000000000000000000000000000000000000000000000000001';

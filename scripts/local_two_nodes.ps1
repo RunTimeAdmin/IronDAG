@@ -44,7 +44,7 @@ $data2 = Join-Path $root "data_node2"
 # Node 1: miner – open in its own window so you can see output
 Write-Host "`nStarting Node 1 (miner) in new window – title: Node 1 - Miner..." -ForegroundColor Green
 # --rpc-no-auth: curl/RPC without API key (dev only). --advertise: distinct QUIC handshake keys on localhost.
-$node1 = Start-Process -FilePath $nodeBin -ArgumentList "--port 8080 --rpc-port 8545 --data-dir `"$data1`" --single-stream --rpc-no-auth --advertise 127.0.0.1:8080" -WorkingDirectory (Get-Location) -PassThru -WindowStyle Normal
+$node1 = Start-Process -FilePath $nodeBin -ArgumentList "--port 8080 --rpc-port 8546 --data-dir `"$data1`" --single-stream --rpc-no-auth --advertise 127.0.0.1:8080" -WorkingDirectory (Get-Location) -PassThru -WindowStyle Normal
 Write-Host "Node 1 PID: $($node1.Id) (check the other window for logs)"
 
 Write-Host "Waiting 12s for Node 1 genesis and RPC..." -ForegroundColor Yellow
@@ -52,7 +52,7 @@ Start-Sleep -Seconds 12
 
 # Check Node 1
 try {
-    $r = Invoke-RestMethod -Uri "http://127.0.0.1:8545" -Method Post -Body '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' -ContentType "application/json" -TimeoutSec 5
+    $r = Invoke-RestMethod -Uri "http://127.0.0.1:8546" -Method Post -Body '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' -ContentType "application/json" -TimeoutSec 5
     $b1 = [Convert]::ToInt32($r.result, 16)
     Write-Host "Node 1 block: $b1" -ForegroundColor Green
 } catch {
@@ -84,7 +84,7 @@ foreach ($port in @(8545, 8546)) {
 }
 
 Write-Host "`n=== 2-Node Test Running ===" -ForegroundColor Cyan
-Write-Host "Node 1 (miner): http://127.0.0.1:8545  PID $($node1.Id)"
+Write-Host "Node 1 (miner): http://127.0.0.1:8546  PID $($node1.Id)"
 Write-Host "Node 2 (sync): http://127.0.0.1:8546  PID $($node2.Id)"
 Write-Host "Stop: .\scripts\stop_local_nodes.ps1"
 @"

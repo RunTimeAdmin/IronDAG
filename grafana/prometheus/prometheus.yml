@@ -7,9 +7,9 @@ global:
 scrape_configs:
   - job_name: 'irondag-node'
     static_configs:
-      - targets: ['host.docker.internal:8545']
+      - targets: ['host.docker.internal:8546']
         labels:
-          instance: 'localhost:8545'
+          instance: 'localhost:8546'
           environment: 'development'
     metrics_path: '/metrics'
     scrape_interval: 10s

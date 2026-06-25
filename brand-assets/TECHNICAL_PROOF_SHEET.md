@@ -141,13 +141,13 @@ Core Mining Tests: 17/17 passing (100%)
 ### Testnet Information
 
 -   **Phase**: Phase 3 (Operational)
--   **RPC Endpoint**: [http://76.13.101.31:8545](http://76.13.101.31:8545)
--   **Chain ID**: 1338
+-   **RPC Endpoint**: https://rpc.irondag.io (public testnet endpoint)
+-   **Chain ID**: 11567 (0x2D2F)
 -   **Network Status**: Live and operational
 
 ### GitHub Repository
 
--   **URL**: [https://github.com/dev-irondag/irondag](https://github.com/dev-irondag/irondag)
+-   **URL**: [https://github.com/RunTimeAdmin/IronDAG](https://github.com/RunTimeAdmin/IronDAG)
 -   **Commits**: 242+ commits
 -   **License**: MIT License
 -   **Language**: Rust (78.1%), TypeScript/JavaScript (frontend)
@@ -279,7 +279,7 @@ To verify these claims independently:
 1.  **Clone Repository**
     
     ```bash
-    git clone https://github.com/dev-irondag/irondag.git
+    git clone https://github.com/RunTimeAdmin/IronDAG.git
     cd irondag
     ```
     
@@ -308,7 +308,7 @@ To verify these claims independently:
     
     ```bash
     # Connect to RPC endpoint
-    curl -X POST http://76.13.101.31:8545 \
+    curl -X POST https://rpc.irondag.io \
       -H "Content-Type: application/json" \
       -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
     ```
@@ -319,7 +319,7 @@ To verify these claims independently:
 ## Contact Information
 
 -   **Website**: [https://irondag.io](https://irondag.io)
--   **GitHub**: [https://github.com/dev-irondag/irondag](https://github.com/dev-irondag/irondag)
+-   **GitHub**: [https://github.com/RunTimeAdmin/IronDAG](https://github.com/RunTimeAdmin/IronDAG)
 -   **Email**: \[contact email\]
 -   **Twitter**: \[@irondag\]
 

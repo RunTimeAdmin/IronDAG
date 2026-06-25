@@ -55,7 +55,7 @@
 
 1. **Rust** (for building Tauri backend)
 2. **Node.js** (for React frontend)
-3. **IronDAG Node** running on `127.0.0.1:8545`
+3. **IronDAG Node** running on `127.0.0.1:8546`
 
 ### Installation
 
@@ -71,7 +71,7 @@ cd /path/to/irondag-blockchain
 cargo run --bin node
 ```
 
-Wait for: `RPC server listening on 127.0.0.1:8545`
+Wait for: `RPC server listening on 127.0.0.1:8546`
 
 **Terminal 2 — Start the desktop app:**
 ```bash
@@ -230,19 +230,19 @@ Output: `src-tauri/target/release/bundle/appimage/irondag-desktop_0.1.0_amd64.Ap
    cd /path/to/irondag-blockchain
    cargo run --release --bin node
    ```
-   Wait for: `✅ JSON-RPC server listening on http://127.0.0.1:8545`
+   Wait for: `✅ JSON-RPC server listening on http://127.0.0.1:8546`
 
 2. **Check Node Health**:
    ```powershell
    # Windows PowerShell
-   Invoke-WebRequest -Uri 'http://127.0.0.1:8545' -Method POST -ContentType 'application/json' -Body '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+   Invoke-WebRequest -Uri 'http://127.0.0.1:8546' -Method POST -ContentType 'application/json' -Body '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
    ```
    Should return: `{"jsonrpc":"2.0","result":"0x...","id":1}`
 
 3. **Verify Port**: 
    - Node RPC must be on port `8545`
-   - Desktop app expects `http://127.0.0.1:8545`
-   - Check firewall isn't blocking port 8545
+   - Desktop app expects `http://127.0.0.1:8546`
+   - Check firewall isn't blocking port 8546
 
 4. **Check Logs**:
    - Node logs: `irondag-blockchain/node.err`
@@ -294,7 +294,7 @@ MIT License — See LICENSE file for details
 - **Website**: [irondag.io](https://irondag.io)
 - **Whitepaper**: [IronDAG Whitepaper](https://irondag.io/IronDAG_WHITEPAPER.html)
 - **Explorer**: [Live Blockchain Explorer](https://irondag.io/explorer/)
-- **Main Repo**: [irondag-blockchain](https://github.com/dev-irondag/irondag)
+- **Main Repo**: [irondag-blockchain](https://github.com/RunTimeAdmin/IronDAG)
 
 ---
 

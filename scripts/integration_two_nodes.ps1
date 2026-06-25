@@ -35,13 +35,13 @@ if (-not (Test-Path $nodeBin)) {
 
 # Node 1: miner (P2P 8080, sync 8081, RPC 8545)
 Write-Host "`nStarting Node 1 (miner) on 8080/8545..." -ForegroundColor Green
-$node1 = Start-Process -FilePath $nodeBin -ArgumentList "--port 8080 --rpc-port 8545 --data-dir data_node1 --single-stream" -WorkingDirectory (Get-Location) -PassThru -WindowStyle Normal
+$node1 = Start-Process -FilePath $nodeBin -ArgumentList "--port 8080 --rpc-port 8546 --data-dir data_node1 --single-stream" -WorkingDirectory (Get-Location) -PassThru -WindowStyle Normal
 
 Write-Host "Waiting 15s for Node 1 genesis..." -ForegroundColor Yellow
 Start-Sleep -Seconds 15
 
 try {
-    $r = Invoke-RestMethod -Uri "http://127.0.0.1:8545" -Method Post -Body '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' -ContentType "application/json" -TimeoutSec 5
+    $r = Invoke-RestMethod -Uri "http://127.0.0.1:8546" -Method Post -Body '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' -ContentType "application/json" -TimeoutSec 5
     $b1 = [Convert]::ToInt32($r.result, 16)
     Write-Host "Node 1 OK - block: $b1" -ForegroundColor Green
 } catch {
@@ -61,8 +61,8 @@ Start-Sleep -Seconds 25
 Write-Host "`n=== Sync Status ===" -ForegroundColor Cyan
 $n1 = $null; $n2 = $null
 try {
-    $b = Invoke-RestMethod -Uri "http://127.0.0.1:8545" -Method Post -Body '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' -ContentType "application/json" -TimeoutSec 5
-    $p = Invoke-RestMethod -Uri "http://127.0.0.1:8545" -Method Post -Body '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' -ContentType "application/json" -TimeoutSec 5
+    $b = Invoke-RestMethod -Uri "http://127.0.0.1:8546" -Method Post -Body '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' -ContentType "application/json" -TimeoutSec 5
+    $p = Invoke-RestMethod -Uri "http://127.0.0.1:8546" -Method Post -Body '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' -ContentType "application/json" -TimeoutSec 5
     $n1 = @{ block = [Convert]::ToInt32($b.result, 16); peers = [Convert]::ToInt32($p.result, 16) }
 } catch { Write-Host "Node 1: $_" -ForegroundColor Red }
 
@@ -87,6 +87,6 @@ if ($n1 -and $n2) {
 # Save PIDs for stop script
 "$($node1.Id)`n$($node2.Id)" | Out-File -FilePath ".\local_node_pids.txt" -Encoding utf8
 
-Write-Host "`nNode 1: http://127.0.0.1:8545  (PID $($node1.Id))"
+Write-Host "`nNode 1: http://127.0.0.1:8546  (PID $($node1.Id))"
 Write-Host "Node 2: http://127.0.0.1:8546  (PID $($node2.Id))"
 Write-Host "Stop: .\scripts\stop_local_nodes.ps1" -ForegroundColor Gray

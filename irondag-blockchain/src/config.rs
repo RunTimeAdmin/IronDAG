@@ -52,7 +52,7 @@ pub struct NodeConfig {
     /// Maximum transaction pool size
     pub max_tx_pool_size: usize,
 
-    /// Chain ID for EIP-155 replay protection (default: 1338)
+    /// Chain ID 11567)
     pub chain_id: u64,
 
     /// Enable experimental gRPC v2 server (some methods unimplemented)

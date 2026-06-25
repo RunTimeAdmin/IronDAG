@@ -41,7 +41,7 @@ graph TB
         end
         
         subgraph "API Layer"
-            RPC["JSON-RPC Server<br/>(port 8545)<br/>Eth-compatible + idag_*"]
+            RPC["JSON-RPC Server<br/>(port 8546)<br/>Eth-compatible + idag_*"]
             AUTH["API Key Auth<br/>Rate Limiting<br/>Response Cache (LRU)"]
         end
         

@@ -4,7 +4,7 @@
 
 # Network
 port = 8080
-rpc_port = 8545
+rpc_port = 8546
 max_peers = 50
 
 # Mining
@@ -14,7 +14,7 @@ max_peers = 50
 # enable_stream_c = false
 
 # Chain
-chain_id = 1338
+chain_id = 11567
 # genesis_file = "path/to/genesis.json"
 
 # Data

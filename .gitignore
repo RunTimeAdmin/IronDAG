@@ -320,16 +320,7 @@ PUMP_*.md
 *WINS*.md
 *CLEANUP*.md
 *VERIFICATION*.md
-# Essential project docs (exceptions to above)
-!docs/PROJECT_STATUS_VERIFICATION_2026-02.md
-!docs/PHASE6_COMPLETION_PLAN.md
-!docs/PHASE7_SOLANA_INTEGRATION.md
-!docs/OPEN_ISSUES_PLAN.md
-!docs/BLOCKDAG_SHARDING_ANALYSIS.md
-!docs/CRITICAL_FIXES_PRIORITIZATION.md
-!docs/PEERING_ANALYSIS.md
-!docs/TESTING_PLAN.md
-!docs/IMPLEMENTATION_VERIFICATION_CODEBASE.md
+# (Internal doc exceptions removed — these files are now explicitly blocked above)
 *TODO*.md
 *ACTION*.md
 *BRIEF*.md
@@ -506,3 +497,7 @@ mondoshawan-blockchain/data2/
 V P S _ A C C E S S . m d 
  
  
+# Generated security tool outputs (contain local absolute paths)
+slither-report.json
+slither-report*
+*.pdf

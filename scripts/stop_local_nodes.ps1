@@ -26,7 +26,7 @@ if (Test-Path ".\local_node_pids.txt") {
 # 2) Any process named node.exe / node whose path contains irondag (our binary)
 Get-Process -Name "node" -ErrorAction SilentlyContinue | ForEach-Object {
     $path = $_.Path
-    if ($path -and ($path -like "*irondag*" -or $path -like "*MondoShawan*")) {
+    if ($path -and $path -like "*irondag*") {
         try {
             Stop-Process -Id $_.Id -Force -ErrorAction Stop
             Write-Host "Stopped process $($_.Id) ($path)" -ForegroundColor Green

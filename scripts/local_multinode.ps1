@@ -35,7 +35,7 @@ Start-Sleep -Seconds 10
 # Check Node 1 health
 Write-Host "Checking Node 1 health..." -ForegroundColor Yellow
 try {
-    $response = Invoke-RestMethod -Uri "http://127.0.0.1:8545" -Method Post -Body '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' -ContentType "application/json" -TimeoutSec 5
+    $response = Invoke-RestMethod -Uri "http://127.0.0.1:8546" -Method Post -Body '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' -ContentType "application/json" -TimeoutSec 5
     Write-Host "Node 1 block: $($response.result)" -ForegroundColor Green
 } catch {
     Write-Host "Node 1 not responding! Check logs." -ForegroundColor Red
@@ -71,7 +71,7 @@ foreach ($port in $ports) {
 }
 
 Write-Host "`n=== Local Testnet Running ===" -ForegroundColor Cyan
-Write-Host "Node 1: http://127.0.0.1:8545 (PID: $($node1.Id))"
+Write-Host "Node 1: http://127.0.0.1:8546 (PID: $($node1.Id))"
 Write-Host "Node 2: http://127.0.0.1:8546 (PID: $($node2.Id))"
 Write-Host "Node 3: http://127.0.0.1:8547 (PID: $($node3.Id))"
 Write-Host "`nTo stop: Stop-Process -Id $($node1.Id),$($node2.Id),$($node3.Id)"

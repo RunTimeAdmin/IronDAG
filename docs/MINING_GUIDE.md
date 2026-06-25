@@ -290,7 +290,7 @@ This prevents DAG tip contamination, where locally-mined blocks create divergent
 #### irondag_getMiningStatus
 
 ```bash
-curl -X POST http://localhost:8545 \
+curl -X POST http://localhost:8546 \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"irondag_getMiningStatus","params":[],"id":1}'
 ```
@@ -314,7 +314,7 @@ Response:
 #### irondag_getMiningDashboard
 
 ```bash
-curl -X POST http://localhost:8545 \
+curl -X POST http://localhost:8546 \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"irondag_getMiningDashboard","params":[3600],"id":1}'
 ```
@@ -343,7 +343,7 @@ RUST_LOG=info ./node 2>&1 | grep -i mine
 ### DAG Statistics
 
 ```bash
-curl -X POST http://localhost:8545 \
+curl -X POST http://localhost:8546 \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"irondag_getDagStats","params":[],"id":1}'
 ```
@@ -476,19 +476,19 @@ sudo taskset -c 0-7 ./node
 **Check**:
 1. Verify miner address is set:
    ```bash
-   curl -X POST http://localhost:8545 \
+   curl -X POST http://localhost:8546 \
      -d '{"jsonrpc":"2.0","method":"eth_getBalance","params":["0xYourAddress","latest"],"id":1}'
    ```
 
 2. Check difficulty vs your hash rate:
    ```bash
-   curl -X POST http://localhost:8545 \
+   curl -X POST http://localhost:8546 \
      -d '{"jsonrpc":"2.0","method":"irondag_getDagStats","params":[],"id":1}'
    ```
 
 3. Ensure node is synced:
    ```bash
-   curl -X POST http://localhost:8545 \
+   curl -X POST http://localhost:8546 \
      -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
    ```
 

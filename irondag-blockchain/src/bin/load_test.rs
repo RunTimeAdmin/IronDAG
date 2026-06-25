@@ -6,12 +6,12 @@
 //!   load_test [options]
 //!
 //! Options:
-//!   --rpc-url <url>       RPC endpoint (default: http://127.0.0.1:8545)
+//!   --rpc-url <url>       RPC endpoint (default: http://127.0.0.1:8546)
 //!   --target-tps <n>      Target transactions per second (default: 100)
 //!   --duration <secs>     Test duration in seconds (default: 60)
 //!   --accounts <n>        Number of sender accounts to generate (default: 10)
 //!   --value <wei>         Value per transaction in wei (default: 1000000000000000)
-//!   --chain-id <id>       Chain ID for EIP-155 (default: 1338)
+//!   --chain_id 11567)
 //!   --ramp-up             Enable ramp-up phases (100->500->1000 TPS)
 //!   --json                Output results in JSON format
 
@@ -186,12 +186,12 @@ struct Config {
 impl Default for Config {
     fn default() -> Self {
         Config {
-            rpc_url: "http://127.0.0.1:8545".to_string(),
+            rpc_url: "http://127.0.0.1:8546".to_string(),
             target_tps: 100,
             duration: 60,
             accounts: 10,
             value: 1_000_000_000_000_000, // 0.001 ETH
-            chain_id: 1338,
+            chain_id 11567,
             ramp_up: false,
             json_output: false,
         }
@@ -225,7 +225,7 @@ fn parse_args() -> Config {
             config.value = args[idx + 1].parse().unwrap_or(1_000_000_000_000_000);
             skip_next = true;
         } else if arg == "--chain-id" && idx + 1 < args.len() {
-            config.chain_id = args[idx + 1].parse().unwrap_or(1338);
+            config.chain_id 11567);
             skip_next = true;
         } else if arg == "--ramp-up" {
             config.ramp_up = true;

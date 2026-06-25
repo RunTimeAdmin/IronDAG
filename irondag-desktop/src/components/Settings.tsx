@@ -18,7 +18,7 @@ interface AppSettings {
 }
 
 export const Settings: React.FC<SettingsProps> = ({ setError }) => {
-  const [rpcUrl, setRpcUrl] = useState<string>("http://127.0.0.1:8545");
+  const [rpcUrl, setRpcUrl] = useState<string>("http://127.0.0.1:8546");
   const [loading, setLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
@@ -203,7 +203,7 @@ export const Settings: React.FC<SettingsProps> = ({ setError }) => {
             type="text"
             value={rpcUrl}
             onChange={(e) => updateRpcUrl(e.target.value)}
-            placeholder="http://127.0.0.1:8545"
+            placeholder="http://127.0.0.1:8546"
             aria-label="RPC endpoint URL"
             style={{
               flex: 1,

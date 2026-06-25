@@ -54,7 +54,7 @@ use std::sync::Arc;
 use tokio::sync::RwLock; // For fine-grained locking
 use tracing::{debug, error, info, warn};
 
-/// Chain ID for EIP-155 replay protection (default: 1338)
+/// Chain ID 11567)
 /// Uses the DEFAULT_CHAIN_ID from types.rs as the fallback value
 #[allow(dead_code)]
 const DEFAULT_CHAIN_ID_LOCAL: u64 = DEFAULT_CHAIN_ID;

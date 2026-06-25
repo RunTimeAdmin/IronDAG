@@ -10,7 +10,7 @@ Stable local environment: **2 BraidCore Mining nodes** + **1 RPC-only node**, al
 | 2    | Peer + mining   | 30304    | 8546     | data/node2 |
 | 3    | Peer, RPC-only  | 30305    | 8547     | data/node3 |
 
-- **Primary RPC for clients:** `http://127.0.0.1:8545` (Node 1).
+- **Primary RPC for clients:** `http://127.0.0.1:8546` (Node 1).
 - Node 3 is RPC-only (no mining) for a stable, low-CPU RPC endpoint.
 
 ## Quick start
@@ -51,7 +51,7 @@ Browser view of all three nodes (like explorer.irondag.io style):
 1. Open **`local_env\node-dashboard.html`** in your browser (double-click or drag into Chrome/Edge).
 2. If you see no data and CORS errors in the console, serve the folder and open the dashboard from the server:
    ```powershell
-   cd D:\MondoShawan\local_env
+   cd irondag\local_env
    python -m http.server 8888
    ```
    Then open **http://localhost:8888/node-dashboard.html**. Leave the terminal open.
@@ -78,9 +78,9 @@ Run in a separate window while the testnet is up:
 
 ```powershell
 # Block height on primary RPC
-$r = Invoke-RestMethod -Uri "http://127.0.0.1:8545" -Method Post -Body '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' -ContentType "application/json"
+$r = Invoke-RestMethod -Uri "http://127.0.0.1:8546" -Method Post -Body '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' -ContentType "application/json"
 [Convert]::ToInt32($r.result, 16)
 ```
 
-MetaMask: RPC URL `http://127.0.0.1:8545`, Chain ID `1338`, symbol IDAG.
+MetaMask: RPC URL `http://127.0.0.1:8546`, Chain ID `11567`, symbol IDAG.
 

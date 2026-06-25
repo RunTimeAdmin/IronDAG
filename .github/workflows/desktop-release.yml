@@ -76,7 +76,7 @@ jobs:
           tagName: ${{ github.ref_name }}
           releaseName: "IronDAG Desktop ${{ github.ref_name }}"
           releaseBody: |
-            See the [CHANGELOG](https://github.com/dev-irondag/irondag/blob/master/CHANGELOG.md) for details.
+            See the [CHANGELOG](https://github.com/RunTimeAdmin/IronDAG/blob/master/CHANGELOG.md) for details.
             
             **Windows users:** You may see a SmartScreen warning. Click "More info" → "Run anyway" to proceed.
           releaseDraft: true

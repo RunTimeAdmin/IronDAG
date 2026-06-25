@@ -1,6 +1,6 @@
 # API Reference
 
-IronDAG implements an Ethereum-compatible JSON-RPC API on port 8545.
+IronDAG implements an Ethereum-compatible JSON-RPC API on port 8546.
 
 ---
 
@@ -9,13 +9,13 @@ IronDAG implements an Ethereum-compatible JSON-RPC API on port 8545.
 ### HTTP
 
 ```
-http://localhost:8545
+http://localhost:8546
 ```
 
 ### Chain ID
 
 ```
-1338 (0x53a)
+11567 (0x2D2F)
 ```
 
 ---
@@ -41,7 +41,7 @@ Returns the chain ID.
 {
   "jsonrpc": "2.0",
   "id": 1,
-  "result": "0x53a"
+  "result": "0x2D2F"
 }
 ```
 
@@ -423,7 +423,7 @@ Returns network ID.
 {
   "jsonrpc": "2.0",
   "id": 1,
-  "result": "1338"
+  "result": "11567"
 }
 ```
 
@@ -592,8 +592,8 @@ Returns risk score for an address.
 | Setting | Value |
 |---------|-------|
 | Network Name | IronDAG Testnet |
-| RPC URL | http://localhost:8545 |
-| Chain ID | 1338 |
+| RPC URL | http://localhost:8546 |
+| Chain ID | 11567 |
 | Currency Symbol | IDAG |
 | Block Explorer | http://localhost:3000 |
 
@@ -606,7 +606,7 @@ Returns risk score for an address.
 ```javascript
 const { ethers } = require('ethers');
 
-const provider = new ethers.JsonRpcProvider('http://localhost:8545');
+const provider = new ethers.JsonRpcProvider('http://localhost:8546');
 
 // Get balance
 const balance = await provider.getBalance('0x742d35Cc6634C0532925a3b844Bc9e7595f8dE1B');
@@ -630,7 +630,7 @@ await tx.wait();
 ```python
 from web3 import Web3
 
-w3 = Web3(Web3.HTTPProvider('http://localhost:8545'))
+w3 = Web3(Web3.HTTPProvider('http://localhost:8546'))
 
 # Get balance
 balance = w3.eth.get_balance('0x742d35Cc6634C0532925a3b844Bc9e7595f8dE1B')
@@ -644,7 +644,7 @@ print(f'Block: {block}')
 ### curl
 
 ```bash
-curl -X POST http://localhost:8545 \
+curl -X POST http://localhost:8546 \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
 ```

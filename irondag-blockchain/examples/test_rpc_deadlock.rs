@@ -76,7 +76,7 @@ async fn main() {
 
     match timeout(Duration::from_secs(5), async {
         client
-            .post("http://127.0.0.1:8545")
+            .post("http://127.0.0.1:8546")
             .json(&rpc_request)
             .send()
             .await
@@ -102,7 +102,7 @@ async fn main() {
 
     match timeout(Duration::from_secs(5), async {
         client
-            .post("http://127.0.0.1:8545")
+            .post("http://127.0.0.1:8546")
             .json(&rpc_request)
             .send()
             .await

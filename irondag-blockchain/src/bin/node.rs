@@ -178,7 +178,7 @@ fn print_help() {
         "    --advertise <ADDR>               P2P handshake address for external peers (IP:PORT)"
     );
     println!("    --max-peers <N>                  Maximum peer connections (default: 50)");
-    println!("    --chain-id <ID>                  Chain ID for EIP-155 replay protection (default: 1338)");
+    println!("    --chain_id 11567)");
     println!("    --genesis-file <PATH>            Load genesis allocations from JSON file");
     println!("    --miner-address <HEX>            Miner reward address (40 hex chars, optional 0x prefix)");
     println!("    --tls-cert <PATH>                TLS certificate file for HTTPS RPC");
@@ -245,7 +245,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //   --peer <addr>                   Connect to peer at startup
     //   --bootstrap-peer <addr>         Add bootstrap peer (can repeat); node connects on start
     //   --advertise <addr>              P2P handshake address (e.g. public IP:8080)
-    //   --chain-id <id>                 Chain ID for EIP-155 replay protection (default: 1338)
+    //   --chain_id 11567)
     let args: Vec<String> = std::env::args().collect();
     #[cfg(debug_assertions)]
     let mut generate_test_txs = false; // Disabled by default for production; use --test-txs to enable
@@ -1627,7 +1627,7 @@ mod tests {
             single_stream = true
             enable_stream_c = false
             mining_backend = "cpu"
-            chain_id = 1338
+            chain_id 11567
             genesis_file = "genesis.json"
             data_dir = "data"
             bootstrap_peers = ["127.0.0.1:8081"]
@@ -1666,7 +1666,7 @@ mod tests {
         assert_eq!(cfg.single_stream, Some(true));
         assert_eq!(cfg.enable_stream_c, Some(false));
         assert_eq!(cfg.mining_backend, Some("cpu".to_string()));
-        assert_eq!(cfg.chain_id, Some(1338));
+        assert_eq!(cfg.chain_id 11567));
         assert_eq!(cfg.genesis_file, Some("genesis.json".to_string()));
         assert_eq!(cfg.data_dir, Some("data".to_string()));
         assert_eq!(cfg.quic_idle_timeout_secs, Some(45));

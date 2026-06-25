@@ -332,7 +332,7 @@
     </div>
     
     <script>
-        const RPC_URL = 'http://127.0.0.1:8545';
+        const RPC_URL = 'http://127.0.0.1:8546';
         let requestId = 1;
         
         async function callRPC(method, params = null) {
@@ -379,7 +379,7 @@
         
         async function testConnection() {
             try {
-                const response = await fetch('http://127.0.0.1:8545/health', {
+                const response = await fetch('http://127.0.0.1:8546/health', {
                     method: 'GET',
                     mode: 'cors'
                 });

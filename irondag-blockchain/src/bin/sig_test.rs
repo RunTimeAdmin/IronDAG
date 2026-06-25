@@ -140,7 +140,7 @@ fn main() {
         data: vec![],
         gas_limit: 21000,
         gas_price: 1_000_000_000u128,
-        chain_id: 1338, // IronDAG testnet
+        chain_id 11567, // IronDAG testnet
     };
 
     info!("Created transaction");

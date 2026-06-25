@@ -43,7 +43,7 @@
   "plugins": {
     "updater": {
       "endpoints": [
-        "https://github.com/dev-irondag/irondag/releases/latest/download/latest.json"
+        "https://github.com/RunTimeAdmin/IronDAG/releases/latest/download/latest.json"
       ],
       "pubkey": ""
     }

@@ -73,7 +73,7 @@ From the `irondag` repo root:
 1. **Install the forge-std library** (needed for the tests in `test/`):
 
    ```powershell
-   cd "c:\Users\Admin01\Desktop\MondoShawan Blockchain\irondag"
+   cd irondag
    forge install foundry-rs/forge-std
    ```
 
