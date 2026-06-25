@@ -5,6 +5,16 @@ use serde::{Deserialize, Serialize};
 use sha3::{Digest, Keccak256}; // Needed for incremental hashing
 use tracing::{debug, error};
 
+/// Identifies which hash algorithm family produced a block's PoW hash.
+/// Included in the committed header bytes so future nodes can verify old blocks
+/// without guessing. Upgrade to a new algorithm via GovernanceAction at a
+/// specific block height — never change it ad-hoc per-node.
+pub const HASH_VERSION_BLAKE3: u8 = 0x01; // Blake3 (Stream A/C) + B3MemHash (Stream B)
+
+fn default_hash_version() -> u8 {
+    HASH_VERSION_BLAKE3
+}
+
 /// Block header
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BlockHeader {
@@ -17,6 +27,11 @@ pub struct BlockHeader {
     /// EIP-1559: Base fee per gas for this block
     /// Used for dynamic fee adjustment based on network congestion
     pub base_fee_per_gas: u128,
+    /// Hash algorithm version — committed into the PoW hash so verifiers know
+    /// which algorithm to use. Currently always HASH_VERSION_BLAKE3 (0x01).
+    /// A governance vote at block height N can bump this to 0x02 for a new algo.
+    #[serde(default = "default_hash_version")]
+    pub hash_version: u8,
     /// Post-Quantum signature (optional Dilithium3 signature from miner)
     /// If present, provides quantum-resistant authentication of the block header
     #[serde(default)]
@@ -46,6 +61,7 @@ impl BlockHeader {
                 .as_secs(),
             nonce: 0, // Initialize nonce to 0
             base_fee_per_gas,
+            hash_version: HASH_VERSION_BLAKE3,
             pq_signature: None,
             miner_pq_pubkey: None,
         }
@@ -71,6 +87,7 @@ impl BlockHeader {
                 .as_secs(),
             nonce,
             base_fee_per_gas,
+            hash_version: HASH_VERSION_BLAKE3,
             pq_signature: None,
             miner_pq_pubkey: None,
         }
@@ -90,6 +107,7 @@ impl BlockHeader {
         hasher.update(&self.timestamp.to_le_bytes());
         hasher.update(&self.nonce.to_le_bytes());
         hasher.update(&self.base_fee_per_gas.to_le_bytes());
+        hasher.update(&[self.hash_version]);
         let result = hasher.finalize();
         let mut hash = [0u8; 32];
         hash.copy_from_slice(&result);

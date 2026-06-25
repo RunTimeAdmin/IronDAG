@@ -53,6 +53,26 @@ const KYBER_HANDSHAKE_TIMEOUT_SECS: u64 = 10;
 /// Maximum concurrent Kyber handshake tasks (prevents blocking threadpool exhaustion)
 const MAX_CONCURRENT_KYBER_HANDSHAKES: usize = 50;
 
+/// Capability bit flags advertised in the P2P handshake.
+/// Add a new bit when a protocol feature or algorithm variant is introduced.
+/// Never reuse a bit — retired bits must stay 0 forever to avoid false positives.
+pub const CAP_BLAKE3_POW: u32 = 1 << 0; // Blake3 PoW (Stream A/C)
+pub const CAP_B3MEMHASH: u32 = 1 << 1; // B3MemHash PoW (Stream B)
+pub const CAP_ML_KEM_768: u32 = 1 << 2; // ML-KEM-768 post-quantum KEM
+pub const CAP_DILITHIUM3: u32 = 1 << 3; // Dilithium3 / ML-DSA-65 signatures
+pub const CAP_SPHINCS_PLUS: u32 = 1 << 4; // SPHINCS+-SHA256-128f signatures
+pub const CAP_COMPACT_BLOCKS: u32 = 1 << 5; // BIP-152 style compact block relay
+pub const CAP_SHARDING: u32 = 1 << 6; // Horizontal sharding protocol
+
+/// Bitmask of capabilities this node advertises. Update when new features ship.
+#[cfg(feature = "kyber")]
+pub const LOCAL_CAPABILITIES: u32 =
+    CAP_BLAKE3_POW | CAP_B3MEMHASH | CAP_ML_KEM_768 | CAP_DILITHIUM3 | CAP_SPHINCS_PLUS | CAP_COMPACT_BLOCKS;
+
+#[cfg(not(feature = "kyber"))]
+pub const LOCAL_CAPABILITIES: u32 =
+    CAP_BLAKE3_POW | CAP_B3MEMHASH | CAP_DILITHIUM3 | CAP_SPHINCS_PLUS | CAP_COMPACT_BLOCKS;
+
 /// Grace period in seconds for Kyber session key cache (reuse on quick reconnect)
 #[cfg(feature = "kyber")]
 const KYBER_SESSION_CACHE_TTL_SECS: u64 = 60;
@@ -911,8 +931,14 @@ pub struct AuthenticatedMessage {
 /// Network message types
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum NetworkMessage {
-    /// Handshake - announce listen address
-    Handshake { listen_addr: String },
+    /// Handshake - announce listen address and capability bitmask
+    Handshake {
+        listen_addr: String,
+        /// Bitmask of CAP_* flags this peer supports. Peers MUST tolerate
+        /// unknown bits (forward compatibility). Missing field = 0 (legacy peer).
+        #[serde(default)]
+        capabilities: u32,
+    },
     /// Announce a new block (full block)
     NewBlock { block: Block },
     /// Announce a new block using compact format (BIP 152 style)
@@ -2444,6 +2470,7 @@ impl NetworkManager {
         };
         let handshake = NetworkMessage::Handshake {
             listen_addr: advertise_addr,
+            capabilities: LOCAL_CAPABILITIES,
         };
 
         let authenticated = self.sign_message(handshake)?;
@@ -4579,6 +4606,7 @@ async fn process_gossip_handshake(
                     // Extract advertised address from handshake
                     if let NetworkMessage::Handshake {
                         listen_addr: peer_listen_addr,
+                        capabilities: peer_caps,
                     } = &auth_msg.message
                     {
                         peer_advertised_addrs
@@ -4586,8 +4614,8 @@ async fn process_gossip_handshake(
                             .await
                             .insert(peer_addr, peer_listen_addr.clone());
                         debug!(
-                            "Peer {} advertises address: {}",
-                            peer_addr, peer_listen_addr
+                            "Peer {} advertises address: {}, capabilities: {:#010x}",
+                            peer_addr, peer_listen_addr, peer_caps
                         );
                     }
                 }
@@ -4601,6 +4629,7 @@ async fn process_gossip_handshake(
     // Send our handshake response
     let handshake = NetworkMessage::Handshake {
         listen_addr: listen_addr.to_string(),
+        capabilities: LOCAL_CAPABILITIES,
     };
 
     // Sign the handshake message with the cached signing key
@@ -4983,10 +5012,11 @@ async fn process_message(
     match message {
         NetworkMessage::Handshake {
             listen_addr: peer_listen_addr,
+            capabilities: peer_caps,
         } => {
             debug!(
-                "Received handshake from {}, listen address: {}",
-                from_addr, peer_listen_addr
+                "Received handshake from {}, listen address: {}, capabilities: {:#010x}",
+                from_addr, peer_listen_addr, peer_caps
             );
             // Keep peer keyed by actual remote address (from_addr) only. Do NOT insert
             // listen_sock_addr into peers or remap the connection: multiple sync nodes

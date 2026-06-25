@@ -117,6 +117,7 @@ pub fn hash_blake3(header: &BlockHeader, transactions_root: &Hash) -> Hash {
     hasher.update(&header.nonce.to_le_bytes());
     hasher.update(&header.stream_type.to_bytes());
     hasher.update(transactions_root);
+    hasher.update(&[header.hash_version]);
 
     let hash = hasher.finalize();
     let mut result = [0u8; 32];
@@ -308,6 +309,7 @@ fn hash_b3memhash_with_buffer(
     input.extend_from_slice(&header.nonce.to_le_bytes());
     input.extend_from_slice(&header.stream_type.to_bytes());
     input.extend_from_slice(transactions_root);
+    input.extend_from_slice(&[header.hash_version]);
 
     // First pass: Fill memory with Blake3 hashes
     let mut hasher = blake3::Hasher::new();
@@ -381,6 +383,7 @@ pub fn mine_block(
     header_bytes.extend_from_slice(&0u64.to_le_bytes()); // Placeholder
     header_bytes.extend_from_slice(&header_template.stream_type.to_bytes());
     header_bytes.extend_from_slice(transactions_root);
+    header_bytes.extend_from_slice(&[header_template.hash_version]);
 
     // Mining loop with optimizations
     let mut nonce = 0u64;
@@ -502,6 +505,7 @@ pub fn mine_block_parallel(
                 header_bytes.extend_from_slice(&0u64.to_le_bytes());
                 header_bytes.extend_from_slice(&header_template.stream_type.to_bytes());
                 header_bytes.extend_from_slice(&tx_root);
+                header_bytes.extend_from_slice(&[header_template.hash_version]);
 
                 s.spawn(move || {
                     for nonce in start..end {
