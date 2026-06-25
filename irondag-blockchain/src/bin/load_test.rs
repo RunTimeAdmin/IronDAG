@@ -11,7 +11,7 @@
 //!   --duration <secs>     Test duration in seconds (default: 60)
 //!   --accounts <n>        Number of sender accounts to generate (default: 10)
 //!   --value <wei>         Value per transaction in wei (default: 1000000000000000)
-//!   --chain_id 11567)
+//!   --chain-id <N>        Chain ID (default: 11567)
 //!   --ramp-up             Enable ramp-up phases (100->500->1000 TPS)
 //!   --json                Output results in JSON format
 
@@ -191,7 +191,7 @@ impl Default for Config {
             duration: 60,
             accounts: 10,
             value: 1_000_000_000_000_000, // 0.001 ETH
-            chain_id 11567,
+            chain_id: 11567,
             ramp_up: false,
             json_output: false,
         }
@@ -225,7 +225,7 @@ fn parse_args() -> Config {
             config.value = args[idx + 1].parse().unwrap_or(1_000_000_000_000_000);
             skip_next = true;
         } else if arg == "--chain-id" && idx + 1 < args.len() {
-            config.chain_id 11567);
+            config.chain_id = args[idx + 1].parse().unwrap_or(11567);
             skip_next = true;
         } else if arg == "--ramp-up" {
             config.ramp_up = true;

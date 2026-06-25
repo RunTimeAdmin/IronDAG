@@ -115,7 +115,7 @@ impl Default for NodeConfig {
     fn default() -> Self {
         Self {
             port: 8080,
-            rpc_port: 8545,
+            rpc_port: 8546,
             http_api_port: 8081,
             miner_address: Address([1u8; 20]), // Default miner address
             data_dir: "data".to_string(),

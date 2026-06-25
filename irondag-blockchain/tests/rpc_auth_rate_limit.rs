@@ -86,7 +86,7 @@ async fn test_rpc_no_auth_when_disabled() {
 #[tokio::test]
 async fn test_rpc_per_ip_rate_limit() {
     let blockchain = Arc::new(RwLock::new(Blockchain::new()));
-    let mut rpc_server = RpcServer::without_auth_with_chain_id 11567);
+    let mut rpc_server = RpcServer::without_auth_with_chain_id(11567);
 
     // 5 tokens, 1 refill per second - burst of 5 then limit
     let limiter = Arc::new(PerIpRateLimiter::new(5, 1.0));
@@ -119,7 +119,7 @@ async fn test_rpc_per_ip_rate_limit() {
 #[tokio::test]
 async fn test_rpc_different_ips_separate_buckets() {
     let blockchain = Arc::new(RwLock::new(Blockchain::new()));
-    let mut rpc_server = RpcServer::without_auth_with_chain_id 11567);
+    let mut rpc_server = RpcServer::without_auth_with_chain_id(11567);
     rpc_server.set_per_ip_rate_limiter(Arc::new(PerIpRateLimiter::new(2, 1.0)));
 
     let ip1: IpAddr = "192.168.1.1".parse().unwrap();

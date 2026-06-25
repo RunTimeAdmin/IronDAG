@@ -67,7 +67,7 @@ impl Default for NodeConfig {
         Self {
             data_dir: PathBuf::from("data"),
             port: 8080,
-            rpc_port: 8545,
+            rpc_port: 8546,
             miner_address: Address([1u8; 20]), // Default miner address
             evm_enabled: true,
             max_peers: 50,

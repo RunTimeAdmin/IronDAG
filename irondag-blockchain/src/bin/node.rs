@@ -167,7 +167,7 @@ fn print_help() {
     println!("    --config <PATH>                  Load configuration from TOML file");
     println!("    --port <PORT>                    P2P network port - UDP/QUIC (default: 8080)");
     println!("    --p2p-port <PORT>                Alias for --port");
-    println!("    --rpc-port <PORT>                JSON-RPC port (default: 8545)");
+    println!("    --rpc-port <PORT>                JSON-RPC port (default: 8546)");
     println!("    --http-api-port <PORT>           HTTP API port (default: derived from P2P port)");
     println!("    --data-dir <PATH>                Blockchain data directory");
     println!("    --peer <ADDR>                    Connect to peer at startup (IP:PORT)");
@@ -178,7 +178,7 @@ fn print_help() {
         "    --advertise <ADDR>               P2P handshake address for external peers (IP:PORT)"
     );
     println!("    --max-peers <N>                  Maximum peer connections (default: 50)");
-    println!("    --chain_id 11567)");
+    println!("    --chain-id <N>                  Chain ID for EIP-155 replay protection (default: 11567)");
     println!("    --genesis-file <PATH>            Load genesis allocations from JSON file");
     println!("    --miner-address <HEX>            Miner reward address (40 hex chars, optional 0x prefix)");
     println!("    --tls-cert <PATH>                TLS certificate file for HTTPS RPC");
@@ -245,7 +245,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //   --peer <addr>                   Connect to peer at startup
     //   --bootstrap-peer <addr>         Add bootstrap peer (can repeat); node connects on start
     //   --advertise <addr>              P2P handshake address (e.g. public IP:8080)
-    //   --chain_id 11567)
+    //   --chain-id <N>              Chain ID for EIP-155 (default: 11567)
     let args: Vec<String> = std::env::args().collect();
     #[cfg(debug_assertions)]
     let mut generate_test_txs = false; // Disabled by default for production; use --test-txs to enable
@@ -1595,11 +1595,11 @@ mod tests {
     fn test_toml_config_minimal() {
         let toml_str = r#"
             port = 8080
-            rpc_port = 8545
+            rpc_port = 8546
         "#;
         let cfg: TomlConfig = toml::from_str(toml_str).expect("Failed to parse TOML");
         assert_eq!(cfg.port, Some(8080));
-        assert_eq!(cfg.rpc_port, Some(8545));
+        assert_eq!(cfg.rpc_port, Some(8546));
         assert!(cfg.quic_idle_timeout_secs.is_none());
     }
 
@@ -1618,7 +1618,7 @@ mod tests {
     fn test_toml_config_all_fields() {
         let toml_str = r#"
             port = 8080
-            rpc_port = 8545
+            rpc_port = 8546
             p2p_port = 9090
             http_api_port = 8090
             max_peers = 100
@@ -1627,7 +1627,7 @@ mod tests {
             single_stream = true
             enable_stream_c = false
             mining_backend = "cpu"
-            chain_id 11567
+            chain_id = 11567
             genesis_file = "genesis.json"
             data_dir = "data"
             bootstrap_peers = ["127.0.0.1:8081"]
@@ -1654,7 +1654,7 @@ mod tests {
         "#;
         let cfg: TomlConfig = toml::from_str(toml_str).expect("Failed to parse TOML");
         assert_eq!(cfg.port, Some(8080));
-        assert_eq!(cfg.rpc_port, Some(8545));
+        assert_eq!(cfg.rpc_port, Some(8546));
         assert_eq!(cfg.p2p_port, Some(9090));
         assert_eq!(cfg.http_api_port, Some(8090));
         assert_eq!(cfg.max_peers, Some(100));
@@ -1666,7 +1666,7 @@ mod tests {
         assert_eq!(cfg.single_stream, Some(true));
         assert_eq!(cfg.enable_stream_c, Some(false));
         assert_eq!(cfg.mining_backend, Some("cpu".to_string()));
-        assert_eq!(cfg.chain_id 11567));
+        assert_eq!(cfg.chain_id, Some(11567));
         assert_eq!(cfg.genesis_file, Some("genesis.json".to_string()));
         assert_eq!(cfg.data_dir, Some("data".to_string()));
         assert_eq!(cfg.quic_idle_timeout_secs, Some(45));
@@ -1714,12 +1714,12 @@ mod tests {
     #[test]
     fn test_toml_config_no_ports() {
         let toml_str = r#"
-            rpc_port = 8545
+            rpc_port = 8546
         "#;
         let cfg: TomlConfig = toml::from_str(toml_str).expect("Failed to parse TOML");
         assert!(cfg.port.is_none());
         assert!(cfg.p2p_port.is_none());
-        assert_eq!(cfg.rpc_port, Some(8545));
+        assert_eq!(cfg.rpc_port, Some(8546));
     }
 
     /// Test empty TomlConfig (all defaults)

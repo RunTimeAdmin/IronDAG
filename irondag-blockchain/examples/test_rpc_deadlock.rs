@@ -16,7 +16,7 @@ async fn main() {
     println!("🔍 RPC Deadlock Diagnostic Test\n");
 
     let mut config = NodeConfig::default();
-    config.rpc_port = 8545;
+    config.rpc_port = 8546;
     config.data_dir = "data-deadlock-test".to_string();
     config.enable_mining = false;
 
