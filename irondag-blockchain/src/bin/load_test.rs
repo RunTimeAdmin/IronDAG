@@ -348,11 +348,7 @@ fn print_results_table(
         100.0
     };
 
-    let avg_block_size = if blocks_produced > 0 {
-        total_txs / blocks_produced
-    } else {
-        0
-    };
+    let avg_block_size = total_txs.checked_div(blocks_produced).unwrap_or(0);
 
     info!(
         "Latency p50: {}ms  p95: {}ms  p99: {}ms",
@@ -413,7 +409,7 @@ fn print_json_results(
         "total_transactions": total_txs,
         "success_rate": success_rate,
         "blocks_produced": blocks_produced,
-        "avg_block_size": if blocks_produced > 0 { total_txs / blocks_produced } else { 0 }
+        "avg_block_size": total_txs.checked_div(blocks_produced).unwrap_or(0)
     });
 
     // For JSON output, we still use println since it's the structured output format
