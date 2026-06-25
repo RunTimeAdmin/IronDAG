@@ -7,8 +7,8 @@
 //!
 //! Run with: cargo run --example prove_pow
 
-use irondag_blockchain::blockchain::BlockHeader;
-use irondag_blockchain::types::StreamType;
+use irondag::blockchain::BlockHeader;
+use irondag::types::StreamType;
 
 fn main() {
     println!("╔═══════════════════════════════════════════════════════════╗");
@@ -20,15 +20,10 @@ fn main() {
     println!("Test 1: Mining block with LOW difficulty (8 bits)");
     println!("─────────────────────────────────────────────────────");
     let header = BlockHeader::new(vec![], 1, StreamType::StreamA, 8, 1_000_000_000);
-    let tx_root = irondag_blockchain::pow::calculate_transactions_root(&[]);
+    let tx_root = irondag::pow::calculate_transactions_root(&[]);
 
     let start = std::time::Instant::now();
-    let result = irondag_blockchain::pow::mine_block(
-        &header,
-        &tx_root,
-        StreamType::StreamA,
-        Some(10_000_000),
-    );
+    let result = irondag::pow::mine_block(&header, &tx_root, StreamType::StreamA, Some(10_000_000));
     let elapsed = start.elapsed();
 
     match result {
@@ -41,7 +36,7 @@ fn main() {
 
             // Verify hash meets difficulty
             assert!(
-                irondag_blockchain::pow::meets_difficulty(&hash, 8),
+                irondag::pow::meets_difficulty(&hash, 8),
                 "Hash must meet difficulty"
             );
             println!("   ✅ Hash validation: PASSED");
@@ -58,10 +53,10 @@ fn main() {
     println!("─────────────────────────────────────────────────────");
     let header1 = BlockHeader::with_nonce(vec![], 2, StreamType::StreamA, 8, 0, 1_000_000_000);
     let header2 = BlockHeader::with_nonce(vec![], 2, StreamType::StreamA, 8, 1, 1_000_000_000);
-    let tx_root = irondag_blockchain::pow::calculate_transactions_root(&[]);
+    let tx_root = irondag::pow::calculate_transactions_root(&[]);
 
-    let hash1 = irondag_blockchain::pow::hash_blake3(&header1, &tx_root);
-    let hash2 = irondag_blockchain::pow::hash_blake3(&header2, &tx_root);
+    let hash1 = irondag::pow::hash_blake3(&header1, &tx_root);
+    let hash2 = irondag::pow::hash_blake3(&header2, &tx_root);
 
     println!("   Nonce 0 hash: {:02x?}...", &hash1.0[..8]);
     println!("   Nonce 1 hash: {:02x?}...", &hash2.0[..8]);
@@ -76,15 +71,11 @@ fn main() {
     println!("Test 3: Mining block with MEDIUM difficulty (16 bits)");
     println!("─────────────────────────────────────────────────────");
     let header = BlockHeader::new(vec![], 3, StreamType::StreamA, 16, 1_000_000_000);
-    let tx_root = irondag_blockchain::pow::calculate_transactions_root(&[]);
+    let tx_root = irondag::pow::calculate_transactions_root(&[]);
 
     let start = std::time::Instant::now();
-    let result = irondag_blockchain::pow::mine_block(
-        &header,
-        &tx_root,
-        StreamType::StreamA,
-        Some(100_000_000),
-    );
+    let result =
+        irondag::pow::mine_block(&header, &tx_root, StreamType::StreamA, Some(100_000_000));
     let elapsed = start.elapsed();
 
     match result {
@@ -99,7 +90,7 @@ fn main() {
             );
 
             assert!(
-                irondag_blockchain::pow::meets_difficulty(&hash, 16),
+                irondag::pow::meets_difficulty(&hash, 16),
                 "Hash must meet difficulty"
             );
             println!("   ✅ Hash validation: PASSED");
@@ -113,9 +104,9 @@ fn main() {
     // Test 4: Difficulty adjustment
     println!("Test 4: Difficulty adjustment algorithm");
     println!("─────────────────────────────────────────────────────");
-    let diff1 = irondag_blockchain::pow::adjust_difficulty(100, 10, 5); // Blocks too fast
-    let diff2 = irondag_blockchain::pow::adjust_difficulty(100, 10, 20); // Blocks too slow
-    let diff3 = irondag_blockchain::pow::adjust_difficulty(100, 10, 10); // Blocks on target
+    let diff1 = irondag::pow::adjust_difficulty(100, 10, 5); // Blocks too fast
+    let diff2 = irondag::pow::adjust_difficulty(100, 10, 20); // Blocks too slow
+    let diff3 = irondag::pow::adjust_difficulty(100, 10, 10); // Blocks on target
 
     println!("   Initial difficulty: 100");
     println!("   If blocks are 5s (target 10s): {}", diff1);
@@ -137,15 +128,10 @@ fn main() {
     println!("Test 5: Stream B mining (CPU - B3MemHash; GPU planned)");
     println!("─────────────────────────────────────────────────────");
     let header = BlockHeader::new(vec![], 4, StreamType::StreamB, 8, 1_000_000_000);
-    let tx_root = irondag_blockchain::pow::calculate_transactions_root(&[]);
+    let tx_root = irondag::pow::calculate_transactions_root(&[]);
 
     let start = std::time::Instant::now();
-    let result = irondag_blockchain::pow::mine_block(
-        &header,
-        &tx_root,
-        StreamType::StreamB,
-        Some(10_000_000),
-    );
+    let result = irondag::pow::mine_block(&header, &tx_root, StreamType::StreamB, Some(10_000_000));
     let elapsed = start.elapsed();
 
     match result {

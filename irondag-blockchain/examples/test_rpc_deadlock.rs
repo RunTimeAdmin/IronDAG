@@ -4,7 +4,7 @@
 #![allow(unexpected_cfgs)]
 
 #[cfg(feature = "reqwest")]
-use irondag_blockchain::node::{Node, NodeConfig};
+use irondag::node::{Node, NodeConfig};
 #[cfg(feature = "reqwest")]
 use std::sync::Arc;
 #[cfg(feature = "reqwest")]
