@@ -1,20 +1,21 @@
-//! Kyber Key Exchange
+//! ML-KEM Key Exchange (FIPS 203)
 //!
-//! Implements ML-KEM (formerly CRYSTALS-Kyber) for P2P handshake and session key derivation
+//! Implements ML-KEM-768 for P2P handshake and session key derivation.
+//! Pure Rust via the `ml-kem` crate — works on all platforms (Windows, Linux, macOS).
 
 use serde::{Deserialize, Serialize};
 
-// Platform-specific imports
-#[cfg(all(feature = "kyber", not(target_os = "windows")))]
+// ML-KEM imports (FIPS 203, pure Rust, all platforms)
+#[cfg(feature = "kyber")]
 use ml_kem::kem::{Ciphertext, Decapsulate, DecapsulationKey, Encapsulate, EncapsulationKey};
-#[cfg(all(feature = "kyber", not(target_os = "windows")))]
+#[cfg(feature = "kyber")]
 use ml_kem::{kem::Kem, KeyExport, MlKem768, TryKeyInit};
 
 /// Bridge rand 0.8 OsRng to rand_core 0.10 CryptoRng for ml-kem compatibility
-#[cfg(all(feature = "kyber", not(target_os = "windows")))]
+#[cfg(feature = "kyber")]
 struct OsRngCompat;
 
-#[cfg(all(feature = "kyber", not(target_os = "windows")))]
+#[cfg(feature = "kyber")]
 impl rand_core_09::TryRng for OsRngCompat {
     type Error = rand_core_09::Infallible;
 
@@ -35,12 +36,8 @@ impl rand_core_09::TryRng for OsRngCompat {
     }
 }
 
-#[cfg(all(feature = "kyber", not(target_os = "windows")))]
+#[cfg(feature = "kyber")]
 impl rand_core_09::TryCryptoRng for OsRngCompat {}
-#[cfg(all(feature = "kyber", target_os = "windows"))]
-use pqcrypto_kyber::kyber768;
-#[cfg(all(feature = "kyber", target_os = "windows"))]
-use pqcrypto_traits::kem::{Ciphertext as KemCiphertext, PublicKey, SecretKey, SharedSecret};
 
 /// Session key derived from Kyber key exchange (32 bytes)
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -68,9 +65,9 @@ pub struct KyberKeyExchange {
     secret_key: Vec<u8>,
 }
 
-#[cfg(all(feature = "kyber", not(target_os = "windows")))]
+#[cfg(feature = "kyber")]
 impl KyberKeyExchange {
-    /// Generate a new Kyber keypair using ML-KEM-768
+    /// Generate a new Kyber keypair using ML-KEM-768 (FIPS 203)
     ///
     /// Note: This is a blocking operation that should be called via spawn_blocking in async contexts
     pub fn generate() -> Self {
@@ -227,184 +224,6 @@ impl KyberKeyExchange {
         // Convert shared key to SessionKey (32 bytes)
         let sk_bytes: &[u8] = &*shared_key;
         let shared_bytes: [u8; 32] = sk_bytes
-            .try_into()
-            .map_err(|_| "Shared secret conversion failed".to_string())?;
-
-        Ok(SessionKey(shared_bytes))
-    }
-
-    /// Decapsulate a shared secret (server side) - async version
-    ///
-    /// This wraps the blocking decapsulation in spawn_blocking for safe use in async contexts
-    pub async fn decapsulate_async(&self, ciphertext: Vec<u8>) -> Result<SessionKey, String> {
-        let public_key_clone = self.public_key.clone();
-        let secret_key_clone = self.secret_key.clone();
-
-        tokio::task::spawn_blocking(move || {
-            let kyber = Self {
-                public_key: public_key_clone,
-                secret_key: secret_key_clone,
-            };
-            kyber.decapsulate(&ciphertext)
-        })
-        .await
-        .map_err(|e| format!("Decapsulation task panicked: {}", e))?
-    }
-
-    /// Get public key
-    pub fn public_key(&self) -> &[u8] {
-        &self.public_key
-    }
-
-    /// Get public key as bytes (for serialization)
-    pub fn public_key_bytes(&self) -> Vec<u8> {
-        self.public_key.clone()
-    }
-}
-
-#[cfg(all(feature = "kyber", target_os = "windows"))]
-impl KyberKeyExchange {
-    /// Generate a new Kyber keypair using pqcrypto-kyber (Windows)
-    ///
-    /// Note: This is a blocking operation that should be called via spawn_blocking in async contexts
-    pub fn generate() -> Self {
-        let (pk, sk) = kyber768::keypair();
-
-        let public_key = pk.as_bytes().to_vec();
-        let secret_key = sk.as_bytes().to_vec();
-
-        Self {
-            public_key,
-            secret_key,
-        }
-    }
-
-    /// Generate a new Kyber keypair using pqcrypto-kyber (Windows) - async version
-    ///
-    /// This wraps the blocking key generation in spawn_blocking for safe use in async contexts
-    pub async fn generate_async() -> Self {
-        tokio::task::spawn_blocking(|| Self::generate())
-            .await
-            .expect("Kyber key generation panicked")
-    }
-
-    /// Create from existing keypair
-    pub fn from_keypair(public_key: Vec<u8>, secret_key: Vec<u8>) -> Result<Self, String> {
-        // Kyber768 key sizes
-        const PK_SIZE: usize = 1184; // Public key size
-        const SK_SIZE: usize = 2400; // Secret key size
-
-        // Verify key sizes
-        if public_key.len() != PK_SIZE {
-            return Err(format!(
-                "Invalid public key size: expected {}, got {}",
-                PK_SIZE,
-                public_key.len()
-            ));
-        }
-        if secret_key.len() != SK_SIZE {
-            return Err(format!(
-                "Invalid secret key size: expected {}, got {}",
-                SK_SIZE,
-                secret_key.len()
-            ));
-        }
-
-        // Verify keys can be deserialized
-        let _pk = kyber768::PublicKey::from_bytes(&public_key)
-            .map_err(|_| "Invalid public key".to_string())?;
-        let _sk = kyber768::SecretKey::from_bytes(&secret_key)
-            .map_err(|_| "Invalid secret key".to_string())?;
-
-        Ok(Self {
-            public_key,
-            secret_key,
-        })
-    }
-
-    /// Encapsulate a shared secret (client side)
-    /// Returns (ciphertext, shared_secret)
-    ///
-    /// Note: This is a blocking operation that should be called via spawn_blocking in async contexts
-    pub fn encapsulate(&self, peer_public_key: &[u8]) -> Result<(Vec<u8>, SessionKey), String> {
-        const PK_SIZE: usize = 1184;
-
-        // Verify size
-        if peer_public_key.len() != PK_SIZE {
-            return Err(format!(
-                "Invalid public key size: expected {}, got {}",
-                PK_SIZE,
-                peer_public_key.len()
-            ));
-        }
-
-        // Deserialize the peer's public key
-        let pk = kyber768::PublicKey::from_bytes(peer_public_key)
-            .map_err(|_| "Invalid public key".to_string())?;
-
-        // Encapsulate to get ciphertext and shared secret
-        let (ciphertext, shared_secret) = kyber768::encapsulate(&pk);
-
-        // Convert shared secret to SessionKey (32 bytes)
-        let shared_bytes: [u8; 32] = shared_secret
-            .as_bytes()
-            .try_into()
-            .map_err(|_| "Shared secret conversion failed".to_string())?;
-
-        Ok((ciphertext.as_bytes().to_vec(), SessionKey(shared_bytes)))
-    }
-
-    /// Encapsulate a shared secret (client side) - async version
-    ///
-    /// This wraps the blocking encapsulation in spawn_blocking for safe use in async contexts
-    pub async fn encapsulate_async(
-        &self,
-        peer_public_key: Vec<u8>,
-    ) -> Result<(Vec<u8>, SessionKey), String> {
-        let public_key_clone = self.public_key.clone();
-        let secret_key_clone = self.secret_key.clone();
-
-        tokio::task::spawn_blocking(move || {
-            let kyber = Self {
-                public_key: public_key_clone,
-                secret_key: secret_key_clone,
-            };
-            kyber.encapsulate(&peer_public_key)
-        })
-        .await
-        .map_err(|e| format!("Encapsulation task panicked: {}", e))?
-    }
-
-    /// Decapsulate a shared secret (server side)
-    /// Returns the shared secret
-    ///
-    /// Note: This is a blocking operation that should be called via spawn_blocking in async contexts
-    pub fn decapsulate(&self, ciphertext: &[u8]) -> Result<SessionKey, String> {
-        const CT_SIZE: usize = 1088; // Ciphertext size for Kyber768
-
-        // Verify ciphertext size
-        if ciphertext.len() != CT_SIZE {
-            return Err(format!(
-                "Invalid ciphertext size: expected {}, got {}",
-                CT_SIZE,
-                ciphertext.len()
-            ));
-        }
-
-        // Deserialize our secret key
-        let sk = kyber768::SecretKey::from_bytes(&self.secret_key)
-            .map_err(|_| "Invalid secret key".to_string())?;
-
-        // Deserialize ciphertext
-        let ct =
-            KemCiphertext::from_bytes(ciphertext).map_err(|_| "Invalid ciphertext".to_string())?;
-
-        // Decapsulate to get shared secret
-        let shared_secret = kyber768::decapsulate(&ct, &sk);
-
-        // Convert shared secret to SessionKey (32 bytes)
-        let shared_bytes: [u8; 32] = shared_secret
-            .as_bytes()
             .try_into()
             .map_err(|_| "Shared secret conversion failed".to_string())?;
 
