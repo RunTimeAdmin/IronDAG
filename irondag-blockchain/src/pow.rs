@@ -1158,38 +1158,37 @@ mod tests {
 
     #[test]
     fn test_max_difficulty_boundary() {
-        // Test MAX_DIFFICULTY boundary (difficulty = 28)
-        assert_eq!(MAX_DIFFICULTY, 28);
+        // Test MAX_DIFFICULTY boundary (difficulty = 21)
+        assert_eq!(MAX_DIFFICULTY, 21);
 
         // Test difficulty target calculation at max difficulty
         let target = difficulty_to_target(MAX_DIFFICULTY);
 
-        // At difficulty 28, we need 3 full zero bytes + 4 bits (28 bits / 8 bits per byte)
-        for (i, item) in target.iter().enumerate().take(3) {
+        // At difficulty 21 = 2 full zero bytes + 5 bits in the 3rd byte
+        for (i, item) in target.iter().enumerate().take(2) {
             assert_eq!(*item, 0, "Byte {} should be zero at max difficulty", i);
         }
 
-        // The 5th byte should have partial bits cleared
-        // 32 % 8 = 0, so no partial bits needed
-        // Actually at exactly 32 bits, we need 4 zero bytes
+        // The 3rd byte should have the top 5 bits cleared (0xFF >> 5 = 0x07)
+        assert_eq!(target[2], 0xFF >> 5);
     }
 
     #[test]
     fn test_meets_difficulty_at_max() {
-        // Test that a hash with 4 zero bytes meets difficulty 28
+        // Test that an all-zero hash meets MAX_DIFFICULTY (21)
         let hash = Hash([0u8; 32]);
         assert!(meets_difficulty(&hash, MAX_DIFFICULTY));
 
-        // Test that a hash with 3 zero bytes + 4 bits fails at difficulty 28
-        // MAX_DIFFICULTY = 28 = 3 full bytes (24 bits) + 4 bits in 4th byte
-        // The 4th byte must have its top 4 bits zero (value <= 0x0F)
+        // Test that a hash with 2 zero bytes but a failing 3rd byte fails at difficulty 21
+        // MAX_DIFFICULTY = 21 = 2 full bytes (16 bits) + 5 bits in 3rd byte
+        // The 3rd byte must be <= 0x07 (0xFF >> 5); 0x08 exceeds that
         let mut hash_inner = [0u8; 32];
-        hash_inner[3] = 0x10; // Set 4th byte to 0x10 (0001 0000) - fails (only 3 zero bits)
+        hash_inner[2] = 0x08; // top 5 bits check: 0x08 > 0x07 -> fails
         let hash = Hash(hash_inner);
         assert!(!meets_difficulty(&hash, MAX_DIFFICULTY));
 
-        // Verify that 0x0F (0000 1111) passes - has 4 zero bits
-        hash_inner[3] = 0x0F;
+        // Verify that 0x07 (0000 0111) passes - top 5 bits are zero
+        hash_inner[2] = 0x07;
         let hash = Hash(hash_inner);
         assert!(meets_difficulty(&hash, MAX_DIFFICULTY));
     }

@@ -82,48 +82,80 @@ mod tests {
 
     #[tokio::test]
     async fn test_e2e_recovery_workflow() {
+        use k256::ecdsa::SigningKey;
+        use rand_core::OsRng;
+        use sha3::{Digest, Keccak256};
+
         let recovery_manager = Arc::new(RwLock::new(SocialRecoveryManager::new()));
 
         let wallet = Address([1u8; 20]);
         let new_owner = Address([2u8; 20]);
-        let guardian1 = Address([3u8; 20]);
-        let guardian2 = Address([4u8; 20]);
-        let guardian3 = Address([5u8; 20]);
+        let timestamp = 1000u64;
+
+        let key_to_addr = |sk: &SigningKey| {
+            let vk = k256::ecdsa::VerifyingKey::from(sk);
+            let point = vk.to_encoded_point(false);
+            let pub_bytes = point.as_bytes();
+            crate::types::derive_eth_address(&pub_bytes[1..])
+        };
+
+        let sk1 = SigningKey::random(&mut OsRng);
+        let sk2 = SigningKey::random(&mut OsRng);
+        let sk3 = SigningKey::random(&mut OsRng);
+        let guardian1 = key_to_addr(&sk1);
+        let guardian2 = key_to_addr(&sk2);
+        let guardian3 = key_to_addr(&sk3);
         let guardians = vec![guardian1, guardian2, guardian3];
         let recovery_threshold = 2;
-        let timestamp = 1000;
+
+        let sign_approval = |sk: &SigningKey, ts: u64| -> Vec<u8> {
+            let mut message = b"RECOVER:".to_vec();
+            message.extend_from_slice(&wallet.0);
+            message.extend_from_slice(&new_owner.0);
+            message.extend_from_slice(&ts.to_le_bytes());
+            let mut hasher = Keccak256::new();
+            hasher.update(&message);
+            let (signature, recovery_id) = sk.sign_digest_recoverable(hasher).expect("sign failed");
+            let sig_bytes = signature.to_bytes();
+            let mut full_sig = Vec::with_capacity(65);
+            full_sig.extend_from_slice(&sig_bytes[..32]);
+            full_sig.extend_from_slice(&sig_bytes[32..64]);
+            full_sig.push(recovery_id.to_byte() + 27);
+            full_sig
+        };
 
         // Initiate recovery
         {
             let mut manager = recovery_manager.write().await;
-            let result = manager.initiate_recovery(
-                wallet,
-                new_owner,
-                guardians.clone(),
-                recovery_threshold,
-                None,
-                timestamp,
-            );
-            assert!(result.is_ok());
+            assert!(manager
+                .initiate_recovery(
+                    wallet,
+                    new_owner,
+                    guardians.clone(),
+                    recovery_threshold,
+                    None,
+                    timestamp,
+                )
+                .is_ok());
         }
 
         // Add guardian approvals
         {
             let mut manager = recovery_manager.write().await;
+            let sig1 = sign_approval(&sk1, timestamp + 100);
             assert!(manager
-                .approve_recovery(wallet, guardians[0], &[], timestamp + 100)
+                .approve_recovery(wallet, guardian1, &sig1, timestamp + 100)
                 .is_ok());
+            let sig2 = sign_approval(&sk2, timestamp + 200);
             assert!(manager
-                .approve_recovery(wallet, guardians[1], &[], timestamp + 200)
+                .approve_recovery(wallet, guardian2, &sig2, timestamp + 200)
                 .is_ok());
         }
 
         // Check status
         {
             let manager = recovery_manager.read().await;
-            let status = manager.get_recovery_status(&wallet);
-            assert!(status.is_some());
-            let status = status.unwrap();
+            let status = manager.get_recovery_status(&wallet).unwrap();
             assert_eq!(status.status, RecoveryStatus::Approved);
             assert_eq!(status.approval_count(), 2);
             assert!(status.threshold_met());

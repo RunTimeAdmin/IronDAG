@@ -537,7 +537,7 @@ mod tests {
 
     #[test]
     fn test_transaction_with_correct_chain_id_accepted() {
-        // Create blockchain with default chain ID (1338)
+        // Create blockchain with default chain ID (11567)
         let mut blockchain = Blockchain::new();
 
         let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4, 1_000_000_000);
@@ -555,9 +555,9 @@ mod tests {
         let receiver = [2u8; 20];
         blockchain.set_balance(sender, 1000).unwrap();
 
-        // Create transaction with correct chain ID (1338)
+        // Create transaction with correct chain ID (11567)
         let tx = Transaction::new(sender, receiver, 100, 10, 0)
-            .with_chain_id(1338) // Correct chain ID
+            .with_chain_id(11567) // Correct chain ID
             .sign(&sender_secret);
 
         // Create block with transaction
@@ -692,14 +692,14 @@ mod tests {
         // This test simulates a replay attack where a transaction signed for one chain
         // is submitted to a different chain
 
-        // Create first blockchain with chain ID 1338
-        let mut blockchain_1338 = Blockchain::new();
+        // Create blockchain with default chain ID (11567)
+        let mut blockchain_11567 = Blockchain::new();
         let genesis_header = BlockHeader::new(vec![], 0, StreamType::StreamA, 4, 1_000_000_000);
         let genesis = Block::new(genesis_header, vec![]);
-        let genesis_hash_1338 = genesis.hash;
-        futures::executor::block_on(blockchain_1338.add_block(genesis)).unwrap();
+        let genesis_hash_11567 = genesis.hash;
+        futures::executor::block_on(blockchain_11567.add_block(genesis)).unwrap();
 
-        // Set up sender with balance on chain 1338
+        // Set up sender with balance on chain 11567
         let sender_secret = [1u8; 32];
         let sender = Transaction::derive_address_from_public_key(
             &SigningKey::from_bytes(&sender_secret)
@@ -707,23 +707,23 @@ mod tests {
                 .to_bytes(),
         );
         let receiver = [2u8; 20];
-        blockchain_1338.set_balance(sender, 1000).unwrap();
+        blockchain_11567.set_balance(sender, 1000).unwrap();
 
-        // Create transaction signed for chain 1338
+        // Create transaction signed for chain 11567
         let tx = Transaction::new(sender, receiver, 100, 10, 0)
-            .with_chain_id(1338)
+            .with_chain_id(11567)
             .sign(&sender_secret);
 
-        // Transaction is accepted on chain 1338
+        // Transaction is accepted on chain 11567
         let block_header = BlockHeader::new(
-            vec![genesis_hash_1338],
+            vec![genesis_hash_11567],
             1,
             StreamType::StreamA,
             4,
             1_000_000_000,
         );
         let block = Block::new(block_header, vec![tx.clone()]);
-        assert!(futures::executor::block_on(blockchain_1338.add_block(block)).is_ok());
+        assert!(futures::executor::block_on(blockchain_11567.add_block(block)).is_ok());
 
         // Now try to replay the same transaction on a different chain (e.g., chain 1337)
         // Note: We can't easily create a blockchain with a different chain_id using Blockchain::new()
@@ -731,9 +731,9 @@ mod tests {
         // which checks tx.chain_id against self.chain_id.
 
         // For this test, we verify that the transaction has chain_id set
-        assert_eq!(tx.chain_id, Some(1338));
+        assert_eq!(tx.chain_id, Some(11567));
 
         // The key protection is that if this tx were submitted to a chain with chain_id 1337,
-        // it would be rejected because tx.chain_id (1338) != blockchain.chain_id (1337)
+        // it would be rejected because tx.chain_id (11567) != blockchain.chain_id (1337)
     }
 }

@@ -532,7 +532,7 @@ mod tests {
         let timestamp = 1000;
 
         manager
-            .initiate_recovery(wallet, new_owner, guardians, 2, None, timestamp)
+            .initiate_recovery(wallet, new_owner, guardians, 1, None, timestamp)
             .unwrap();
 
         // Try to approve with valid signature but wrong guardian address
@@ -552,7 +552,7 @@ mod tests {
         let timestamp = 1000;
 
         manager
-            .initiate_recovery(wallet, new_owner, guardians, 2, None, timestamp)
+            .initiate_recovery(wallet, new_owner, guardians, 1, None, timestamp)
             .unwrap();
 
         // Try to approve with invalid signature bytes
