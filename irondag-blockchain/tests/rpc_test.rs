@@ -27,12 +27,12 @@ async fn test_all_rpc_methods() {
     let response = rpc_server
         .handle_request(make_request("net_version", Some(json!([]))), None, None)
         .await;
-    assert_eq!(response.result, Some(json!("1338")));
+    assert_eq!(response.result, Some(json!("11567")));
 
     let response = rpc_server
         .handle_request(make_request("eth_chainId", Some(json!([]))), None, None)
         .await;
-    assert_eq!(response.result, Some(json!("0x53a")));
+    assert_eq!(response.result, Some(json!("0x2d2f")));
 
     let response = rpc_server
         .handle_request(make_request("net_peerCount", Some(json!([]))), None, None)
