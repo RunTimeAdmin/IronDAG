@@ -2321,7 +2321,7 @@ mod tests {
 
         // Create database and manually set version to 1
         {
-            let db = sled::Config::new().path(&db_path).open().unwrap();
+            let db = sled::Config::new().path(&db_path).flush_every_ms(None).open().unwrap();
             db.insert(DB_VERSION_KEY, &1u32.to_le_bytes()).unwrap();
             db.flush().unwrap();
         }
@@ -2342,7 +2342,7 @@ mod tests {
 
         // Create database with future version (99)
         {
-            let db = sled::Config::new().path(&db_path).open().unwrap();
+            let db = sled::Config::new().path(&db_path).flush_every_ms(None).open().unwrap();
             db.insert(DB_VERSION_KEY, &99u32.to_le_bytes()).unwrap();
             db.flush().unwrap();
         }
@@ -2367,7 +2367,7 @@ mod tests {
 
         // Create database with corrupted version key (not 4 bytes)
         {
-            let db = sled::Config::new().path(&db_path).open().unwrap();
+            let db = sled::Config::new().path(&db_path).flush_every_ms(None).open().unwrap();
             db.insert(DB_VERSION_KEY, b"bad").unwrap(); // Only 3 bytes
             db.flush().unwrap();
         }
@@ -2440,7 +2440,7 @@ mod tests {
         let db_path = temp_dir.path().join("migration_cleared_test");
 
         // Create database
-        let db = sled::Config::new().path(&db_path).open().unwrap();
+        let db = sled::Config::new().path(&db_path).flush_every_ms(None).open().unwrap();
 
         // Manually set a marker as if migration was interrupted
         db.insert(MIGRATION_IN_PROGRESS_KEY, &0u32.to_le_bytes())
@@ -2469,8 +2469,13 @@ mod tests {
         let temp_dir = TempDir::new().unwrap();
         let db_path = temp_dir.path().join("incomplete_migration_test");
 
-        // Create raw sled database
-        let db = sled::Config::new().path(&db_path).open().unwrap();
+        // Create raw sled database with background flush disabled so drop() is
+        // synchronous and releases the file lock before Database::open below.
+        let db = sled::Config::new()
+            .path(&db_path)
+            .flush_every_ms(None)
+            .open()
+            .unwrap();
 
         // Simulate an incomplete migration from version 0
         db.insert(MIGRATION_IN_PROGRESS_KEY, &0u32.to_le_bytes())
