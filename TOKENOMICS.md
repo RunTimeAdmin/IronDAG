@@ -69,16 +69,46 @@ Smooth decay avoids “halving shock” and gives miners predictable economics.
 
 ---
 
-## 4. IKO (Initial Koin Offering) — Summary
+## 4. Public Sale — Fjord Foundry LBP on Solana
+
+The public token sale uses a **Liquidity Bootstrapping Pool (LBP)** on Fjord Foundry (Solana), replacing the original Polygon/Kommunitas IKO approach. This gives fairer price discovery, eliminates bot sniping, and puts $IDAG directly on Solana's liquidity infrastructure from day one.
 
 | Item | Value |
 |------|--------|
-| **Network** | Polygon (ERC-20 wrapper); mainnet swap at launch |
-| **IKO Allocation** | 700,000,000 IDAG (7%) |
-| **TGE Unlock** | 20% |
-| **Vesting** | Linear over 5 months |
-| **Liquidity Lock** | 12 months minimum (e.g. DxLock) |
-| **Refund** | 72-hour window (per IKO terms) |
+| **Platform** | Fjord Foundry (Solana) |
+| **Token standard** | SPL Token-2022 |
+| **Sale allocation** | 700,000,000 IDAG (7% of supply) |
+| **LBP duration** | 72 hours |
+| **Starting weight** | 99% IDAG / 1% USDC |
+| **Ending weight** | 50% IDAG / 50% USDC |
+| **Seed capital** | ~$500 USDC (99/1 ratio requires minimal collateral) |
+| **Post-LBP liquidity** | Raised USDC + remaining tokens → Raydium CLMM pool |
+| **Vesting** | 20% at LBP close; linear over 5 months |
+| **Fjord fee** | 2% of total raise |
+
+### Why LBP over Traditional IKO
+- Price decays naturally from a high ceiling — FOMO buyers pay a premium, patient buyers are rewarded
+- 99/1 starting weight means near-zero seed capital required from the project
+- No whitelist management, no refund windows, no centralized platform dependency
+- Raised capital immediately seeds permanent Raydium liquidity (no separate liquidity event needed)
+
+### Team / Treasury Vesting (Streamflow Finance)
+All locked allocations are managed on-chain via **Streamflow Finance** (Solana), with Squads multisig as the authority:
+
+| Allocation | Cliff | Vest |
+|---|---|---|
+| Team & Founder (5%) | 12 months | 24 months linear |
+| Ecosystem & Grants (8%) | 6 months | 48 months quarterly |
+| Development Fund (4%) | 0 | Milestone-based |
+| Treasury Reserve (1%) | 12 months | Governance-controlled |
+
+### Governance (Realms DAO)
+Post-LBP, $IDAG SPL holders govern protocol parameters via **Realms**:
+- Community token: $IDAG SPL
+- Council: Squads 3-of-5 multisig (core team)
+- Governance votes relay to IronDAG native chain via ZK bridge (see Phase 7)
+
+See `docs/SOLANA_HYBRID_ARCHITECTURE.md` for full hybrid architecture specification.
 
 ---
 
