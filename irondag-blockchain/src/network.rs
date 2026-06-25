@@ -82,6 +82,7 @@ const JACCARD_SYBIL_THRESHOLD: f64 = 0.9;
 /// Monotonic nonce counter for replay protection — each signed message gets a unique nonce.
 /// This ensures that even if a timestamp is within the 5-minute window, a replayed message
 /// with the same nonce from the same peer will be rejected.
+#[allow(dead_code)]
 static MESSAGE_NONCE: AtomicU64 = AtomicU64::new(0);
 /// Reputation penalty per Sybil detection
 const JACCARD_REPUTATION_PENALTY: f64 = 5.0;

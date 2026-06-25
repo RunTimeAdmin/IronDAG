@@ -1122,7 +1122,6 @@ impl Node {
         let blockchain = self.blockchain.clone();
         let mining_manager = self.mining_manager.clone();
         let network_manager = self.network_manager.clone();
-        let active_catchup_peers = self.active_catchup_peers.clone();
         tokio::spawn(async move {
             const CATCHUP_INTERVAL: std::time::Duration = std::time::Duration::from_secs(15);
             // Wait for QUIC + gossip handshake
@@ -1202,10 +1201,6 @@ impl Node {
 
                 tokio::time::sleep(CATCHUP_INTERVAL).await;
             }
-
-            // Cleanup: remove from active set when loop exits
-            active_catchup_peers.write().await.remove(&addr);
-            debug!("Removed {} from active catch-up peers", addr);
         });
 
         Ok(())
@@ -1568,11 +1563,9 @@ async fn start_rpc_server(
                         if total_read >= 4 {
                             // Search backwards from current position for header separator
                             for i in (3..total_read).rev() {
-                                if i >= 3 && &header_buffer[i - 3..=i] == b"\r\n\r\n" {
-                                    header_end = i + 1;
-                                    headers_complete = true;
-                                    break;
-                                } else if i >= 1 && &header_buffer[i - 1..=i] == b"\n\n" {
+                                if (i >= 3 && &header_buffer[i - 3..=i] == b"\r\n\r\n")
+                                    || (i >= 1 && &header_buffer[i - 1..=i] == b"\n\n")
+                                {
                                     header_end = i + 1;
                                     headers_complete = true;
                                     break;

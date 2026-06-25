@@ -460,7 +460,7 @@ impl MessageProcessor {
         // Phase 3: Update all statuses in single lock acquisition
         let status_updates: Vec<_> = receipt_ids
             .into_iter()
-            .zip(results.into_iter())
+            .zip(results)
             .map(|(receipt_id, result)| {
                 let status = match result {
                     Ok(Ok(())) => ReceiptStatus::Processed,

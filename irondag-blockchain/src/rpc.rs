@@ -1680,22 +1680,7 @@ impl RpcServer {
             "irondag_getPriceFeeds" => self.irondag_get_price_feeds().await,
             "irondag_requestRandomness" => self.irondag_request_randomness(request.params).await,
             "irondag_getRandomness" => self.irondag_get_randomness(request.params).await,
-            // Recurring Transaction Operations
-            "irondag_createRecurringTransaction" => {
-                self.irondag_create_recurring_transaction(request.params)
-                    .await
-            }
-            "irondag_cancelRecurringTransaction" => {
-                self.irondag_cancel_recurring_transaction(request.params)
-                    .await
-            }
-            "irondag_getRecurringTransaction" => {
-                self.irondag_get_recurring_transaction(request.params).await
-            }
-            "irondag_getRecurringTransactions" => {
-                self.irondag_get_recurring_transactions(request.params)
-                    .await
-            }
+            // Recurring Transaction Operations (additional)
             "irondag_pauseRecurringTransaction" => {
                 self.irondag_pause_recurring_transaction(request.params)
                     .await
@@ -2719,7 +2704,7 @@ impl RpcServer {
                 .collect();
 
             // Sort by block number descending (most recent first) and truncate
-            matching.sort_by(|a, b| b.header.block_number.cmp(&a.header.block_number));
+            matching.sort_by_key(|b| std::cmp::Reverse(b.header.block_number));
             matching.truncate(count);
             matching
         });
@@ -10178,7 +10163,7 @@ impl RpcServer {
             if snapshot.metadata.top_accounts.is_empty() && !snapshot.accounts.is_empty() {
                 // Fallback for legacy snapshots: compute on-the-fly
                 let mut accounts_sorted: Vec<_> = snapshot.accounts.iter().collect();
-                accounts_sorted.sort_by(|a, b| b.balance.cmp(&a.balance));
+                accounts_sorted.sort_by_key(|b| std::cmp::Reverse(b.balance));
                 accounts_sorted
                     .iter()
                     .take(10)

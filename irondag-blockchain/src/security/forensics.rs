@@ -202,7 +202,7 @@ impl ForensicAnalyzer {
         }
 
         // Sort by value (descending)
-        paths.sort_by(|a, b| b.total_value.cmp(&a.total_value));
+        paths.sort_by_key(|b| std::cmp::Reverse(b.total_value));
         paths.truncate(max_paths);
         paths
     }

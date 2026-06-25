@@ -247,11 +247,10 @@ impl SecurityPolicyManager {
                     return Err("Block address list cannot be empty".to_string());
                 }
             }
-            PolicyType::BlockRiskLabels { labels } => {
-                if labels.is_empty() {
-                    return Err("Block risk labels list cannot be empty".to_string());
-                }
+            PolicyType::BlockRiskLabels { labels } if labels.is_empty() => {
+                return Err("Block risk labels list cannot be empty".to_string());
             }
+            PolicyType::BlockRiskLabels { .. } => {}
             _ => {}
         }
 

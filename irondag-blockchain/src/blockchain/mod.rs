@@ -204,9 +204,9 @@ struct BlocksData {
 
 /// Account state (balance + nonce) stored in lock-free map
 #[derive(Clone, Copy, Debug)]
-pub(crate) struct AccountState {
-    pub(crate) balance: u128,
-    pub(crate) nonce: u64,
+pub struct AccountState {
+    pub balance: u128,
+    pub nonce: u64,
 }
 
 impl Blockchain {
@@ -3752,11 +3752,7 @@ impl Blockchain {
         stats.total_blocks = chain_total;
         stats.total_transactions = chain_txs;
         stats.total_size_bytes = chain_size;
-        stats.avg_block_size = if chain_total == 0 {
-            0
-        } else {
-            chain_size / chain_total
-        };
+        stats.avg_block_size = chain_size.checked_div(chain_total).unwrap_or(0);
         stats.avg_txs_per_block = if chain_total == 0 {
             0.0
         } else {

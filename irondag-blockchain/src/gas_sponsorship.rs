@@ -38,8 +38,7 @@ pub struct SponsorPolicy {
 impl SponsorPolicy {
     /// True if the policy has passed its expiry block.
     pub fn is_expired(&self, current_block: u64) -> bool {
-        self.expires_at_block
-            .map_or(false, |exp| current_block > exp)
+        self.expires_at_block.is_some_and(|exp| current_block > exp)
     }
 
     /// True if `sender` is permitted by the allowlist (or there is no allowlist).

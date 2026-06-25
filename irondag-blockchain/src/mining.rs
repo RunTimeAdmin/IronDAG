@@ -2209,7 +2209,7 @@ impl MiningManager {
                     let mut pool = self.stream_a_pool.write().await;
 
                     // BPR-005: Sort by fee descending (highest fee first) before selection
-                    pool.sort_unstable_by(|a, b| b.tx.fee.cmp(&a.tx.fee));
+                    pool.sort_unstable_by_key(|b| std::cmp::Reverse(b.tx.fee));
 
                     let mut drained = 0;
                     while drained < count && !pool.is_empty() {
@@ -2571,7 +2571,7 @@ impl MiningManager {
             self.evict_expired_transactions().await;
 
             debug!("Stream B: Loop iteration (checking for txs)");
-            let mining_start = Instant::now();
+            let _mining_start = Instant::now();
             let mut txs = if let Some(shard_manager) = &self.shard_manager {
                 // Get transactions from all shards
                 let mut all_txs = Vec::new();
@@ -2642,7 +2642,7 @@ impl MiningManager {
                     let mut pool = self.stream_b_pool.write().await;
 
                     // BPR-005: Sort by fee descending (highest fee first) before selection
-                    pool.sort_unstable_by(|a, b| b.tx.fee.cmp(&a.tx.fee));
+                    pool.sort_unstable_by_key(|b| std::cmp::Reverse(b.tx.fee));
 
                     let mut drained = 0;
                     while drained < count && !pool.is_empty() {
@@ -3046,7 +3046,7 @@ impl MiningManager {
                     let mut pool = self.stream_c_pool.write().await;
 
                     // BPR-005: Sort by fee descending (highest fee first) before selection
-                    pool.sort_unstable_by(|a, b| b.tx.fee.cmp(&a.tx.fee));
+                    pool.sort_unstable_by_key(|b| std::cmp::Reverse(b.tx.fee));
 
                     let mut drained = 0;
                     while drained < count && !pool.is_empty() {

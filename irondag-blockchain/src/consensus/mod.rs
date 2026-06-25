@@ -891,11 +891,7 @@ impl GhostDAG {
             red_blocks,
             total_transactions: total_txs,
             total_size_bytes: total_size,
-            avg_block_size: if total_blocks == 0 {
-                0
-            } else {
-                total_size / total_blocks
-            },
+            avg_block_size: total_size.checked_div(total_blocks).unwrap_or(0),
             avg_txs_per_block: if total_blocks == 0 {
                 0.0
             } else {
@@ -982,7 +978,7 @@ impl GhostDAG {
         }
 
         // Sort tips by blue score (descending) - highest score first
-        tips.sort_by(|a, b| b.1.cmp(&a.1));
+        tips.sort_by_key(|b| std::cmp::Reverse(b.1));
 
         // Return top K tips (or fewer if less available)
         // K is the GhostDAG security parameter

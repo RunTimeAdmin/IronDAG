@@ -1104,10 +1104,7 @@ pub fn select_blocks_for_sync_batch(bc: &Blockchain, from_block: u64, count: u64
     let filtered: Vec<Block> = all_blocks
         .into_iter()
         .filter(|block| {
-            if block.header.block_number == 0 {
-                valid_hashes.insert(block.hash.0);
-                true
-            } else if block.header.block_number < from_block {
+            if block.header.block_number == 0 || block.header.block_number < from_block {
                 valid_hashes.insert(block.hash.0);
                 true
             } else {

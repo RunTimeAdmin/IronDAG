@@ -1634,7 +1634,7 @@ impl<'a> SnapshotManager<'a> {
         // PERF-02: Pre-compute top 10 accounts by balance and cache in metadata
         // This avoids recalculating on every access (e.g., RPC calls)
         let mut accounts_sorted: Vec<_> = snapshot.accounts.iter().collect();
-        accounts_sorted.sort_by(|a, b| b.balance.cmp(&a.balance));
+        accounts_sorted.sort_by_key(|b| std::cmp::Reverse(b.balance));
         snapshot.metadata.top_accounts = accounts_sorted
             .iter()
             .take(10)
@@ -1717,7 +1717,7 @@ impl<'a> SnapshotManager<'a> {
         }
 
         // Sort by block number (newest first)
-        snapshots.sort_by(|a, b| b.1.block_number.cmp(&a.1.block_number));
+        snapshots.sort_by_key(|b| std::cmp::Reverse(b.1.block_number));
 
         Ok(snapshots)
     }
