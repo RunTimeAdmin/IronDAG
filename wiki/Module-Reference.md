@@ -331,19 +331,20 @@ Quantum-resistant cryptographic operations.
 
 #### Algorithms
 
-| Algorithm | Purpose |
-|-----------|---------|
-| Dilithium | Digital signatures |
-| Kyber | Key encapsulation |
+| Algorithm | FIPS Standard | Purpose |
+|-----------|--------------|---------|
+| ML-DSA-65 | FIPS 204 | Digital signatures (block signing, transaction auth) |
+| SLH-DSA-SHA2-128f | FIPS 205 | Hash-based signatures (alternative trust model) |
+| ML-KEM-768 | FIPS 203 | Key encapsulation (P2P session key establishment) |
 
 #### Key Types
 
 | Type | Description |
 |------|-------------|
-| `PqAccount` | Post-quantum account |
-| `PqSignature` | Dilithium signature |
-| `KyberKeyExchange` | Key exchange |
-| `PqEncryption` | Hybrid encryption |
+| `PqAccount` | Post-quantum account (ML-DSA-65 or SLH-DSA) |
+| `PqSignature` | ML-DSA-65 or SLH-DSA signature |
+| `KyberKeyExchange` | ML-KEM-768 key exchange |
+| `PqEncryption` | Hybrid encryption (ML-KEM-768 + AES-256-GCM) |
 
 ---
 

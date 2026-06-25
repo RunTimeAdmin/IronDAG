@@ -10,7 +10,7 @@ IronDAG is a Layer 1 blockchain that combines quantum resistance with post-quant
 
 **Key Differentiators:**
 - BraidCore Mining Architecture — IronDAG's multi-stream mining architecture where three parallel mining streams (A, B, C) cross-reference each other at the parent level, braiding into a single GhostDAG consensus layer
-- Post-Quantum Cryptography (Dilithium3, SPHINCS+, Kyber)
+- Post-Quantum Cryptography — NIST FIPS 203 (ML-KEM-768), FIPS 204 (ML-DSA-65), FIPS 205 (SLH-DSA)
 - Verkle Trees for stateless validation
 - Rule-Based Fraud Detection & Forensics
 - MEV-Aware Transaction Ordering
@@ -57,26 +57,24 @@ IronDAG is a Layer 1 blockchain that combines quantum resistance with post-quant
 
 ## 2. Post-Quantum Cryptography
 
-### Quantum-Resistant from Day One
+### NIST FIPS 203 / 204 / 205 — Aligned from Day One
 
-IronDAG is the first L1 blockchain with native post-quantum cryptography:
+IronDAG implements all three finalized NIST post-quantum cryptography standards natively at the protocol layer, not as an add-on:
+
+**Key Encapsulation:**
+- **ML-KEM-768 (FIPS 203)** — P2P session key establishment. Pure-Rust `ml-kem` crate, works on Windows, Linux, and macOS without C bindings. Replaces pre-standard Kyber-768.
 
 **Signature Schemes:**
-- **Dilithium3**: NIST-approved lattice-based signatures
-- **SPHINCS+**: Hash-based stateless signatures
-- **Ed25519**: Classical fallback for compatibility
+- **ML-DSA-65 (FIPS 204)** — Lattice-based digital signatures for block signing and transaction authentication. Default account type. Replaces pre-standard Dilithium3.
+- **SLH-DSA-SHA2-128f (FIPS 205)** — Stateless hash-based signatures. Alternative account type for operators who want hash-only security assumptions independent of lattice hardness. Replaces pre-standard SPHINCS+.
+- **Ed25519** — Classical fallback for Ethereum wallet compatibility.
 
-**Key Exchange:**
-- **Kyber**: Post-quantum key encapsulation
-- Used for P2P network encryption
-- Session key establishment
-
-### Account Types
+**Account Types:**
 
 ```rust
-PqAccount::new_dilithium3()   // Quantum-resistant
-PqAccount::new_sphincsplus()  // Hash-based security
-PqAccount::new_ed25519()      // Classical compatibility
+PqAccount::new_dilithium3()   // ML-DSA-65 (FIPS 204) — recommended default
+PqAccount::new_sphincsplus()  // SLH-DSA-SHA2-128f (FIPS 205) — hash-only trust
+PqAccount::new_ed25519()      // Ed25519 — Ethereum compatibility
 ```
 
 **Features:**
@@ -85,6 +83,28 @@ PqAccount::new_ed25519()      // Classical compatibility
 - Backward compatibility with Ethereum wallets
 
 **Implementation**: `src/pqc/accounts.rs`, `src/pqc/kyber.rs`
+
+### Crypto-Agility
+
+IronDAG is designed so cryptographic algorithms can be upgraded across the network without breaking the chain:
+
+**`hash_version` byte in every BlockHeader:**
+The hash algorithm identifier is committed into the PoW hash input itself — not just metadata — so a future node can unambiguously identify which algorithm produced a given block. Current value: `0x01 = BLAKE3`. Upgrading to a new PoW hash requires only a governance-scheduled block height, after which all nodes switch together.
+
+**Capabilities bitmask in P2P handshake:**
+Every node advertises its supported algorithms when connecting:
+
+| Bit | Constant | Meaning |
+|-----|----------|---------|
+| 0 | `CAP_BLAKE3_POW` | BLAKE3 proof-of-work |
+| 1 | `CAP_B3MEMHASH` | B3MemHash Stream B mining |
+| 2 | `CAP_ML_KEM_768` | FIPS 203 key encapsulation |
+| 3 | `CAP_ML_DSA_65` | FIPS 204 signatures |
+| 4 | `CAP_SLH_DSA` | FIPS 205 signatures |
+| 5 | `CAP_COMPACT_BLOCKS` | Compact block relay |
+| 6 | `CAP_SHARDING` | Cross-shard routing |
+
+This lets the network negotiate a safe upgrade window before requiring a new capability and rejecting peers that don't support it.
 
 ---
 
@@ -546,8 +566,8 @@ With native sharding enabled (default: 10 shards), throughput scales linearly:
 ### Cryptographic Primitives
 
 - **Hashing**: Blake3, SHA-256, Keccak-256
-- **Signatures**: Dilithium3, SPHINCS+, Ed25519
-- **Key Exchange**: Kyber
+- **Signatures**: ML-DSA-65 (FIPS 204), SLH-DSA-SHA2-128f (FIPS 205), Ed25519
+- **Key Exchange**: ML-KEM-768 (FIPS 203)
 - **Commitments**: KZG (for Verkle)
 
 ---

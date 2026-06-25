@@ -41,9 +41,9 @@ Complete list of external crates and libraries used by IronDAG.
 | Crate | Version | Purpose |
 |-------|---------|---------|
 | `pqcrypto-traits` | 0.3.5 | PQC traits |
-| `pqcrypto-dilithium` | 0.5 | Dilithium signatures |
-
-> Note: `pqcrypto-kyber` and `pqcrypto-sphincsplus` temporarily disabled due to Windows/MSVC build issues.
+| `pqcrypto-mldsa` | 0.1 | ML-DSA-65 signatures (FIPS 204) |
+| `ml-kem` | 0.3 | ML-KEM-768 key encapsulation (FIPS 203) — pure Rust, all platforms |
+| `pqcrypto-sphincsplus` | 0.7 | SLH-DSA-SHA2-128f signatures (FIPS 205) |
 
 ### EVM Integration
 

@@ -62,7 +62,7 @@ irondag-blockchain/
 ### Advanced Features
 - **Account Abstraction**: Smart contract wallets, multi-sig, social recovery
 - **Privacy Layer**: zk-SNARKs for private transfers (Groth16 on BN254)
-- **Post-Quantum Cryptography**: Dilithium signatures, Kyber key exchange
+- **Post-Quantum Cryptography**: ML-KEM-768 (FIPS 203) key exchange, ML-DSA-65 (FIPS 204) signatures, SLH-DSA (FIPS 205) hash-based signatures
 - **Built-in Oracles**: Native price feeds and VRF randomness
 - **AI Security**: Fraud detection, risk scoring, forensic analysis
 

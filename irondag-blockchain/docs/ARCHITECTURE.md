@@ -46,7 +46,7 @@ graph TB
         end
         
         subgraph "Cryptography"
-            PQC["Post-Quantum<br/>Dilithium3 signatures<br/>Kyber key exchange*"]
+            PQC["Post-Quantum (FIPS 203/204/205)<br/>ML-DSA-65 signatures<br/>ML-KEM-768 key exchange*<br/>SLH-DSA alt signatures"]
             ECDSA["ECDSA secp256k1<br/>EIP-155 signatures"]
         end
     end
@@ -85,7 +85,7 @@ graph TB
     NET --> PQC
 ```
 
-> **Note:** * Kyber key exchange is feature-flagged and optional. Enable via `--features kyber` in Cargo.toml. Includes HKDF domain separation and session caching.
+> **Note:** * ML-KEM-768 key exchange is feature-flagged (`--features kyber`). Uses the `ml-kem` crate (FIPS 203, pure Rust, all platforms). Includes HKDF domain separation and session caching. Capability advertised as `CAP_ML_KEM_768` in the P2P handshake bitmask.
 
 ---
 

@@ -83,12 +83,18 @@ Core Mining Tests: 17/17 passing (100%)
 
 ## Security Features
 
-### Post-Quantum Cryptography
+### Post-Quantum Cryptography (NIST FIPS 203 / 204 / 205)
 
--   **Kyber-1024**: NIST-standardized key encapsulation
--   **Dilithium-5**: NIST-standardized digital signatures
--   **AES-GCM**: Encryption for sensitive data
--   **Blake3**: Fast hashing algorithm
+-   **ML-KEM-768 (FIPS 203)**: Key encapsulation — P2P session key establishment. Pure-Rust `ml-kem` crate, all platforms. Formerly known as Kyber-768.
+-   **ML-DSA-65 (FIPS 204)**: Lattice-based digital signatures — block signing and transaction authentication. Formerly Dilithium3.
+-   **SLH-DSA-SHA2-128f (FIPS 205)**: Stateless hash-based signatures — alternative account type for hash-security-only trust assumptions. Formerly SPHINCS+.
+-   **AES-256-GCM**: Authenticated encryption for session data
+-   **BLAKE3**: Fast hashing for PoW and Merkle trees
+
+### Crypto-Agility
+
+-   **`hash_version` byte in BlockHeader**: Every block commits the hash algorithm identifier into the PoW bytes, enabling a governance-scheduled migration to a new hash function without a hard-fork ambiguity.
+-   **Capabilities bitmask in P2P handshake**: Each node advertises supported algorithms (`CAP_ML_KEM_768`, `CAP_ML_DSA_65`, `CAP_SLH_DSA`, `CAP_BLAKE3_POW`, `CAP_B3MEMHASH`) so the network can negotiate a safe upgrade window.
 
 ### Consensus Security
 

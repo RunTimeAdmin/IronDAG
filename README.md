@@ -30,7 +30,7 @@
 | **Consensus** | GhostDAG (BlockDAG — parallel block production) |
 | **Mining** | BraidCore: Stream A (Blake3, ~10s, 50 IDAG) + Stream B (B3MemHash, ~5s, 25 IDAG) |
 | **Smart Contracts** | Full EVM compatibility via SputnikVM |
-| **Security** | NIST post-quantum signatures (ML-DSA / Dilithium) |
+| **Security** | NIST FIPS 203 ML-KEM-768 · FIPS 204 ML-DSA-65 · FIPS 205 SLH-DSA |
 | **Fee Model** | 50% of transaction fees burned per block |
 
 ---
@@ -53,7 +53,7 @@ Both streams are actively mining on testnet. Full GPU / ASIC differentiation is 
 - **GhostDAG Consensus** — DAG-based consensus allowing parallel block production with blue-score finality
 - **EVM Compatible** — Deploy Solidity contracts, use MetaMask, ethers.js, Foundry
 - **SIMD-Accelerated Mining** — AVX2/SSE2 optimized B3MemHash for Stream B
-- **Post-Quantum Ready** — Dilithium signatures, Kyber key exchange, Noise Protocol P2P encryption
+- **Post-Quantum Ready** — Full NIST PQC stack: ML-KEM-768 (FIPS 203) key exchange, ML-DSA-65 (FIPS 204) signatures, SLH-DSA (FIPS 205) hash-based signatures
 - **Verkle State Proofs** — Wide 256-way branching tree with KZG polynomial commitments for O(1) stateless verification
 - **Account Abstraction (ERC-4337)** — Smart contract wallets with flexible signature schemes and gas sponsorship
 - **Privacy Layer** — Feature-gated confidential transactions with zk-SNARK dual commitments
@@ -183,7 +183,7 @@ Two-node public testnet with both BraidCore streams active:
 | **Nodes** | Primary miner + sync node |
 | **Explorer** | https://explorer.irondag.io |
 | **Faucet** | 10 IDAG per request (enabled) |
-| **P2P Transport** | QUIC with Kyber post-quantum key exchange |
+| **P2P Transport** | QUIC with ML-KEM-768 (FIPS 203) post-quantum key exchange |
 
 ---
 

@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Infrastructure**: Two-node cluster operational (srv1296980 miner + srv1296981 sync)
 - **Mining**: BraidCore active: Stream A (Blake3, ~10s) and Stream B (KHeavyHash, ~5s) mining. Stream C available via --enable-stream-c flag
 - **Block Height**: 150+ and growing
-- **P2P**: QUIC transport fully operational (TLS, gossip, sync, Kyber key exchange)
+- **P2P**: QUIC transport fully operational (TLS, gossip, sync, ML-KEM-768 key exchange)
 - **Explorer**: Live at https://explorer.irondag.io
 - **Faucet**: Enabled, mints 10 IDAG per request via direct balance credit
 - **RPC**: All standard eth_* methods + irondag_faucet + irondag_getBlocksByStream operational
