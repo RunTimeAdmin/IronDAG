@@ -101,11 +101,14 @@ struct TomlConfig {
 /// stronger containment checks when a base directory is known.
 fn validate_path(path: &str, label: &str) -> Result<std::path::PathBuf, String> {
     let p = std::path::PathBuf::from(path);
+    if path.trim().is_empty() {
+        return Err(format!("{}: path cannot be empty", label));
+    }
     if path.contains("..") {
         return Err(format!("{}: path traversal ('..') not allowed", label));
     }
-    if path.trim().is_empty() {
-        return Err(format!("{}: path cannot be empty", label));
+    if p.is_absolute() {
+        return Err(format!("{}: absolute paths not allowed", label));
     }
     Ok(p)
 }
