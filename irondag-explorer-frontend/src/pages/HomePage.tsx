@@ -39,8 +39,8 @@ export function HomePage() {
     }
   }
 
-  const health = (dag.data?.blue_blocks != null && dag.data?.total_blocks)
-    ? `${((dag.data.blue_blocks / dag.data.total_blocks) * 100).toFixed(1)}%`
+  const health = (dag.data?.blue_blocks != null && dag.data?.red_blocks != null)
+    ? `${((dag.data.blue_blocks / (dag.data.blue_blocks + dag.data.red_blocks)) * 100).toFixed(1)}%`
     : '—'
   const tps = tpsQuery.data != null ? tpsQuery.data.toFixed(2) : '—'
 
