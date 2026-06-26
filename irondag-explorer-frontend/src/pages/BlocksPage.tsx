@@ -8,7 +8,7 @@ const PAGE_SIZE = 25
 
 export function BlocksPage() {
   const [page, setPage] = useState(0)
-  const tipQ = useQuery({ queryKey: ['blockNumber'], queryFn: getBlockNumber, refetchInterval: 15_000 })
+  const tipQ = useQuery({ queryKey: ['blockNumber'], queryFn: getBlockNumber, refetchInterval: 8_000 })
   const tip = tipQ.data ?? 0
 
   const startBlock = Math.max(0, tip - page * PAGE_SIZE)

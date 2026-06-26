@@ -7,16 +7,23 @@ import { TxRow } from '@/components/TxRow'
 import { IconBlock, IconNetwork, IconDag, IconZap } from '@/components/icons'
 import type { RpcTransaction } from '@/lib/types'
 
-const REFETCH = 15_000
+// Block height polls fast (1 cheap call). Everything else only refetches when
+// the height changes — avoids hammering the RPC with 20+ calls per cycle.
+const POLL_HEIGHT  = 8_000   // how often to check for new blocks
+const REFETCH_SLOW = 30_000  // slow-changing data (peers, DAG stats, TPS)
 
 export function HomePage() {
-  const blockNum = useQuery({ queryKey: ['blockNumber'], queryFn: getBlockNumber, refetchInterval: REFETCH })
-  const peers    = useQuery({ queryKey: ['peerCount'],   queryFn: getPeerCount,   refetchInterval: REFETCH })
-  const dag      = useQuery({ queryKey: ['dagStats'],    queryFn: getDagStats,    refetchInterval: REFETCH })
-  const tpsQuery = useQuery({ queryKey: ['tps'],         queryFn: () => getTps(10), refetchInterval: REFETCH })
-  const blocks   = useQuery({ queryKey: ['recentBlocks'], queryFn: () => getRecentBlocks(20), refetchInterval: REFETCH })
-  const streamA  = useQuery({ queryKey: ['streamA'],     queryFn: () => getBlocksByStream('StreamA', 5), refetchInterval: REFETCH })
-  const streamB  = useQuery({ queryKey: ['streamB'],     queryFn: () => getBlocksByStream('StreamB', 5), refetchInterval: REFETCH })
+  const blockNum = useQuery({ queryKey: ['blockNumber'], queryFn: getBlockNumber, refetchInterval: POLL_HEIGHT })
+  const tip = blockNum.data ?? 0
+
+  const peers    = useQuery({ queryKey: ['peerCount'],   queryFn: getPeerCount,   refetchInterval: REFETCH_SLOW })
+  const dag      = useQuery({ queryKey: ['dagStats'],    queryFn: getDagStats,    refetchInterval: REFETCH_SLOW })
+  const tpsQuery = useQuery({ queryKey: ['tps'],         queryFn: () => getTps(10), refetchInterval: REFETCH_SLOW })
+
+  // Include tip in queryKey so these re-run automatically when a new block arrives
+  const blocks   = useQuery({ queryKey: ['recentBlocks', tip], queryFn: () => getRecentBlocks(20), enabled: tip > 0 })
+  const streamA  = useQuery({ queryKey: ['streamA', tip],      queryFn: () => getBlocksByStream('StreamA', 5), enabled: tip > 0 })
+  const streamB  = useQuery({ queryKey: ['streamB', tip],      queryFn: () => getBlocksByStream('StreamB', 5), enabled: tip > 0 })
 
   // Collect recent txs from recent blocks
   const recentTxs: RpcTransaction[] = []
