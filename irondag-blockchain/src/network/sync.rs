@@ -2134,8 +2134,9 @@ impl SyncClient {
                 }
             }
 
-            // Multi-pass insertion for BlockDAG: parents must exist before children
-            let mut bc = blockchain.write().await;
+            // Multi-pass insertion for BlockDAG: parents must exist before children.
+            // The write lock is acquired and released once per pass (not held for all passes)
+            // so that process_blocks can commit mined blocks between passes.
             let mut total_added = if checkpoint_installed { 1 } else { 0 };
             let mut pass = 0;
             const MAX_PASSES: usize = 50; // Increased from 10 for deeper DAG chains
@@ -2145,6 +2146,7 @@ impl SyncClient {
                 let mut added_this_pass = 0;
                 let mut still_remaining = Vec::new();
 
+                let mut bc = blockchain.write().await;
                 for block in remaining_blocks {
                     let block_num = block.header.block_number;
 
@@ -2182,6 +2184,7 @@ impl SyncClient {
                         still_remaining.push(block);
                     }
                 }
+                drop(bc); // Release write lock between passes so mining can proceed
 
                 total_added += added_this_pass;
 
@@ -2219,9 +2222,10 @@ impl SyncClient {
                 }
 
                 remaining_blocks = still_remaining;
-            }
 
-            drop(bc);
+                // Yield between passes to allow process_blocks to acquire write lock
+                tokio::task::yield_now().await;
+            }
 
             info!(added = total_added, passes = pass, "Added validated blocks");
             total_synced += total_added;
