@@ -22,8 +22,8 @@ export function HomePage() {
 
   // Include tip in queryKey so these re-run automatically when a new block arrives
   const blocks   = useQuery({ queryKey: ['recentBlocks', tip], queryFn: () => getRecentBlocks(20), enabled: tip > 0 })
-  const streamA  = useQuery({ queryKey: ['streamA', tip],      queryFn: () => getBlocksByStream('StreamA', 5), enabled: tip > 0 })
-  const streamB  = useQuery({ queryKey: ['streamB', tip],      queryFn: () => getBlocksByStream('StreamB', 5), enabled: tip > 0 })
+  const streamA  = useQuery({ queryKey: ['streamA', tip],      queryFn: () => getBlocksByStream('A', 5), enabled: tip > 0 })
+  const streamB  = useQuery({ queryKey: ['streamB', tip],      queryFn: () => getBlocksByStream('B', 5), enabled: tip > 0 })
 
   // Collect recent txs from recent blocks
   const recentTxs: RpcTransaction[] = []

@@ -46,8 +46,8 @@ export function DevToolsPage() {
     { label: 'Peer count', method: 'net_peerCount', params: '[]' },
     { label: 'DAG stats', method: 'irondag_getDagStats', params: '[]' },
     { label: 'Latest block', method: 'eth_getBlockByNumber', params: '["latest", false]' },
-    { label: 'Stream A blocks', method: 'irondag_getBlocksByStream', params: '["StreamA", 5]' },
-    { label: 'Stream B blocks', method: 'irondag_getBlocksByStream', params: '["StreamB", 5]' },
+    { label: 'Stream A blocks', method: 'irondag_getBlocksByStream', params: '["A", 5]' },
+    { label: 'Stream B blocks', method: 'irondag_getBlocksByStream', params: '["B", 5]' },
   ]
 
   return (
