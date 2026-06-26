@@ -788,6 +788,71 @@ impl Node {
             }
         }
 
+        // Start JSON-RPC server before bootstrap so RPC is immediately available
+        // even if all bootstrap peers are unreachable or slow to respond.
+        let rpc_port = self.config.rpc_port;
+        let rpc_server = self.rpc_server.clone();
+        let metrics = self.metrics.clone();
+        let ready_flag = self.ready.clone(); // Pass ready flag to RPC server
+        let tls_cert_path = self.config.tls_cert_path.clone();
+        let tls_key_path = self.config.tls_key_path.clone();
+        let cors_allowed_origins = self.config.cors_allowed_origins.clone();
+        let is_tls = tls_cert_path.is_some() && tls_key_path.is_some();
+        let disable_tls_warning = self.config.disable_tls_warning;
+        let network_for_rpc = self.network_manager.clone();
+        let mining_for_rpc = self.mining_manager.clone();
+        let blockchain_for_rpc = self.blockchain.clone();
+        let data_dir_for_rpc = self.config.data_dir.clone();
+
+        // Warn if RPC is bound to non-localhost without TLS
+        if !is_tls && !disable_tls_warning {
+            warn!("RPC server bound to 0.0.0.0:{} without TLS. This is insecure for production. Use --tls-cert and --tls-key for HTTPS, or use --disable-tls-warning if running behind a reverse proxy.", rpc_port);
+        }
+
+        // Log CORS configuration at startup
+        if !cors_allowed_origins.is_empty() {
+            if cors_allowed_origins.contains(&"*".to_string()) {
+                info!("CORS origins: allowing all origins (development mode)");
+            } else {
+                info!("CORS origins: {:?}", cors_allowed_origins);
+            }
+        } else {
+            info!("CORS origins: none allowed");
+        }
+
+        tokio::spawn(async move {
+            start_rpc_server(
+                rpc_port,
+                rpc_server,
+                metrics,
+                ready_flag,
+                tls_cert_path,
+                tls_key_path,
+                cors_allowed_origins,
+                Some(network_for_rpc),
+                Some(mining_for_rpc),
+                Some(blockchain_for_rpc),
+                data_dir_for_rpc,
+            )
+            .await;
+        });
+        let scheme = if is_tls { "https" } else { "http" };
+        info!(
+            "JSON-RPC API starting on {}://127.0.0.1:{}",
+            scheme, rpc_port
+        );
+
+        // Start gRPC server (on port + 1000 for default)
+        let grpc_port = rpc_port + 1000; // Default: 9545
+        let rpc_server_grpc = self.rpc_server.clone();
+        tokio::spawn(async move {
+            if let Err(e) = crate::rpc::grpc::start_grpc_server(grpc_port, rpc_server_grpc).await {
+                warn!("gRPC server error: {}", e);
+            }
+        });
+        info!("gRPC server starting on http://127.0.0.1:{}", grpc_port);
+        info!("  Supports: HTTP/2, Binary Protobuf, Streaming");
+
         // Connect to bootstrap peers from config with retry logic
         if !self.config.bootstrap_peers.is_empty() {
             info!(
@@ -877,70 +942,6 @@ impl Node {
 
         // Note: Dedicated sync server removed - sync now uses QUIC stream type 0x02
         // Sync requests/responses flow over the main P2P QUIC connection
-
-        // Start JSON-RPC server with ready flag
-        let rpc_port = self.config.rpc_port;
-        let rpc_server = self.rpc_server.clone();
-        let metrics = self.metrics.clone();
-        let ready_flag = self.ready.clone(); // Pass ready flag to RPC server
-        let tls_cert_path = self.config.tls_cert_path.clone();
-        let tls_key_path = self.config.tls_key_path.clone();
-        let cors_allowed_origins = self.config.cors_allowed_origins.clone();
-        let is_tls = tls_cert_path.is_some() && tls_key_path.is_some();
-        let disable_tls_warning = self.config.disable_tls_warning;
-        let network_for_rpc = self.network_manager.clone();
-        let mining_for_rpc = self.mining_manager.clone();
-        let blockchain_for_rpc = self.blockchain.clone();
-        let data_dir_for_rpc = self.config.data_dir.clone();
-
-        // Warn if RPC is bound to non-localhost without TLS
-        if !is_tls && !disable_tls_warning {
-            warn!("RPC server bound to 0.0.0.0:{} without TLS. This is insecure for production. Use --tls-cert and --tls-key for HTTPS, or use --disable-tls-warning if running behind a reverse proxy.", rpc_port);
-        }
-
-        // Log CORS configuration at startup
-        if !cors_allowed_origins.is_empty() {
-            if cors_allowed_origins.contains(&"*".to_string()) {
-                info!("CORS origins: allowing all origins (development mode)");
-            } else {
-                info!("CORS origins: {:?}", cors_allowed_origins);
-            }
-        } else {
-            info!("CORS origins: none allowed");
-        }
-
-        tokio::spawn(async move {
-            start_rpc_server(
-                rpc_port,
-                rpc_server,
-                metrics,
-                ready_flag,
-                tls_cert_path,
-                tls_key_path,
-                cors_allowed_origins,
-                Some(network_for_rpc),
-                Some(mining_for_rpc),
-                Some(blockchain_for_rpc),
-                data_dir_for_rpc,
-            )
-            .await;
-        });
-        let scheme = if is_tls { "https" } else { "http" };
-        info!(
-            "JSON-RPC API starting on {}://127.0.0.1:{}",
-            scheme, rpc_port
-        );
-
-        // Start gRPC server (on port + 1000 for default)
-        let grpc_port = rpc_port + 1000; // Default: 9545
-        let rpc_server_grpc = self.rpc_server.clone();
-        tokio::spawn(async move {
-            if let Err(e) = crate::rpc::grpc::start_grpc_server(grpc_port, rpc_server_grpc).await {
-                warn!("gRPC server error: {}", e);
-            }
-        });
-        info!("gRPC server starting on http://127.0.0.1:{}", grpc_port);
-        info!("  Supports: HTTP/2, Binary Protobuf, Streaming");
 
         // Start gRPC v2 server (on port + 1001 for default) - only if explicitly enabled
         if self.config.enable_grpc_v2 {
