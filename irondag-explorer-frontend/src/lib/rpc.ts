@@ -68,7 +68,7 @@ export async function getRecentBlocks(count = 20): Promise<RpcBlock[]> {
 
 export async function getBlocksByStream(stream: string, count = 20): Promise<StreamBlock[]> {
   try {
-    return await call<StreamBlock[]>('idag_getBlocksByStream', [stream, count])
+    return await call<StreamBlock[]>('irondag_getBlocksByStream', [stream, count])
   } catch {
     return []
   }
@@ -100,16 +100,25 @@ export async function getNonce(address: string): Promise<number> {
 
 export async function getDagStats(): Promise<DagStats> {
   try {
-    return await call<DagStats>('idag_getDagStats', [])
+    return await call<DagStats>('irondag_getDagStats', [])
   } catch {
     return {}
+  }
+}
+
+export async function getTps(windowSecs = 10): Promise<number> {
+  try {
+    const s = await call<string>('irondag_getTps', [windowSecs])
+    return parseFloat(s)
+  } catch {
+    return 0
   }
 }
 
 // ── Faucet ────────────────────────────────────────────────────────────────────
 
 export async function requestFaucet(address: string): Promise<FaucetResult> {
-  return call<FaucetResult>('idag_faucet', [address])
+  return call<FaucetResult>('irondag_faucet', [address])
 }
 
 // ── Search ────────────────────────────────────────────────────────────────────

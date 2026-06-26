@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { getBlockNumber, getPeerCount, getDagStats, getRecentBlocks, getBlocksByStream } from '@/lib/rpc'
+import { getBlockNumber, getPeerCount, getDagStats, getTps, getRecentBlocks, getBlocksByStream } from '@/lib/rpc'
 import { StatCard } from '@/components/StatCard'
 import { BlockRow } from '@/components/BlockRow'
 import { TxRow } from '@/components/TxRow'
@@ -13,6 +13,7 @@ export function HomePage() {
   const blockNum = useQuery({ queryKey: ['blockNumber'], queryFn: getBlockNumber, refetchInterval: REFETCH })
   const peers    = useQuery({ queryKey: ['peerCount'],   queryFn: getPeerCount,   refetchInterval: REFETCH })
   const dag      = useQuery({ queryKey: ['dagStats'],    queryFn: getDagStats,    refetchInterval: REFETCH })
+  const tpsQuery = useQuery({ queryKey: ['tps'],         queryFn: () => getTps(10), refetchInterval: REFETCH })
   const blocks   = useQuery({ queryKey: ['recentBlocks'], queryFn: () => getRecentBlocks(20), refetchInterval: REFETCH })
   const streamA  = useQuery({ queryKey: ['streamA'],     queryFn: () => getBlocksByStream('StreamA', 5), refetchInterval: REFETCH })
   const streamB  = useQuery({ queryKey: ['streamB'],     queryFn: () => getBlocksByStream('StreamB', 5), refetchInterval: REFETCH })
@@ -31,10 +32,10 @@ export function HomePage() {
     }
   }
 
-  const health = dag.data?.dag_health != null
-    ? `${(dag.data.dag_health * 100).toFixed(1)}%`
+  const health = (dag.data?.blue_blocks != null && dag.data?.total_blocks)
+    ? `${((dag.data.blue_blocks / dag.data.total_blocks) * 100).toFixed(1)}%`
     : '—'
-  const tps = dag.data?.tps != null ? dag.data.tps.toFixed(2) : '—'
+  const tps = tpsQuery.data != null ? tpsQuery.data.toFixed(2) : '—'
 
   return (
     <div className="space-y-8">
