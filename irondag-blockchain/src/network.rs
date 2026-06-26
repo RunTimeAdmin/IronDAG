@@ -5049,7 +5049,7 @@ async fn process_message(
                      (advertised {:#010x}, required {:#010x}) — closing connection",
                     from_addr, peer_caps, REQUIRED_CAPABILITIES
                 );
-                return Err(crate::error::BlockchainError::NetworkError(format!(
+                return Err(crate::error::BlockchainError::Network(format!(
                     "Peer {} insufficient capabilities: {:#010x} (need {:#010x})",
                     from_addr, peer_caps, REQUIRED_CAPABILITIES
                 )));
