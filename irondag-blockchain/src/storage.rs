@@ -712,27 +712,29 @@ impl<'a> BlockStore<'a> {
         limit: usize,
     ) -> crate::error::BlockchainResult<Vec<Block>> {
         let mut blocks = Vec::new();
+        let mut seen_hashes: std::collections::HashSet<[u8; 32]> = std::collections::HashSet::new();
 
-        // First, try optimized prefix scan for new versioned binary-keyed blocks
+        // Scan new versioned binary-keyed blocks
         let prefix = make_prefix(key_prefix::BLOCK);
         for (_, value) in self.db.scan_prefix_bytes(&prefix) {
             if let Ok(block) = bincode::deserialize::<Block>(&value) {
-                blocks.push(block);
-            }
-        }
-
-        // If no blocks found with prefix, fall back to legacy v0 prefix scan
-        // (for backward compatibility with old databases)
-        if blocks.is_empty() {
-            // Try legacy v0 format (single-byte prefix)
-            for (_, value) in self.db.scan_prefix_bytes(&[legacy_prefix::BLOCK]) {
-                if let Ok(block) = bincode::deserialize::<Block>(&value) {
+                if seen_hashes.insert(block.hash.0) {
                     blocks.push(block);
                 }
             }
         }
 
-        // If still empty, fall back to raw hash keys (oldest format)
+        // Always also scan legacy v0 format (single-byte prefix) — databases can have
+        // blocks in BOTH formats if written by different binary versions.
+        for (_, value) in self.db.scan_prefix_bytes(&[legacy_prefix::BLOCK]) {
+            if let Ok(block) = bincode::deserialize::<Block>(&value) {
+                if seen_hashes.insert(block.hash.0) {
+                    blocks.push(block);
+                }
+            }
+        }
+
+        // Also scan raw hash keys (oldest format) only if nothing found yet
         if blocks.is_empty() {
             for result in self.db.db.iter() {
                 let (key, value) = result.map_err(|e| {
@@ -742,7 +744,9 @@ impl<'a> BlockStore<'a> {
                 // Legacy blocks stored with 32-byte hash keys
                 if key.len() == 32 {
                     if let Ok(block) = bincode::deserialize::<Block>(&value) {
-                        blocks.push(block);
+                        if seen_hashes.insert(block.hash.0) {
+                            blocks.push(block);
+                        }
                     }
                 }
             }
