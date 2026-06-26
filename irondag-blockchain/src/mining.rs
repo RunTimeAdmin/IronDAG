@@ -2375,13 +2375,15 @@ impl MiningManager {
             // EIP-1559: Get current base fee for this stream
             let base_fee = self.get_current_base_fee(StreamType::StreamA).await;
 
-            let header_template = BlockHeader::new(
+            let hash_version = self.blockchain.read().await.active_hash_version().await;
+            let mut header_template = BlockHeader::new(
                 parent_hashes.clone(),
                 block_number,
                 StreamType::StreamA,
                 difficulty,
                 base_fee,
             );
+            header_template.hash_version = hash_version;
             let header_template_clone = header_template.clone(); // preserve timestamp for final header
 
             debug!(
@@ -2805,13 +2807,15 @@ impl MiningManager {
             // EIP-1559: Get current base fee for this stream
             let base_fee = self.get_current_base_fee(StreamType::StreamB).await;
 
-            let header_template = BlockHeader::new(
+            let hash_version = self.blockchain.read().await.active_hash_version().await;
+            let mut header_template = BlockHeader::new(
                 parent_hashes.clone(),
                 block_number,
                 StreamType::StreamB,
                 difficulty,
                 base_fee,
             );
+            header_template.hash_version = hash_version;
             let header_template_clone = header_template.clone();
 
             // Pre-PoW block size validation - prevent wasted mining on oversized blocks
@@ -3212,13 +3216,15 @@ impl MiningManager {
             // EIP-1559: Get current base fee for this stream
             let base_fee = self.get_current_base_fee(StreamType::StreamC).await;
 
-            let header = BlockHeader::new(
+            let hash_version = self.blockchain.read().await.active_hash_version().await;
+            let mut header = BlockHeader::new(
                 parent_hashes.clone(),
                 block_number,
                 StreamType::StreamC,
                 4,
                 base_fee,
             );
+            header.hash_version = hash_version;
 
             // Pre-submission block size validation (Stream C has no PoW, but still enforce size limit)
             // QUA-006 + ARC-008: Use shared trim helper with O(log n) binary search

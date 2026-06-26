@@ -187,6 +187,12 @@ pub struct Blockchain {
     /// Sync compares against peer height (5000), sees a massive gap, and triggers fork recovery
     /// This flag ensures sync/mining wait until all blocks are loaded from storage
     blockchain_ready: Arc<AtomicBool>,
+
+    /// Governance-scheduled protocol upgrades (e.g. SetHashAlgorithm).
+    /// Applied deterministically at the activation block height so every node
+    /// transitions at the same point in the chain.
+    governance_scheduler:
+        Arc<tokio::sync::RwLock<crate::governance::GovernanceScheduler>>,
 }
 
 /// Blocks and metadata grouped together (locked as a unit)
@@ -253,6 +259,9 @@ impl Blockchain {
             zk_enforce: false,
             total_fees_burned: Arc::new(tokio::sync::RwLock::new(0)),
             blockchain_ready: Arc::new(AtomicBool::new(false)),
+            governance_scheduler: Arc::new(tokio::sync::RwLock::new(
+                crate::governance::GovernanceScheduler::new(),
+            )),
         };
         // In-memory blockchain is immediately ready (no storage to load)
         bc.set_ready();
@@ -302,6 +311,9 @@ impl Blockchain {
             zk_enforce: false,
             total_fees_burned: Arc::new(tokio::sync::RwLock::new(0)),
             blockchain_ready: Arc::new(AtomicBool::new(false)),
+            governance_scheduler: Arc::new(tokio::sync::RwLock::new(
+                crate::governance::GovernanceScheduler::new(),
+            )),
         };
         // In-memory blockchain is immediately ready (no storage to load)
         bc.set_ready();
@@ -372,6 +384,9 @@ impl Blockchain {
             zk_enforce: false,
             total_fees_burned: Arc::new(tokio::sync::RwLock::new(0)),
             blockchain_ready: Arc::new(AtomicBool::new(false)),
+            governance_scheduler: Arc::new(tokio::sync::RwLock::new(
+                crate::governance::GovernanceScheduler::new(),
+            )),
         };
 
         // Load existing blocks and state from storage
@@ -442,6 +457,9 @@ impl Blockchain {
             zk_enforce: false,
             total_fees_burned: Arc::new(tokio::sync::RwLock::new(0)),
             blockchain_ready: Arc::new(AtomicBool::new(false)),
+            governance_scheduler: Arc::new(tokio::sync::RwLock::new(
+                crate::governance::GovernanceScheduler::new(),
+            )),
         };
 
         // Load existing blocks and state from storage
@@ -1042,7 +1060,43 @@ impl Blockchain {
         self.process_recurring_transactions(block_number, block_timestamp)
             .await;
 
+        // 13. Apply any governance actions scheduled at this block height.
+        self.governance_scheduler
+            .write()
+            .await
+            .apply_at_height(block_number);
+
         Ok(())
+    }
+
+    /// The `hash_version` byte that miners must commit into new block headers.
+    /// Returns the value currently mandated by the governance scheduler.
+    pub async fn active_hash_version(&self) -> u8 {
+        self.governance_scheduler
+            .read()
+            .await
+            .active_hash_version()
+    }
+
+    /// Schedule a governance action to activate at `activation_height`.
+    ///
+    /// Returns `Err` if the action is invalid (height 0, duplicate, etc.).
+    pub async fn schedule_governance_action(
+        &self,
+        action: crate::governance::ScheduledAction,
+    ) -> Result<(), String> {
+        self.governance_scheduler.write().await.schedule(action)
+    }
+
+    /// Pending governance actions (for RPC / status reporting).
+    pub async fn pending_governance_actions(
+        &self,
+    ) -> Vec<crate::governance::ScheduledAction> {
+        self.governance_scheduler
+            .read()
+            .await
+            .pending_actions()
+            .to_vec()
     }
 
     /// Execute due recurring transactions for the given block timestamp.
