@@ -386,7 +386,11 @@ impl Node {
             .parse::<SocketAddr>()
             .unwrap_or_else(|_| "0.0.0.0:8080".parse().unwrap());
 
-        let mut network_manager = NetworkManager::new(blockchain_arc.clone(), listen_addr);
+        let mut network_manager = NetworkManager::new_with_data_dir(
+            blockchain_arc.clone(),
+            listen_addr,
+            &config.data_dir,
+        );
         if let Some(ref addr) = config.advertise_addr {
             network_manager.set_advertise_addr(addr.clone());
         } else if config.try_stun_discovery {

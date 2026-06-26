@@ -1197,12 +1197,50 @@ pub struct NetworkManager {
     ctx: Arc<NetworkContext>,
 }
 
+/// Loads the node identity key from `{data_dir}/node_key` or generates and saves a new one.
+pub fn load_or_generate_signing_key(data_dir: &str) -> [u8; 32] {
+    use ed25519_dalek::SigningKey;
+    use rand::rngs::OsRng;
+    use std::path::Path;
+
+    let key_path = Path::new(data_dir).join("node_key");
+    if let Ok(bytes) = std::fs::read(&key_path) {
+        if bytes.len() == 32 {
+            let mut arr = [0u8; 32];
+            arr.copy_from_slice(&bytes);
+            info!("Loaded persisted node identity key from {:?}", key_path);
+            return arr;
+        }
+    }
+    let key = SigningKey::generate(&mut OsRng);
+    let bytes = key.to_bytes();
+    if let Err(e) = std::fs::write(&key_path, &bytes) {
+        warn!("Could not persist node identity key to {:?}: {}", key_path, e);
+    } else {
+        info!("Generated and saved new node identity key to {:?}", key_path);
+    }
+    bytes
+}
+
 impl NetworkManager {
-    /// Creates a new network manager with a generated Ed25519 identity key.
+    /// Creates a new network manager, loading a persisted Ed25519 identity key or generating one.
     ///
     /// # Arguments
     /// * `blockchain` - The blockchain instance to share with peers
     /// * `listen_addr` - The local address to bind for P2P connections
+    /// * `data_dir` - Data directory used to load or save the identity key
+    pub fn new_with_data_dir(
+        blockchain: Arc<RwLock<Blockchain>>,
+        listen_addr: SocketAddr,
+        data_dir: &str,
+    ) -> Self {
+        let secret = load_or_generate_signing_key(data_dir);
+        use ed25519_dalek::SigningKey;
+        let signing_key = SigningKey::from_bytes(&secret);
+        Self::new_inner(blockchain, listen_addr, signing_key)
+    }
+
+    /// Creates a new network manager with a freshly-generated Ed25519 identity key.
     pub fn new(blockchain: Arc<RwLock<Blockchain>>, listen_addr: SocketAddr) -> Self {
         // Generate a new Ed25519 keypair for node identity (single generation)
         use ed25519_dalek::SigningKey;
