@@ -39,6 +39,7 @@ pub struct GhostDAG {
     blue_score: HashMap<Hash, u64>,       // Blue score for each block
     block_timestamps: HashMap<Hash, u64>, // Timestamp cache for sort comparator (avoids disk reads)
     ordering: Vec<Hash>,                  // Final block ordering
+    checkpoint_stale_rebuilt: bool,       // Guard: stale-checkpoint BFS rebuild fires at most once per session
 }
 
 impl GhostDAG {
@@ -72,6 +73,7 @@ impl GhostDAG {
             red_set: HashSet::new(),
             blue_score: HashMap::new(),
             block_timestamps: HashMap::new(),
+            checkpoint_stale_rebuilt: false,
             ordering: Vec::new(),
         }
     }
@@ -139,6 +141,7 @@ impl GhostDAG {
             blue_score,
             block_timestamps: HashMap::new(), // Timestamps will be populated as blocks are added
             ordering,
+            checkpoint_stale_rebuilt: false,
         };
 
         // RECOVERY: If ordering is too short for finalization, rebuild from stored blocks.
@@ -463,17 +466,29 @@ impl GhostDAG {
                 let parents_in_blue = parents.iter().any(|p| self.blue_set.contains(p));
 
                 if parents_in_hot && !parents_in_blue {
-                    // Stale checkpoint detected: parents exist in hot_blocks but not in blue_set
-                    // Clear the stale blue_set and rebuild from actual blocks in memory
-                    warn!(
-                        "[GhostDAG] Stale checkpoint detected: parents in hot_blocks but not in blue_set. Rebuilding blue_set from {} hot blocks",
-                        hot_blocks.len()
-                    );
-                    self.blue_set.clear();
-                    self.red_set.clear();
-                    self.blue_score.clear();
-                    self.ordering.clear();
-                    return self.update_blue_set();
+                    if !self.checkpoint_stale_rebuilt {
+                        // First occurrence: genuine stale checkpoint from disk. Rebuild once.
+                        warn!(
+                            "[GhostDAG] Stale checkpoint detected: parents in hot_blocks but not in blue_set. Rebuilding blue_set from {} hot blocks",
+                            hot_blocks.len()
+                        );
+                        self.blue_set.clear();
+                        self.red_set.clear();
+                        self.blue_score.clear();
+                        self.ordering.clear();
+                        self.checkpoint_stale_rebuilt = true;
+                        return self.update_blue_set();
+                    } else {
+                        // Already rebuilt this session. Parent arrived out-of-order during burst
+                        // sync — insert it directly rather than triggering another O(n²) BFS.
+                        let next_score = self.blue_score.values().max().copied().unwrap_or(0) + 1;
+                        for p in parents.iter() {
+                            if hot_blocks.contains_key(p) && !self.blue_set.contains(p) {
+                                self.blue_set.insert(*p);
+                                self.blue_score.entry(*p).or_insert(next_score);
+                            }
+                        }
+                    }
                 }
             }
         }
