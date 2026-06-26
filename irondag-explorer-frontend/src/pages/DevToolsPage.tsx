@@ -44,10 +44,10 @@ export function DevToolsPage() {
     { label: 'Block number', method: 'eth_blockNumber', params: '[]' },
     { label: 'Chain ID', method: 'eth_chainId', params: '[]' },
     { label: 'Peer count', method: 'net_peerCount', params: '[]' },
-    { label: 'DAG stats', method: 'idag_getDagStats', params: '[]' },
+    { label: 'DAG stats', method: 'irondag_getDagStats', params: '[]' },
     { label: 'Latest block', method: 'eth_getBlockByNumber', params: '["latest", false]' },
-    { label: 'Stream A blocks', method: 'idag_getBlocksByStream', params: '["StreamA", 5]' },
-    { label: 'Stream B blocks', method: 'idag_getBlocksByStream', params: '["StreamB", 5]' },
+    { label: 'Stream A blocks', method: 'irondag_getBlocksByStream', params: '["StreamA", 5]' },
+    { label: 'Stream B blocks', method: 'irondag_getBlocksByStream', params: '["StreamB", 5]' },
   ]
 
   return (
