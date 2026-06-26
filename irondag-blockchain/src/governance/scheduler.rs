@@ -82,8 +82,7 @@ impl GovernanceScheduler {
 
         self.pending.push(action);
         // Keep sorted so we can drain the front cheaply
-        self.pending
-            .sort_unstable_by_key(|s| s.activation_height);
+        self.pending.sort_unstable_by_key(|s| s.activation_height);
         Ok(())
     }
 

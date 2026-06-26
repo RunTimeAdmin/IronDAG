@@ -2578,7 +2578,6 @@ dependencies = [
  "num_cpus",
  "ocl",
  "parking_lot 0.12.5",
- "pqcrypto-kyber",
  "pqcrypto-mldsa",
  "pqcrypto-sphincsplus",
  "pqcrypto-traits",
@@ -3436,19 +3435,6 @@ dependencies = [
  "dunce",
  "getrandom 0.3.4",
  "libc",
-]
-
-[[package]]
-name = "pqcrypto-kyber"
-version = "0.7.9"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c32fe9d5c9913b1aed1ba92b3449eb2d7cf7ca29741b11455dfa34c711b95776"
-dependencies = [
- "cc",
- "glob",
- "libc",
- "pqcrypto-internals",
- "pqcrypto-traits",
 ]
 
 [[package]]

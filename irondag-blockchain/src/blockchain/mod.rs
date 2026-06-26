@@ -191,8 +191,7 @@ pub struct Blockchain {
     /// Governance-scheduled protocol upgrades (e.g. SetHashAlgorithm).
     /// Applied deterministically at the activation block height so every node
     /// transitions at the same point in the chain.
-    governance_scheduler:
-        Arc<tokio::sync::RwLock<crate::governance::GovernanceScheduler>>,
+    governance_scheduler: Arc<tokio::sync::RwLock<crate::governance::GovernanceScheduler>>,
 }
 
 /// Blocks and metadata grouped together (locked as a unit)
@@ -1072,10 +1071,7 @@ impl Blockchain {
     /// The `hash_version` byte that miners must commit into new block headers.
     /// Returns the value currently mandated by the governance scheduler.
     pub async fn active_hash_version(&self) -> u8 {
-        self.governance_scheduler
-            .read()
-            .await
-            .active_hash_version()
+        self.governance_scheduler.read().await.active_hash_version()
     }
 
     /// Schedule a governance action to activate at `activation_height`.
@@ -1089,9 +1085,7 @@ impl Blockchain {
     }
 
     /// Pending governance actions (for RPC / status reporting).
-    pub async fn pending_governance_actions(
-        &self,
-    ) -> Vec<crate::governance::ScheduledAction> {
+    pub async fn pending_governance_actions(&self) -> Vec<crate::governance::ScheduledAction> {
         self.governance_scheduler
             .read()
             .await

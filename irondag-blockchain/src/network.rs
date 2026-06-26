@@ -66,8 +66,12 @@ pub const CAP_SHARDING: u32 = 1 << 6; // Horizontal sharding protocol
 
 /// Bitmask of capabilities this node advertises. Update when new features ship.
 #[cfg(feature = "kyber")]
-pub const LOCAL_CAPABILITIES: u32 =
-    CAP_BLAKE3_POW | CAP_B3MEMHASH | CAP_ML_KEM_768 | CAP_DILITHIUM3 | CAP_SPHINCS_PLUS | CAP_COMPACT_BLOCKS;
+pub const LOCAL_CAPABILITIES: u32 = CAP_BLAKE3_POW
+    | CAP_B3MEMHASH
+    | CAP_ML_KEM_768
+    | CAP_DILITHIUM3
+    | CAP_SPHINCS_PLUS
+    | CAP_COMPACT_BLOCKS;
 
 #[cfg(not(feature = "kyber"))]
 pub const LOCAL_CAPABILITIES: u32 =
