@@ -73,6 +73,18 @@ pub const LOCAL_CAPABILITIES: u32 =
 pub const LOCAL_CAPABILITIES: u32 =
     CAP_BLAKE3_POW | CAP_B3MEMHASH | CAP_DILITHIUM3 | CAP_SPHINCS_PLUS | CAP_COMPACT_BLOCKS;
 
+/// Minimum capability set a peer MUST advertise to be accepted.
+/// Peers missing these bits cannot validate IronDAG blocks and are rejected
+/// during the handshake. Kept conservative: only the two PoW algorithms
+/// required for Stream A/B/C validation.
+/// CAP_ML_KEM_768 is NOT required here because the kyber feature is optional.
+pub const REQUIRED_CAPABILITIES: u32 = CAP_BLAKE3_POW | CAP_B3MEMHASH;
+
+/// Returns true if `peer_caps` satisfies `REQUIRED_CAPABILITIES`.
+pub fn meets_required_capabilities(peer_caps: u32) -> bool {
+    peer_caps & REQUIRED_CAPABILITIES == REQUIRED_CAPABILITIES
+}
+
 /// Grace period in seconds for Kyber session key cache (reuse on quick reconnect)
 #[cfg(feature = "kyber")]
 const KYBER_SESSION_CACHE_TTL_SECS: u64 = 60;
@@ -4609,6 +4621,14 @@ async fn process_gossip_handshake(
                         capabilities: peer_caps,
                     } = &auth_msg.message
                     {
+                        // Reject peers that cannot validate IronDAG blocks
+                        if !meets_required_capabilities(*peer_caps) {
+                            return Err(format!(
+                                "Peer {} rejected: insufficient capabilities \
+                                 (advertised {:#010x}, required {:#010x})",
+                                peer_addr, peer_caps, REQUIRED_CAPABILITIES
+                            ));
+                        }
                         peer_advertised_addrs
                             .write()
                             .await
@@ -5018,6 +5038,18 @@ async fn process_message(
                 "Received handshake from {}, listen address: {}, capabilities: {:#010x}",
                 from_addr, peer_listen_addr, peer_caps
             );
+            // Reject peers that cannot validate IronDAG blocks
+            if !meets_required_capabilities(peer_caps) {
+                warn!(
+                    "Peer {} rejected: insufficient capabilities \
+                     (advertised {:#010x}, required {:#010x}) — closing connection",
+                    from_addr, peer_caps, REQUIRED_CAPABILITIES
+                );
+                return Err(crate::error::BlockchainError::NetworkError(format!(
+                    "Peer {} insufficient capabilities: {:#010x} (need {:#010x})",
+                    from_addr, peer_caps, REQUIRED_CAPABILITIES
+                )));
+            }
             // Keep peer keyed by actual remote address (from_addr) only. Do NOT insert
             // listen_sock_addr into peers or remap the connection: multiple sync nodes
             // often advertise the same address (e.g. 127.0.0.1:8080), which would collapse
@@ -7765,6 +7797,57 @@ mod tests {
             (eff2 - 0.1).abs() < 0.001,
             "Poor ratio should give efficiency 0.1, got {}",
             eff2
+        );
+    }
+
+    // Tests for capability enforcement
+    #[test]
+    fn test_meets_required_capabilities_full() {
+        // A node advertising all capabilities always passes
+        assert!(meets_required_capabilities(LOCAL_CAPABILITIES));
+    }
+
+    #[test]
+    fn test_meets_required_capabilities_minimum() {
+        // Exactly the required set passes
+        assert!(meets_required_capabilities(REQUIRED_CAPABILITIES));
+    }
+
+    #[test]
+    fn test_meets_required_capabilities_superset() {
+        // Extra capability bits beyond required still pass
+        assert!(meets_required_capabilities(
+            REQUIRED_CAPABILITIES | CAP_ML_KEM_768 | CAP_COMPACT_BLOCKS
+        ));
+    }
+
+    #[test]
+    fn test_meets_required_capabilities_missing_b3memhash() {
+        // Missing CAP_B3MEMHASH — cannot validate Stream B blocks
+        let caps = REQUIRED_CAPABILITIES & !CAP_B3MEMHASH;
+        assert!(!meets_required_capabilities(caps));
+    }
+
+    #[test]
+    fn test_meets_required_capabilities_missing_blake3() {
+        // Missing CAP_BLAKE3_POW — cannot validate Stream A/C blocks
+        let caps = REQUIRED_CAPABILITIES & !CAP_BLAKE3_POW;
+        assert!(!meets_required_capabilities(caps));
+    }
+
+    #[test]
+    fn test_meets_required_capabilities_zero() {
+        // Old node advertising no capabilities is rejected
+        assert!(!meets_required_capabilities(0));
+    }
+
+    #[test]
+    fn test_required_capabilities_subset_of_local() {
+        // REQUIRED must be a strict subset of what we ourselves advertise
+        assert_eq!(
+            LOCAL_CAPABILITIES & REQUIRED_CAPABILITIES,
+            REQUIRED_CAPABILITIES,
+            "LOCAL_CAPABILITIES must include all REQUIRED_CAPABILITIES"
         );
     }
 }

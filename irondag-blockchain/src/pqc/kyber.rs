@@ -316,6 +316,59 @@ impl KyberKeyExchange {
     }
 }
 
+/// Algorithm-agnostic interface for post-quantum key encapsulation mechanisms.
+///
+/// Implement this trait to plug in a different KEM (e.g. ML-KEM-512, ML-KEM-1024,
+/// HQC, or a hybrid construction) without touching the network layer.
+/// The associated `ALGORITHM_ID` is a `u8` matching the `CAP_*` semantics —
+/// include it in protocol negotiation to tell the peer which KEM you used.
+///
+/// # Thread safety
+/// Implementations must be `Send + Sync` because key exchange objects are
+/// shared across async tasks in the P2P network.
+pub trait KemAlgorithm: Send + Sync + 'static {
+    /// Identifier for this KEM variant (corresponds to a `CAP_ML_KEM_*` constant).
+    const ALGORITHM_ID: u8;
+
+    /// Generate a fresh keypair.
+    fn generate() -> Self
+    where
+        Self: Sized;
+
+    /// Public key bytes (the encapsulation key, sent to the peer during handshake).
+    fn public_key_bytes(&self) -> Vec<u8>;
+
+    /// Encapsulate a shared secret using `peer_public_key`.
+    /// Returns `(ciphertext, shared_secret)`. The ciphertext is sent to the peer;
+    /// the shared secret is used to derive the session key.
+    fn encapsulate(&self, peer_public_key: &[u8]) -> Result<(Vec<u8>, SessionKey), String>;
+
+    /// Decapsulate a shared secret using our private key.
+    fn decapsulate(&self, ciphertext: &[u8]) -> Result<SessionKey, String>;
+}
+
+/// ML-KEM-768 (FIPS 203) is the current production KEM.
+/// ALGORITHM_ID = 0x03 matches the `CAP_ML_KEM_768` bit position (bit 2, value 4).
+impl KemAlgorithm for KyberKeyExchange {
+    const ALGORITHM_ID: u8 = 0x03; // CAP_ML_KEM_768
+
+    fn generate() -> Self {
+        KyberKeyExchange::generate()
+    }
+
+    fn public_key_bytes(&self) -> Vec<u8> {
+        self.public_key_bytes()
+    }
+
+    fn encapsulate(&self, peer_public_key: &[u8]) -> Result<(Vec<u8>, SessionKey), String> {
+        self.encapsulate(peer_public_key)
+    }
+
+    fn decapsulate(&self, ciphertext: &[u8]) -> Result<SessionKey, String> {
+        self.decapsulate(ciphertext)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
