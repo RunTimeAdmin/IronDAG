@@ -1089,15 +1089,18 @@ pub fn select_blocks_for_sync_batch(bc: &Blockchain, from_block: u64, count: u64
     all_blocks.sort_by_key(|b| b.header.block_number);
 
     // Filter to only chain-continuous blocks.
-    // When from_block is far below the earliest block we actually have (peer
-    // has pruned old history), treat the first available block as a snapshot
-    // boundary so we can serve our actual chain instead of returning empty.
+    // When the earliest block we have is ahead of from_block (due to mining
+    // number gaps or pruned history), treat the first available block as a
+    // snapshot boundary so we can serve our actual chain instead of returning empty.
     let earliest_available = all_blocks
         .first()
         .map(|b| b.header.block_number)
         .unwrap_or(from_block);
-    let pruned_gap = earliest_available > from_block.saturating_add(100);
-    // Skip the snapshot-boundary logic when there is no pruning gap.
+    // Any gap triggers the snapshot-boundary path. Mining number gaps (reserved
+    // but failed attempts) can leave holes as small as 1, which the old +100
+    // threshold missed, causing the server to return an empty batch.
+    let pruned_gap = earliest_available > from_block;
+    // Skip the snapshot-boundary logic only when from_block itself exists.
     let mut first_above_from_seen = !pruned_gap;
     let mut valid_hashes: HashSet<[u8; 32]> = HashSet::new();
 
