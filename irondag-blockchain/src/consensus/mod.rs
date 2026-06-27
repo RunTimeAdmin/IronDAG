@@ -39,7 +39,7 @@ pub struct GhostDAG {
     blue_score: HashMap<Hash, u64>,       // Blue score for each block
     block_timestamps: HashMap<Hash, u64>, // Timestamp cache for sort comparator (avoids disk reads)
     ordering: Vec<Hash>,                  // Final block ordering
-    checkpoint_stale_rebuilt: bool,       // Guard: stale-checkpoint BFS rebuild fires at most once per session
+    checkpoint_stale_rebuilt: bool, // Guard: stale-checkpoint BFS rebuild fires at most once per session
 }
 
 impl GhostDAG {

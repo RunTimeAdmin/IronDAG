@@ -1215,9 +1215,15 @@ pub fn load_or_generate_signing_key(data_dir: &str) -> [u8; 32] {
     let key = SigningKey::generate(&mut OsRng);
     let bytes = key.to_bytes();
     if let Err(e) = std::fs::write(&key_path, &bytes) {
-        warn!("Could not persist node identity key to {:?}: {}", key_path, e);
+        warn!(
+            "Could not persist node identity key to {:?}: {}",
+            key_path, e
+        );
     } else {
-        info!("Generated and saved new node identity key to {:?}", key_path);
+        info!(
+            "Generated and saved new node identity key to {:?}",
+            key_path
+        );
     }
     bytes
 }
